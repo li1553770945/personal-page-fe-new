@@ -7,8 +7,8 @@ export default function Home() {
   const { t } = useTranslation()
 
   return (
-    <main className="">
+    <div>
         123
-    </main>
+    </div>
   )
 }

@@ -28,18 +28,19 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
         <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-        <div className="flex flex-col min-h-screen w-full max-w-7xl mx-auto">
-        <Header />
-        <main className="flex-1 w-full px-4 md:px-6">
-          {children}
-        </main>
-        <Footer />
-        </div>
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Header />
+          <div className="flex flex-col min-h-screen w-full max-w-7xl mx-auto bg-background">
+
+            <main className="flex-1 w-full px-4 md:px-6">
+              {children}
+            </main>
+            <Footer />
+          </div>
         </ThemeProvider>
       </body>
     </html>

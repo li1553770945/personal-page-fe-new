@@ -1,3 +1,5 @@
+"use client"
+
 import Link from 'next/link';
 import {
     NavigationMenu,
@@ -11,6 +13,7 @@ import {
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { ModeToggle } from "@/components/global/header/mode-toggle"
+import { LanguageToggle } from "@/components/global/header/language-toggle"
 import { HomeIcon } from "@/components/ui/icons/heroicons-home"
 import { BookOpenIcon } from "@/components/ui/icons/heroicons-book-open"
 import { ChatBubbleOvalLeftSolidIcon } from "@/components/ui/icons/heroicons-chat-bubble-oval-left-solid"
@@ -21,6 +24,9 @@ import { RocketLaunchIcon } from "@/components/ui/icons/heroicons-rocket-launch"
 import { FileOutlinedIcon } from "@/components/ui/icons/ant-design-file-outlined"
 import { UserGroupIcon } from "@/components/ui/icons/heroicons-user-group"
 import { cn } from "@/lib/utils"
+import { usePathname } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
+
 interface NavItem {
     label: string
     href?: string
@@ -32,73 +38,78 @@ interface NavItem {
     }[]
 }
 
-const navItems: NavItem[] = [
-    {
-        label: "主页",
-        icon: HomeIcon,
-        href: "/",
-    },
-    {
-        label: "博客",
-        icon: BookOpenIcon,
-        href: "/blog",
-    },
-    {
-        label: "工具箱",
-        icon: RocketLaunchIcon,
-        subItem: [
-            {
-                label: "文件管理",
-                icon: FileOutlinedIcon,
-                href: "/files",
-            },
-            {
-                label: "临时群聊",
-                icon: UserGroupIcon,
-                href: "/chat",
-            }
-        ]
-    },
-    {
-        label: "联系",
-        icon: ChatBubbleOvalLeftSolidIcon,
-        subItem: [
-            {
-                label: "邮箱",
-                icon: MailOutlinedIcon,
-                href: "mailto:peacesheep@qq.com",
-            },
-            {
-                label: "Github",
-                icon: GithubFilledIcon,
-                href: "https://github.com/li1553770945",
-            },
-            {
-                label: "咨询&留言",
-                icon: MessageOutlinedIcon,
-                href: "/feedback"
-            }
-        ]
-    },
-    // {
-    //     label: "关于",
-    //     href: "/about",
-    // }
-]
-
 export default function Header() {
+    const { t } = useTranslation();
+    const pathname = usePathname();
+
+    const navItems: NavItem[] = [
+        {
+            label: t('nav.home'),
+            icon: HomeIcon,
+            href: "/",
+        },
+        {
+            label: t('nav.blog'),
+            icon: BookOpenIcon,
+            href: "/blog",
+        },
+        {
+            label: t('nav.tools'),
+            icon: RocketLaunchIcon,
+            subItem: [
+                {
+                    label: t('nav.fileManagement'),
+                    icon: FileOutlinedIcon,
+                    href: "/files",
+                },
+                {
+                    label: t('nav.temporaryChat'),
+                    icon: UserGroupIcon,
+                    href: "/chat",
+                }
+            ]
+        },
+        {
+            label: t('nav.contact'),
+            icon: ChatBubbleOvalLeftSolidIcon,
+            subItem: [
+                {
+                    label: t('nav.email'),
+                    icon: MailOutlinedIcon,
+                    href: "mailto:peacesheep@qq.com",
+                },
+                {
+                    label: t('nav.github'),
+                    icon: GithubFilledIcon,
+                    href: "https://github.com/li1553770945",
+                },
+                {
+                    label: t('nav.consultation'),
+                    icon: MessageOutlinedIcon,
+                    href: "/feedback"
+                }
+            ]
+        },
+        // {
+        //     label: "关于",
+        //     href: "/about",
+        // }
+    ]
+
     return (
-        <header className="w-full border-b bg-[oklch(0.9975_0.0017_67.8)]">
+        <header className="w-full">
             <div className="flex h-16 items-center justify-between px-4 md:px-6">
                 <NavigationMenu viewport={false}>
                     <NavigationMenuList>
                         {navItems.map((item) => {
+                            const isActive = item.href && pathname === item.href;
+
                             const hasSub = item.subItem && item.subItem.length > 0
                             const IconComp = item.icon
 
                             if (hasSub) {
                                 return (
-                                    <NavigationMenuItem key={item.label}>
+                                    <NavigationMenuItem key={item.label} className='hover:border-b-3 hover:border-[var(--underline-background)]'>
                                         <NavigationMenuTrigger>
                                             {IconComp ? <IconComp className="mr-2 size-4 text-foreground" /> : null}
                                             {item.label}
@@ -106,11 +117,11 @@ export default function Header() {
                                         <NavigationMenuContent>
                                             <ul className="grid min-w-[150px] w-fit max-w-[360px] gap-3 p-4">
                                                 {item.subItem?.map((sub) => (
-                                                    <li key={sub.label}>
-                                                        <NavigationMenuLink asChild className={cn("flex-row items-center")}>
-                                                            <Link href={sub.href}>
+                                                    <li key={sub.label} className='hover:border-b-3 hover:border-[var(--underline-background)]'>
+                                                        <NavigationMenuLink asChild >
+                                                            <Link href={sub.href} className={cn("flex flex-row items-center")}>
                                                                 {sub.icon ? <sub.icon className="mr-2 size-4 text-foreground" /> : null}
-                                                                <div className="text-sm font-medium leading-none">{sub.label}</div>
+                                                                <div>{sub.label}</div>
                                                             </Link>
                                                         </NavigationMenuLink>
                                                     </li>
@@ -122,20 +133,25 @@ export default function Header() {
                             }
 
                             return (
-                                <NavigationMenuItem key={item.label}>
-                                    <Link href={item.href || '#'} passHref>
-                                        <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "flex-row items-center")}>
+                                <NavigationMenuItem key={item.label} className={cn('hover:border-b-3 hover:border-[var(--underline-background)]', isActive && 'border-b-3 border-[var(--underline-background)]')}>
+                                    <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "flex-row items-center ")}>
+                                        <Link href={item.href || '#'}>
                                             {IconComp ? <IconComp className="mr-2 size-4 text-foreground" /> : null}
                                             {item.label}
-                                        </NavigationMenuLink>
-                                    </Link>
+                                        </Link>
+                                    </NavigationMenuLink>
                                 </NavigationMenuItem>
                             )
                         })}
                     </NavigationMenuList>
                 </NavigationMenu>
-                <ModeToggle />
+                <div className="flex items-center gap-2">
+                    <LanguageToggle />
+                    <ModeToggle />
+                </div>
             </div>
+            <div className="mx-[30px] h-0 border-b-2 border-[var(--seprator-background)]" />
+
         </header>
     );
 }

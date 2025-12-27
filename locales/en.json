@@ -1,0 +1,124 @@
+{
+  "nav": {
+    "home": "Home",
+    "blog": "Blog",
+    "tools": "Tools",
+    "fileManagement": "File Management",
+    "temporaryChat": "Temporary Chat",
+    "contact": "Contact",
+    "email": "Email",
+    "github": "Github",
+    "consultation": "Consultation & Feedback"
+  },
+  "experience": {
+    "title": "Work Experience",
+    "items": [
+      {
+        "period": "Apr 2025 - Present",
+        "company": "Alibaba",
+        "department": "Aicheng Technology",
+        "type": "Internship",
+        "position": "Distributed Infrastructure",
+        "description": "Responsible for MCP protocol adaptation work for Alibaba's gateway Higress, using Go to write Envoy plugins and load them as dynamic libraries, exposing Alibaba's existing HSF services in MCP protocol form from the gateway level, enabling Agents to directly call Alibaba's existing microservices. Optimized the original plugin compilation process, reducing single test time from 10 minutes to less than 1 minute, wrote multi-language gateway end-to-end tests, completed CI process design for plugins, implemented MCPServer metrics monitoring using OTEL and Grafana, and collaborated on developing MCPServer management page frontend and backend"
+      },
+      {
+        "period": "Nov 2022 - Feb 2023",
+        "company": "ByteDance",
+        "department": "Data Department",
+        "type": "Internship",
+        "position": "Backend Development",
+        "description": "Developed RPC services for ByteDance's commercialization data platform backend, refactored the existing project's Kitex dependency from local to overpass, greatly shortening the microservice version upgrade process. Used Google's open-source component library go-wire to implement dependency injection mechanism, refactored the extensive use of global variables in existing DDD architecture projects with inversion of control, making the project structure clearer"
+      },
+      {
+        "period": "Jul 2022 - Aug 2022",
+        "company": "Tencent",
+        "department": "Magic Cube Studio",
+        "type": "Internship",
+        "position": "Backend Development",
+        "description": "Designed and developed an object storage system using C++ language, capable of processing uploads and downloads of 100k small files within 1 minute. The system fully utilized epoll's IO multiplexing mechanism. Metadata used leveldb, and network transmission comprehensively used TCP and UDP protocols according to different scenarios to optimize data transmission performance"
+      }
+    ]
+  },
+  "skills": {
+    "title": "Skills",
+    "content": "Go / Rust / K8s / Redis / MQ"
+  },
+  "awards": {
+    "title": "Awards",
+    "content": "ICPC / 竞赛 / 亮点"
+  },
+  "blog": {
+    "title": "Blog",
+    "content": "这里以后放最近文章列表。"
+  },
+  "education": {
+    "title": "Education",
+    "courses": "Main Courses",
+    "honors": "Honors & Awards",
+    "items": [
+      {
+        "period": "Sep 2023 - Sep 2026",
+        "school": "Southeast University",
+        "college": "School of Computer Science and Engineering",
+        "degree": "Master's",
+        "major": "Computer Technology",
+        "courses": [
+          {
+            "name": "Algorithm Design and Analysis",
+            "score": "Normalized 87"
+          },
+          {
+            "name": "Computer Network Architecture",
+            "score": "Normalized 87"
+          },
+          {
+            "name": "Software Development Methods and Technologies",
+            "score": "Normalized 89"
+          }
+        ],
+        "honors": [
+          "Southeast University Zhishan Scholarship",
+          "First-Class Academic Scholarship",
+          "Outstanding Graduate Student"
+        ]
+      },
+      {
+        "period": "Sep 2019 - Jun 2023",
+        "school": "Nanjing University of Aeronautics and Astronautics",
+        "college": "College of Computer Science and Technology",
+        "degree": "Bachelor's",
+        "major": "Computer Science and Technology",
+        "courses": [
+          {
+            "name": "Software Development Methods and Technologies",
+            "score": "92"
+          },
+          {
+            "name": "Algorithm Design and Analysis",
+            "score": "91"
+          },
+          {
+            "name": "Computer Network Architecture",
+            "score": ""
+          },
+          {
+            "name": "Artificial Intelligence",
+            "score": ""
+          }
+        ],
+        "honors": [
+          "CCF Outstanding Student",
+          "Huawei Intelligent Base Scholarship",
+          "First-Class Outstanding Student Scholarship",
+          "Outstanding Student",
+          "Outstanding Student Cadre"
+        ]
+      }
+    ]
+  },
+  "language": {
+    "switchTo": "Switch to Chinese",
+    "current": "English"
+  }
+}
+

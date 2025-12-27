@@ -1,0 +1,124 @@
+{
+  "nav": {
+    "home": "主页",
+    "blog": "博客",
+    "tools": "工具箱",
+    "fileManagement": "文件管理",
+    "temporaryChat": "临时群聊",
+    "contact": "联系",
+    "email": "邮箱",
+    "github": "Github",
+    "consultation": "咨询&留言"
+  },
+  "experience": {
+    "title": "工作/实习经历",
+    "items": [
+      {
+        "period": "2025年4月-今",
+        "company": "阿里巴巴",
+        "department": "爱橙科技",
+        "type": "实习",
+        "position": "分布式基础技术",
+        "description": "负责阿里网关Higress的MCP协议适配工作，使用Go编写Envoy插件并以动态库形式加载，从网关层面将阿里现有HSF服务以MCP协议形式暴露，使得Agent能够直接调用阿里现有微服务。优化原有插件编译流程，单次测试时间从10分钟降低到小于1分钟，编写了多语言网关端到端测试，完成了插件的CI流程设计，使用OTEL和Grafana实现MCPServer指标监控，并配合开发MCPServer管理页面前后端"
+      },
+      {
+        "period": "2022年11月-2023年2月",
+        "company": "字节跳动",
+        "department": "Data部门",
+        "type": "实习",
+        "position": "后端开发",
+        "description": "为字节跳动商业化数据平台后端开发 RPC 服务，将现有项目的Kitex依赖从本地重构为 overpass，极大缩短微服务版本升级流程。采用 Google 开源组件库 go-wire 实现依赖注入机制，对现有DDD架构项目中大量使用全局变量的情况进行控制反转重构，使项目结构更清晰"
+      },
+      {
+        "period": "2022年7月-2022年8月",
+        "company": "腾讯",
+        "department": "魔方工作室",
+        "type": "实习",
+        "position": "后台开发",
+        "description": "使用 C++ 语言设计并开发了一款对象存储系统，能够在1分钟内处理10w小文件的上传和下载。系统充分利用了 epoll 的 IO 多路复用机制。元信息使用leveldb，网络传输根据不同场景综合使用 TCP 和 UDP 协议，优化数据传输性能"
+      }
+    ]
+  },
+  "skills": {
+    "title": "技能",
+    "content": "Go / Rust / K8s / Redis / MQ"
+  },
+  "awards": {
+    "title": "奖项",
+    "content": "ICPC / 竞赛 / 亮点"
+  },
+  "blog": {
+    "title": "博客",
+    "content": "这里以后放最近文章列表。"
+  },
+  "education": {
+    "title": "教育经历",
+    "courses": "主修课程",
+    "honors": "荣誉奖项",
+    "items": [
+      {
+        "period": "2023年9月-2026年9月",
+        "school": "东南大学",
+        "college": "计算机科学与工程学院",
+        "degree": "硕士",
+        "major": "计算机技术",
+        "courses": [
+          {
+            "name": "算法设计与分析",
+            "score": "规格化87"
+          },
+          {
+            "name": "计算机网络体系结构",
+            "score": "规格化87"
+          },
+          {
+            "name": "软件开发方法与技术",
+            "score": "规格化89"
+          }
+        ],
+        "honors": [
+          "东南大学至善奖学金",
+          "学业奖学金一等奖",
+          "三好研究生标兵"
+        ]
+      },
+      {
+        "period": "2019年9月-2023年6月",
+        "school": "南京航空航天大学",
+        "college": "计算机科学与技术学院",
+        "degree": "本科",
+        "major": "计算机科学与技术",
+        "courses": [
+          {
+            "name": "软件开发方法与技术",
+            "score": "92分"
+          },
+          {
+            "name": "算法设计与分析",
+            "score": "91分"
+          },
+          {
+            "name": "计算机网络体系结构",
+            "score": ""
+          },
+          {
+            "name": "人工智能",
+            "score": ""
+          }
+        ],
+        "honors": [
+          "CCF 优秀大学生",
+          "华为智能基座奖学金",
+          "优秀学生奖学金一等奖",
+          "三好学生",
+          "优秀学生干部"
+        ]
+      }
+    ]
+  },
+  "language": {
+    "switchTo": "切换到英文",
+    "current": "中文"
+  }
+}
+

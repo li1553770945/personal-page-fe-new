@@ -119,6 +119,17 @@
   "language": {
     "switchTo": "Switch to Chinese",
     "current": "English"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "description": "Enter your credentials to access your account.",
+    "username": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "activeCode": "Active Code",
+    "activeCodePlaceholder": "Enter your active code"
   }
 }
 

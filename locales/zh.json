@@ -119,6 +119,17 @@
   "language": {
     "switchTo": "切换到英文",
     "current": "中文"
+  },
+  "auth": {
+    "login": "登录",
+    "register": "注册",
+    "description": "请输入您的凭据以访问您的帐户。",
+    "username": "用户名",
+    "usernamePlaceholder": "请输入您的用户名",
+    "password": "密码",
+    "passwordPlaceholder": "请输入您的密码",
+    "activeCode": "激活码",
+    "activeCodePlaceholder": "请输入您的激活码"
   }
 }
 

@@ -10,7 +10,7 @@ export default function Home() {
 
   return (
     <div>
-          <TypingAnimation className="text-2xl font-bold">Hello, I'm PeaceSheep 👋</TypingAnimation>
+          <TypingAnimation className="text-2xl font-bold mt-10 block">Hello, I'm PeaceSheep 👋</TypingAnimation>
           <Education />
           <Experience />
     </div>

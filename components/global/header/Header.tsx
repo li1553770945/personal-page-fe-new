@@ -15,6 +15,7 @@ import {
 import { ModeToggle } from "@/components/global/header/mode-toggle"
 import { LanguageToggle } from "@/components/global/header/language-toggle"
 import { HomeIcon } from "@/components/ui/icons/heroicons-home"
+import { LinkOutlinedIcon } from "@/components/ui/icons/ant-design-link-outlined"
 import { BookOpenIcon } from "@/components/ui/icons/heroicons-book-open"
 import { ChatBubbleOvalLeftSolidIcon } from "@/components/ui/icons/heroicons-chat-bubble-oval-left-solid"
 import { MailOutlinedIcon } from "@/components/ui/icons/ant-design-mail-outlined"
@@ -26,15 +27,18 @@ import { UserGroupIcon } from "@/components/ui/icons/heroicons-user-group"
 import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-
+import { UserLogo } from "@/components/global/user/user-logo"
+// 导航项接口
 interface NavItem {
-    label: string
-    href?: string
-    icon?: React.ElementType
+    label: string // 导航项标签
+    href?: string // 导航项链接
+    icon?: React.ElementType // 导航项图标
+    target?: string // 导航项目标，_blank 表示在新标签页打开
     subItem?: {
         label: string
         href: string
-        icon?: React.ElementType
+        icon?: React.ElementType // 子导航项图标
+        target?: string // 子导航项目标
     }[]
 }
 
@@ -51,7 +55,8 @@ export default function Header() {
         {
             label: t('nav.blog'),
             icon: BookOpenIcon,
-            href: "/blog",
+            href: "https://blog.peacesheep.xyz",
+            target: "_blank",
         },
         {
             label: t('nav.tools'),
@@ -119,9 +124,11 @@ export default function Header() {
                                                 {item.subItem?.map((sub) => (
                                                     <li key={sub.label} className='hover:border-b-3 hover:border-(--underline-background)'>
                                                         <NavigationMenuLink asChild >
-                                                            <Link href={sub.href} className={cn("flex flex-row items-center")}>
+                                                            
+                                                            <Link href={sub.href} className={cn("flex flex-row items-center")} target={sub.target || '_self'}>
                                                                 {sub.icon ? <sub.icon className="mr-2 size-4 text-foreground" /> : null}
                                                                 <div>{sub.label}</div>
+                                                                {sub.target === '_blank' && <LinkOutlinedIcon className="ml-1 size-3 text-muted-foreground" />}
                                                             </Link>
                                                         </NavigationMenuLink>
                                                     </li>
@@ -135,9 +142,10 @@ export default function Header() {
                             return (
                                 <NavigationMenuItem key={item.label} className={cn('hover:border-b-3 hover:border-(--underline-background)', isActive && 'border-b-3 hover:border-(--underline-background)')}>
                                     <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "flex-row items-center ")}>
-                                        <Link href={item.href || '#'}>
+                                        <Link href={item.href || '#'} target={item.target}>
                                             {IconComp ? <IconComp className="mr-2 size-4 text-foreground" /> : null}
                                             {item.label}
+                                            {item.target === '_blank' && <LinkOutlinedIcon className="ml-1 size-3 text-muted-foreground" />}
                                         </Link>
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
@@ -150,6 +158,8 @@ export default function Header() {
                     <LanguageToggle className="right-10" />
                     {/* 主题切换 */}
                     <ModeToggle />
+                    {/* 用户 */}
+                    <UserLogo />
                 </div>
             </div>
             {/* 分割线 */}

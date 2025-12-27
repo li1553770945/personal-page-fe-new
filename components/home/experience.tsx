@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { motion, useInView, AnimatePresence } from 'motion/react'
 import { useRef, useState } from 'react'
 import { Briefcase, ChevronDown, ChevronUp } from 'lucide-react'
+import Image from 'next/image'
 
 export default function Experience() {
     const { t } = useTranslation()
@@ -20,6 +21,17 @@ export default function Experience() {
         description: string
     }>
 
+    const getCompanyLogo = (companyName: string): string | null => {
+        const logoMap: Record<string, string> = {
+            '阿里巴巴': '/companies/alibaba.svg',
+            '字节跳动': '/companies/bytedance.svg',
+            '腾讯': '/companies/tencent.svg',
+            'Alibaba': '/companies/alibaba.svg',
+            'ByteDance': '/companies/bytedance.svg',
+            'Tencent': '/companies/tencent.svg',
+        }
+        return logoMap[companyName] || null
+    }
     const toggleExpand = (index: number) => {
         setExpandedItems(prev => {
             const newSet = new Set(prev)
@@ -69,9 +81,21 @@ export default function Experience() {
                                         {/* 主要信息 - 紧凑的两行布局 */}
                                         <div className="flex items-start justify-between gap-4">
                                             <div className="flex items-start gap-3 flex-1 min-w-0">
-                                                <div className="p-1.5 rounded-md bg-primary/10 text-primary shrink-0">
-                                                    <Briefcase className="w-4 h-4" />
-                                                </div>
+                                                {getCompanyLogo(item.company) ? (
+                                                    <div className="p-1.5 rounded-md shrink-0 flex items-center justify-center">
+                                                        <Image
+                                                            src={getCompanyLogo(item.company)!}
+                                                            alt={item.company}
+                                                            width={32}
+                                                            height={32}
+                                                            className="object-contain"
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <div className="p-1.5 rounded-md bg-primary/10 text-primary shrink-0">
+                                                        <Briefcase className="w-4 h-4" />
+                                                    </div>
+                                                )}
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-2 flex-wrap">
                                                         <h3 className="text-lg font-semibold text-foreground">

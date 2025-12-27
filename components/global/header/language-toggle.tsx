@@ -6,7 +6,11 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-export function LanguageToggle() {
+interface LanguageToggleProps {
+  className?: string
+}
+
+export function LanguageToggle({ className }: LanguageToggleProps) {
   const { i18n } = useTranslation()
   const [mounted, setMounted] = React.useState(false)
 
@@ -21,7 +25,7 @@ export function LanguageToggle() {
         variant="ghost"
         size="icon"
         disabled
-        className="opacity-50 size-9"
+        className={cn("opacity-50 size-9", className)}
         aria-label="Toggle language"
       >
         <Languages className="size-4" />
@@ -46,7 +50,8 @@ export function LanguageToggle() {
         "size-9 relative overflow-visible",
         "hover:bg-accent hover:text-accent-foreground",
         "transition-colors",
-        "group"
+        "group",
+        className
       )}
       aria-label={isChinese ? "Switch to English" : "切换到中文"}
       title={isChinese ? "Switch to English" : "切换到中文"}

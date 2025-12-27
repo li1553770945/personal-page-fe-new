@@ -109,7 +109,7 @@ export default function Header() {
 
                             if (hasSub) {
                                 return (
-                                    <NavigationMenuItem key={item.label} className='hover:border-b-3 hover:border-[var(--underline-background)]'>
+                                    <NavigationMenuItem key={item.label} className='hover:border-b-3 hover:border-(--underline-background)'>
                                         <NavigationMenuTrigger>
                                             {IconComp ? <IconComp className="mr-2 size-4 text-foreground" /> : null}
                                             {item.label}
@@ -117,7 +117,7 @@ export default function Header() {
                                         <NavigationMenuContent>
                                             <ul className="grid min-w-[150px] w-fit max-w-[360px] gap-3 p-4">
                                                 {item.subItem?.map((sub) => (
-                                                    <li key={sub.label} className='hover:border-b-3 hover:border-[var(--underline-background)]'>
+                                                    <li key={sub.label} className='hover:border-b-3 hover:border-(--underline-background)'>
                                                         <NavigationMenuLink asChild >
                                                             <Link href={sub.href} className={cn("flex flex-row items-center")}>
                                                                 {sub.icon ? <sub.icon className="mr-2 size-4 text-foreground" /> : null}
@@ -133,7 +133,7 @@ export default function Header() {
                             }
 
                             return (
-                                <NavigationMenuItem key={item.label} className={cn('hover:border-b-3 hover:border-[var(--underline-background)]', isActive && 'border-b-3 border-[var(--underline-background)]')}>
+                                <NavigationMenuItem key={item.label} className={cn('hover:border-b-3 hover:border-(--underline-background)', isActive && 'border-b-3 hover:border-(--underline-background)')}>
                                     <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "flex-row items-center ")}>
                                         <Link href={item.href || '#'}>
                                             {IconComp ? <IconComp className="mr-2 size-4 text-foreground" /> : null}
@@ -146,12 +146,14 @@ export default function Header() {
                     </NavigationMenuList>
                 </NavigationMenu>
                 <div className="flex items-center gap-2">
-                    <LanguageToggle />
+                    {/* 语言切换 */}
+                    <LanguageToggle className="right-10" />
+                    {/* 主题切换 */}
                     <ModeToggle />
                 </div>
             </div>
-            <div className="mx-[30px] h-0 border-b-2 border-[var(--seprator-background)]" />
-
+            {/* 分割线 */}
+            <div className="mx-[30px] h-0 border-b-2 border-(--seprator-background)" />
         </header>
     );
 }

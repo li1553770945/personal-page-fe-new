@@ -5,6 +5,7 @@ import { motion, useInView, AnimatePresence } from 'motion/react'
 import { useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { GraduationCap, ChevronDown, ChevronUp } from 'lucide-react'
+import Image from 'next/image'
 
 export default function Education() {
     const { t } = useTranslation()
@@ -21,6 +22,17 @@ export default function Education() {
         courses: Array<{ name: string; score: string }>
         honors: string[]
     }>
+
+    // 根据学校名称获取校徽路径
+    const getSchoolLogo = (schoolName: string): string | null => {
+        const logoMap: Record<string, string> = {
+            '东南大学': '/schools/seu.svg',
+            'Southeast University': '/schools/seu.svg',
+            '南京航空航天大学': '/schools/nuaa.jpg',
+            'Nanjing University of Aeronautics and Astronautics': '/schools/nuaa.jpg',
+        }
+        return logoMap[schoolName] || null
+    }
 
     const toggleExpand = (index: number) => {
         setExpandedItems(prev => {
@@ -71,9 +83,21 @@ export default function Education() {
                                         {/* 主要信息 - 紧凑的两行布局 */}
                                         <div className="flex items-start justify-between gap-4">
                                             <div className="flex items-start gap-3 flex-1 min-w-0">
-                                                <div className="p-1.5 rounded-md bg-primary/10 text-primary shrink-0">
-                                                    <GraduationCap className="w-4 h-4" />
-                                                </div>
+                                                {getSchoolLogo(item.school) ? (
+                                                    <div className=" shrink-0 flex items-center justify-center">
+                                                        <Image
+                                                            src={getSchoolLogo(item.school)!}
+                                                            alt={item.school}
+                                                            width={32}
+                                                            height={32}
+                                                            className="object-contain"
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <div className="p-1.5 rounded-md bg-primary/10 text-primary shrink-0">
+                                                        <GraduationCap className="w-4 h-4" />
+                                                    </div>
+                                                )}
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-2 flex-wrap">
                                                         <h3 className="text-lg font-semibold text-foreground">

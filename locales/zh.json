@@ -144,6 +144,40 @@
     "alipay": "支付宝",
     "wechat": "微信支付",
     "thankYou": "感谢你的支持！"
+  },
+  "feedback": {
+    "title": "提建议",
+    "replyTitle": "回复查询",
+    "sectionTitle": "提交建议或反馈",
+    "category": "问题类别",
+    "categoryPlaceholder": "请选择问题类别",
+    "messageTitle": "标题",
+    "messageTitlePlaceholder": "请输入标题",
+    "content": "留言内容",
+    "contentPlaceholder": "请详细描述您的问题或建议（切换页面时该内容会保存，但是刷新后被清空）",
+    "name": "署名",
+    "namePlaceholder": "请输入您的姓名或昵称",
+    "contact": "联系方式",
+    "contactPlaceholder": "请输入联系方式（如：QQ、微信、手机号、邮箱等，选填）",
+    "submit": "提交反馈",
+    "appreciate": "如果感觉有帮助，您可以赞赏我",
+    "querySectionTitle": "查询回复",
+    "queryId": "留言ID",
+    "queryIdPlaceholder": "请输入您提交留言后收到的ID",
+    "queryButton": "查询回复",
+    "dialogTitle": "提示",
+    "dialogContent": "留言ID：{{uuid}} 请记录此ID，该ID是唯一获取回复的方式。该对话框关闭后ID将无法再次查询。请勿泄露，任何拥有此ID的人都可以看到建议及回复",
+    "confirm": "确认",
+    "successTitle": "留言成功",
+    "successMessage": "已收到您的宝贵建议，感谢反馈",
+    "validation": {
+        "categoryRequired": "请选择类别",
+        "contentRequired": "请输入留言内容",
+        "contentLength": "留言内容在10-1000个字",
+        "nameRequired": "请输入署名",
+        "titleRequired": "请输入标题",
+        "uuidRequired": "请输入留言ID"
+    }
   }
 }
 

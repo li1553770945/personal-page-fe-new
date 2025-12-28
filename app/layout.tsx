@@ -6,6 +6,9 @@ import "../lib/i18n"
 import Header from "@/components/global/header/Header";
 import Footer from "@/components/global/footer/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
+import { NotificationProvider } from "@/context/notification-context";
+import { NotificationList } from "@/components/global/notification-list";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,14 +39,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <div className="flex flex-col min-h-screen w-full max-w-7xl mx-auto bg-background">
+          <NotificationProvider>
+            <Header />
+            <div className="flex flex-col min-h-screen w-full max-w-7xl mx-auto bg-background">
 
-            <main className="flex-1 w-full px-4 md:px-6">
-              {children}
-            </main>
-            <Footer />
-          </div>
+              <main className="flex-1 w-full px-4 md:px-6">
+                {children}
+              </main>
+              <Footer />
+            </div>
+            <NotificationList />
+          </NotificationProvider>
         </ThemeProvider>
       </body>
     </html>

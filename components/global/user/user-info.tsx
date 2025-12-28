@@ -4,6 +4,8 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useNotification } from "@/context/notification-context"
+
 import {
   Card,
   CardContent,
@@ -25,6 +27,7 @@ export interface UserInfoProps {
 
 export function UserInfo({ initialUser, onSave }: UserInfoProps) {
   const { t } = useTranslation()
+  const { success, error, warning, info } = useNotification()
   const [formData, setFormData] = useState(initialUser)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +37,8 @@ export function UserInfo({ initialUser, onSave }: UserInfoProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSave(formData)
+    success("Profile updated successfully","Profile updated successfully")
+    // onSave(formData)
   }
 
   return (

@@ -136,6 +136,40 @@
     "alipay": "Alipay",
     "wechat": "WeChat Pay",
     "thankYou": "Thank you for your support!"
+  },
+  "feedback": {
+    "title": "Submit Feedback",
+    "replyTitle": "Query Reply",
+    "sectionTitle": "Submit Suggestion or Feedback",
+    "category": "Category",
+    "categoryPlaceholder": "Select category",
+    "messageTitle": "Title",
+    "messageTitlePlaceholder": "Enter title",
+    "content": "Content",
+    "contentPlaceholder": "Please describe your question or suggestion in detail...",
+    "name": "Name",
+    "namePlaceholder": "Enter your name or nickname",
+    "contact": "Contact",
+    "contactPlaceholder": "Enter contact info (optional)",
+    "submit": "Submit Feedback",
+    "appreciate": "If you find it helpful, you can appreciate me",
+    "querySectionTitle": "Query Reply",
+    "queryId": "Message ID",
+    "queryIdPlaceholder": "Enter the ID you received",
+    "queryButton": "Query Reply",
+    "dialogTitle": "Notice",
+    "dialogContent": "Message ID: {{uuid}} Please record this ID, it is the only way to retrieve the reply...",
+    "confirm": "Confirm",
+    "successTitle": "Success",
+    "successMessage": "Received your valuable suggestion, thank you!",
+    "validation": {
+        "categoryRequired": "Please select a category",
+        "contentRequired": "Please enter content",
+        "contentLength": "Content must be between 10 and 1000 characters",
+        "nameRequired": "Please enter your name",
+        "titleRequired": "Please enter a title",
+        "uuidRequired": "Please enter Message ID"
+    }
   }
 }
 

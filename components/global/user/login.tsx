@@ -28,7 +28,7 @@ export function Login({ onRegisterClick, onLoginSuccess }: LoginProps) {
     }
 
     return (
-        <Card className="relative w-full w-[350px] overflow-hidden">
+        <Card className="relative w-[350px] overflow-hidden">
             {/* <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} /> */}
             <CardHeader>
                 <CardTitle>{t('auth.login')}</CardTitle>

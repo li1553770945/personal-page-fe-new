@@ -21,7 +21,6 @@ export function UserLogo() {
 
     const handleOpenChange = (newOpen: boolean) => {
         setOpen(newOpen)
-        console.log(newOpen)
         if (newOpen) {
             if (isLoggedIn) setView('info')
             else setView('login')

@@ -28,6 +28,8 @@ import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { UserLogo } from "@/components/global/user/user-logo"
+import { ScrollProgress } from "@/components/ui/scroll-progress"
+
 // 导航项接口
 interface NavItem {
     label: string // 导航项标签
@@ -102,7 +104,8 @@ export default function Header() {
     ]
 
     return (
-        <header className="w-full">
+        // 顶部固定：80%透明背景 + 中度背景模糊（毛玻璃效果），并针对支持模糊特性的浏览器优化透明度
+        <header className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-md supports-[backdrop-filter]:bg-background/50">
             <div className="flex h-16 items-center justify-between px-4 md:px-6">
                 <NavigationMenu viewport={false}>
                     <NavigationMenuList>
@@ -124,7 +127,7 @@ export default function Header() {
                                                 {item.subItem?.map((sub) => (
                                                     <li key={sub.label} className='hover:border-b-3 hover:border-(--underline-background)'>
                                                         <NavigationMenuLink asChild >
-                                                            
+
                                                             <Link href={sub.href} className={cn("flex flex-row items-center")} target={sub.target || '_self'}>
                                                                 {sub.icon ? <sub.icon className="mr-2 size-4 text-foreground" /> : null}
                                                                 <div>{sub.label}</div>
@@ -163,7 +166,8 @@ export default function Header() {
                 </div>
             </div>
             {/* 分割线 */}
-            <div className="mx-[30px] h-0 border-b-2 border-(--seprator-background)" />
+            {/* <div className="mx-[30px] h-0 border-b-2 border-(--seprator-background)" /> */}
+            <ScrollProgress className="absolute top-auto bottom-0" />
         </header>
     );
 }

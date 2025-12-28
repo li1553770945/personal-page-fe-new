@@ -48,8 +48,8 @@ export function Register() {
         </form>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline">{t('auth.register')}</Button>
-        <Button>{t('auth.login')}</Button>
+        <Button variant="outline">{t('auth.login')}</Button>
+        <Button>{t('auth.register')}</Button>
       </CardFooter>
       <BorderBeam duration={8} size={100} />
     </Card>

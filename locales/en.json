@@ -43,14 +43,6 @@
     "title": "Skills",
     "content": "Go / Rust / K8s / Redis / MQ"
   },
-  "awards": {
-    "title": "Awards",
-    "content": "ICPC / 竞赛 / 亮点"
-  },
-  "blog": {
-    "title": "Blog",
-    "content": "这里以后放最近文章列表。"
-  },
   "education": {
     "title": "Education",
     "courses": "Main Courses",

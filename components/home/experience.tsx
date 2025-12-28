@@ -5,7 +5,6 @@ import { motion, useInView, AnimatePresence } from 'motion/react'
 import { useRef, useState } from 'react'
 import { Briefcase, ChevronDown, ChevronUp } from 'lucide-react'
 import Image from 'next/image'
-
 export default function Experience() {
     const { t } = useTranslation()
     const containerRef = useRef<HTMLDivElement>(null)
@@ -46,6 +45,7 @@ export default function Experience() {
 
     return (
         <div ref={containerRef} className="w-full py-8">
+            {/* motion 当用户滚动页面，直到这个组件进入视野 20% 时，标题会从下方淡入并向上浮动显示。 */}
             <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}

@@ -13,7 +13,8 @@
     "contact": "Contact",
     "email": "Email",
     "github": "Github",
-    "consultation": "Consultation & Feedback"
+    "consultation": "Consultation & Feedback",
+    "appreciate": "Appreciate"
   },
   "experience": {
     "title": "Work Experience",
@@ -128,6 +129,13 @@
     "activeCode": "Active Code",
     "activeCodePlaceholder": "Enter your active code",
     "loginFailed": "Login failed, please check your username or password"
+  },
+  "appreciate": {
+    "title": "Appreciate",
+    "description": "If my work has helped you, consider buying me a coffee ☕️",
+    "alipay": "Alipay",
+    "wechat": "WeChat Pay",
+    "thankYou": "Thank you for your support!"
   }
 }
 

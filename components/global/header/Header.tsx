@@ -23,6 +23,7 @@ import { GithubFilledIcon } from "@/components/ui/icons/ant-design-github-filled
 import { MessageOutlinedIcon } from "@/components/ui/icons/ant-design-message-outlined"
 import { RocketLaunchIcon } from "@/components/ui/icons/heroicons-rocket-launch"
 import { FileOutlinedIcon } from "@/components/ui/icons/ant-design-file-outlined"
+import { CoffeeOutlinedIcon } from "@/components/ui/icons/ant-design-coffee-outlined"
 import { UserGroupIcon } from "@/components/ui/icons/heroicons-user-group"
 import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
@@ -91,6 +92,11 @@ export default function Header() {
                     icon: GithubFilledIcon,
                     href: "https://github.com/li1553770945",
                     target: "_blank",
+                },
+                {
+                    label: t('nav.appreciate'),
+                    icon: CoffeeOutlinedIcon,
+                    href: "/appreciate"
                 },
                 {
                     label: t('nav.consultation'),

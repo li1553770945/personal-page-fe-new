@@ -8,7 +8,7 @@ import Image from 'next/image'
 export default function Experience() {
     const { t } = useTranslation()
     const containerRef = useRef<HTMLDivElement>(null)
-    const isInView = useInView(containerRef, { once: true, amount: 0.2 })
+    const isInView = useInView(containerRef, { once: false, amount: 0.2 })
     const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set())
 
     const experienceItems = t('experience.items', { returnObjects: true }) as Array<{

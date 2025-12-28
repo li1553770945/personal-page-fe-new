@@ -13,7 +13,8 @@
     "contact": "联系",
     "email": "邮箱",
     "github": "Github",
-    "consultation": "咨询&留言"
+    "consultation": "咨询&留言",
+    "appreciate": "赞赏"
   },
   "experience": {
     "title": "工作/实习经历",
@@ -136,6 +137,13 @@
     "activeCode": "激活码",
     "activeCodePlaceholder": "请输入您的激活码",
     "loginFailed": "登录失败，请检查用户名或密码"
+  },
+  "appreciate": {
+    "title": "赞赏支持",
+    "description": "如果我的作品对你有帮助，欢迎请我喝杯咖啡 ☕️",
+    "alipay": "支付宝",
+    "wechat": "微信支付",
+    "thankYou": "感谢你的支持！"
   }
 }
 

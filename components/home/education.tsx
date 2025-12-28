@@ -3,14 +3,13 @@
 import { useTranslation } from 'react-i18next'
 import { motion, useInView, AnimatePresence } from 'motion/react'
 import { useRef, useState } from 'react'
-import { cn } from '@/lib/utils'
 import { GraduationCap, ChevronDown, ChevronUp } from 'lucide-react'
 import Image from 'next/image'
 
 export default function Education() {
     const { t } = useTranslation()
     const containerRef = useRef<HTMLDivElement>(null)
-    const isInView = useInView(containerRef, { once: true, amount: 0.2 })
+    const isInView = useInView(containerRef, { once: false, amount: 0.2 })
     const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set())
 
     const educationItems = t('education.items', { returnObjects: true }) as Array<{

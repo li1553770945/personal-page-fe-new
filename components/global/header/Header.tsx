@@ -84,11 +84,13 @@ export default function Header() {
                     label: t('nav.email'),
                     icon: MailOutlinedIcon,
                     href: "mailto:peacesheep@qq.com",
+                    target: "_blank",
                 },
                 {
                     label: t('nav.github'),
                     icon: GithubFilledIcon,
                     href: "https://github.com/li1553770945",
+                    target: "_blank",
                 },
                 {
                     label: t('nav.consultation'),

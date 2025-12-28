@@ -1,4 +1,9 @@
 {
+  "common": {
+    "notFound": "404 - Page Not Found",
+    "pageNotFound": "Sorry, the page you visited does not exist.",
+    "returnHome": "Return to Home"
+  },
   "nav": {
     "home": "Home",
     "blog": "Blog",

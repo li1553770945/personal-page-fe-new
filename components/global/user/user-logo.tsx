@@ -27,7 +27,6 @@ export function UserLogo() {
 
     // 2. 只有当获取到数据且没有错误时，才算已登录
     const isLoggedIn = !error && userData;
-    // 如果 API 返回的数据结构是 { data: { username: ... } }，这里可能需要调整为 userData?.data
     const [open, setOpen] = useState(false)
     const [view, setView] = useState<'login' | 'register' | 'info'>('login')
 

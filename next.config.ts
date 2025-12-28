@@ -3,10 +3,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   async rewrites() {
+    const env = process.env.NODE_ENV;
+    if(!env || env !== 'development') {
+      return [];
+    }
     const proxyMode = process.env.PROXY_MODE;
     if (!proxyMode) {
-      console.warn('PROXY_MODE is not set, not proxying API requests');
-      return [];
+      throw new Error('PROXY_MODE is not set');
     }
     if (proxyMode !== 'prod' && proxyMode !== 'local') {
       throw new Error('PROXY_MODE must be prod or local');

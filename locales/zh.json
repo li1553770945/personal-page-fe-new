@@ -129,7 +129,8 @@
     "password": "密码",
     "passwordPlaceholder": "请输入您的密码",
     "activeCode": "激活码",
-    "activeCodePlaceholder": "请输入您的激活码"
+    "activeCodePlaceholder": "请输入您的激活码",
+    "loginFailed": "登录失败，请检查用户名或密码"
   }
 }
 

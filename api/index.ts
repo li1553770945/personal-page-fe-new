@@ -13,7 +13,7 @@ export const generateCodeAPI = (data: any) =>
   instance.post("/users/activate-code", data);
 
 export const userInfoAPI = () =>
-  instance.get(`users/me`);
+  instance.get(`/users/me`);
 
 
 export const downloadFileAPI = (key: string) =>

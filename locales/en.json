@@ -121,7 +121,8 @@
     "password": "Password",
     "passwordPlaceholder": "Enter your password",
     "activeCode": "Active Code",
-    "activeCodePlaceholder": "Enter your active code"
+    "activeCodePlaceholder": "Enter your active code",
+    "loginFailed": "Login failed, please check your username or password"
   }
 }
 

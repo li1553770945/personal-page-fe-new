@@ -2,9 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: "export",
+
   async rewrites() {
     const env = process.env.NODE_ENV;
-    if(!env || env !== 'development') {
+    if (!env || env !== 'development') {
       return [];
     }
     const proxyMode = process.env.PROXY_MODE;

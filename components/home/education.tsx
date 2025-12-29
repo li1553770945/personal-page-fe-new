@@ -27,8 +27,8 @@ export default function Education() {
         const logoMap: Record<string, string> = {
             '东南大学': '/schools/seu.svg',
             'Southeast University': '/schools/seu.svg',
-            '南京航空航天大学': '/schools/nuaa.jpg',
-            'Nanjing University of Aeronautics and Astronautics': '/schools/nuaa.jpg',
+            '南京航空航天大学': '/schools/nuaa.svg',
+            'Nanjing University of Aeronautics and Astronautics': '/schools/nuaa.svg',
         }
         return logoMap[schoolName] || null
     }

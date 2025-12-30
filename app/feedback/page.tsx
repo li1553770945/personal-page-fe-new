@@ -301,7 +301,7 @@ export default function FeedbackPage() {
                         <div className="text-center space-y-2">
                             <h3 className="text-lg font-medium">{t("feedback.querySectionTitle")}</h3>
                             <p className="text-sm text-muted-foreground">
-                                Enter your feedback ID to check for replies
+                                {t("feedback.queryIdDesc")}
                             </p>
                         </div>
                         

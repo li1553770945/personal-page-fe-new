@@ -5,7 +5,6 @@ import { useRef, useState } from 'react'
 
 const slugs = [
     "typescript",
-    "java",
     "html5",
     "nginx",
     "docker",

@@ -174,13 +174,14 @@
     "successTitle": "Success",
     "successMessage": "Received your valuable suggestion, thank you!",
     "validation": {
-        "categoryRequired": "Please select a category",
-        "contentRequired": "Please enter content",
-        "contentLength": "Content must be between 10 and 1000 characters",
-        "nameRequired": "Please enter your name",
-        "titleRequired": "Please enter a title",
-        "uuidRequired": "Please enter Message ID"
-    }
+      "categoryRequired": "Please select a category",
+      "contentRequired": "Please enter content",
+      "contentLength": "Content must be between 10 and 1000 characters",
+      "nameRequired": "Please enter your name",
+      "titleRequired": "Please enter a title",
+      "uuidRequired": "Please enter Message ID"
+    },
+    "queryIdDesc": "Please enter the ID you received after submitting your feedback, to query the reply."
   },
   "files": {
     "title": "File Management",
@@ -250,5 +251,9 @@
       "deleteFailed": "Delete Failed",
       "deleteFailedDesc": "Could not delete file."
     }
+  },
+  "friends": {
+    "title": "My Friends",
+    "description": "Here are some interesting friends and their homepages."
   }
 }

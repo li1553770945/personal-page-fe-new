@@ -12,6 +12,7 @@
     "tools": "工具箱",
     "fileManagement": "文件管理",
     "temporaryChat": "临时群聊",
+    "friends": "朋友们",
     "contact": "联系",
     "email": "邮箱",
     "github": "Github",
@@ -182,13 +183,14 @@
     "successTitle": "留言成功",
     "successMessage": "已收到您的宝贵建议，感谢反馈",
     "validation": {
-        "categoryRequired": "请选择类别",
-        "contentRequired": "请输入留言内容",
-        "contentLength": "留言内容在10-1000个字",
-        "nameRequired": "请输入署名",
-        "titleRequired": "请输入标题",
-        "uuidRequired": "请输入留言ID"
-    }
+      "categoryRequired": "请选择类别",
+      "contentRequired": "请输入留言内容",
+      "contentLength": "留言内容在10-1000个字",
+      "nameRequired": "请输入署名",
+      "titleRequired": "请输入标题",
+      "uuidRequired": "请输入留言ID"
+    },
+    "queryIdDesc": "请输入您提交留言后收到的ID，以查询回复。"
   },
   "files": {
     "title": "文件管理",
@@ -258,5 +260,9 @@
       "deleteFailed": "删除失败",
       "deleteFailedDesc": "无法删除文件。"
     }
+  },
+  "friends": {
+    "title": "我的朋友们",
+    "description": "这里是一些有趣的朋友和他们的主页。"
   }
 }

@@ -25,6 +25,7 @@ import { RocketLaunchIcon } from "@/components/ui/icons/heroicons-rocket-launch"
 import { FileOutlinedIcon } from "@/components/ui/icons/ant-design-file-outlined"
 import { CoffeeOutlinedIcon } from "@/components/ui/icons/ant-design-coffee-outlined"
 import { UserGroupIcon } from "@/components/ui/icons/heroicons-user-group"
+import { FriendsIcon } from "@/components/ui/icons/friends"
 import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -105,10 +106,11 @@ export default function Header() {
                 }
             ]
         },
-        // {
-        //     label: "关于",
-        //     href: "/about",
-        // }
+        {
+            label: t('nav.friends'),
+            icon: FriendsIcon,
+            href: "/friends",
+        },
     ]
 
     return (

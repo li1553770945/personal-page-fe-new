@@ -2,6 +2,7 @@
 
 import { create } from "zustand"
 import { userInfoAPI, loginAPI,registerAPI } from "@/api"
+import { ApiResponse } from "@/types/api"
 type User = {
   username: string
   nickname: string

@@ -1,4 +1,5 @@
 import instance from "../lib/requests";
+import type { ApiResponse, FeedbackCategory, FeedbackResponse } from "../types/api";
 
 export const logoutAPI = () => instance.get("/users/logout");
 
@@ -29,10 +30,10 @@ export const deleteFileAPI = (key:string) =>
 export const uploadFileAPI = (data:any) =>
   instance.post(`/files`,data);
 
-export const allFeedbackCategoriesAPI = () =>
+export const allFeedbackCategoriesAPI = (): Promise<ApiResponse<FeedbackCategory[]>> =>
   instance.get('/feedback/categories')
 
-export const saveFeedbackAPI = (data: any) =>
+export const saveFeedbackAPI = (data: any): Promise<ApiResponse<FeedbackResponse>> =>
   instance.post("/feedback", data);
 
 export const getReplyAPI = (uuid: string) =>

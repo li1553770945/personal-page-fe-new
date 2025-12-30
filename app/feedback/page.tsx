@@ -41,17 +41,14 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { allFeedbackCategoriesAPI, saveFeedbackAPI } from "@/api"
 import { cn } from "@/lib/utils"
+import { ApiResponse, FeedbackCategory } from "@/types/api"
 
-interface Category {
-  id: number;
-  name: string;
-  value: string;
-}
+
 
 export default function FeedbackPage() {
   const { t } = useTranslation()
   const router = useRouter()
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<FeedbackCategory[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [submittedUuid, setSubmittedUuid] = useState("")
@@ -60,8 +57,9 @@ export default function FeedbackPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await allFeedbackCategoriesAPI()
-        if (res.data.code === 0) {
+        const res: ApiResponse<FeedbackCategory[]> = await allFeedbackCategoriesAPI()
+        console.log(res)
+        if (res.code === 0) {
           setCategories(res.data)
         }
       } catch (error) {
@@ -73,7 +71,9 @@ export default function FeedbackPage() {
 
   // Feedback Form Schema
   const feedbackSchema = z.object({
-    categoryId: z.number(),
+    categoryId: z.optional(z.number()).refine(val => val !== undefined, {
+      message: t("feedback.validation.categoryRequired"),
+    }),
     title: z.string().min(1, t("feedback.validation.titleRequired")).max(100),
     content: z.string().min(10, t("feedback.validation.contentLength")).max(1000, t("feedback.validation.contentLength")),
     name: z.string().min(1, t("feedback.validation.nameRequired")).max(50),
@@ -83,7 +83,7 @@ export default function FeedbackPage() {
   const form = useForm<z.infer<typeof feedbackSchema>>({
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
-      categoryId: 0,
+      categoryId: undefined,
       title: "",
       content: "",
       name: "",
@@ -95,13 +95,13 @@ export default function FeedbackPage() {
     setIsSubmitting(true)
     try {
       const res = await saveFeedbackAPI(values)
-      if (res.data.code === 0) {
+      if (res.code === 0) {
         setSubmittedUuid(res.data.uuid)
         setDialogOpen(true)
         form.reset()
       } else {
         // You might want to add a toast here
-        console.error(res.data.message)
+        console.error(res.msg)
       }
     } catch (error) {
       console.error(error)
@@ -162,7 +162,7 @@ export default function FeedbackPage() {
                             control={form.control}
                             name="categoryId"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="flex flex-col">
                                 <FormLabel>{t("feedback.category")}</FormLabel>
                                 <Select
                                   onValueChange={(value) => field.onChange(Number(value))}
@@ -181,7 +181,7 @@ export default function FeedbackPage() {
                                     ))}
                                     </SelectContent>
                                 </Select>
-                                <FormMessage />
+                                <FormMessage className="text-red-500 min-h-[1.5rem]"/>
                                 </FormItem>
                             )}
                             />
@@ -190,12 +190,12 @@ export default function FeedbackPage() {
                             control={form.control}
                             name="title"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="flex flex-col">
                                 <FormLabel>{t("feedback.messageTitle")}</FormLabel>
                                 <FormControl>
                                     <Input placeholder={t("feedback.messageTitlePlaceholder")} {...field} />
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className="text-red-500 min-h-[1.5rem]"/>
                                 </FormItem>
                             )}
                             />
@@ -217,7 +217,7 @@ export default function FeedbackPage() {
                             <FormDescription className="text-xs text-right">
                                 {field.value.length}/1000
                             </FormDescription>
-                            <FormMessage />
+                            <FormMessage className="text-red-500"/>
                             </FormItem>
                         )}
                         />
@@ -227,12 +227,12 @@ export default function FeedbackPage() {
                             control={form.control}
                             name="name"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="flex flex-col">
                                 <FormLabel>{t("feedback.name")}</FormLabel>
                                 <FormControl>
                                     <Input placeholder={t("feedback.namePlaceholder")} {...field} />
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className="text-red-500 min-h-[1.5rem]"/>
                                 </FormItem>
                             )}
                             />
@@ -241,12 +241,12 @@ export default function FeedbackPage() {
                             control={form.control}
                             name="contact"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="flex flex-col">
                                 <FormLabel>{t("feedback.contact")}</FormLabel>
                                 <FormControl>
                                     <Input placeholder={t("feedback.contactPlaceholder")} {...field} />
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className="text-red-500 min-h-[1.5rem]"/>
                                 </FormItem>
                             )}
                             />

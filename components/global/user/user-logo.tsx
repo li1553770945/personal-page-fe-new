@@ -1,34 +1,23 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { createPortal } from "react-dom"
 import { Button } from "@/components/ui/button"
-// import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Login } from "./login"
 import { Register } from "./register"
 import { UserInfo } from "./user-info"
 import { User } from "lucide-react"
-import useSWR from 'swr'
-import { fetcher } from '@/lib/fetcher'
-
+import { useUser } from "@/context/user"
+import { useNotification } from "@/context/notification"
 export function UserLogo() {
-    // 1. 获取全局 mutate 方法 (用于在其他地方通知刷新，或者使用 hook 返回的 mutate)
-    // 这里的 mutate 是针对当前 key 的特定刷新函数
-    const {
-        data: userData,
-        error,
-        isLoading,
-        mutate // 重要：手动刷新数据的函数
-    } = useSWR('/users/me', fetcher, {
-        shouldRetryOnError: false, // 如果 401 了，不要一直重试，直接算未登录
-        revalidateOnFocus: false,  // 窗口聚焦时不必须刷新，看你需求
-    })
+    const { user, refresh } = useUser()
 
-    // 2. 只有当获取到数据且没有错误时，才算已登录
-    const isLoggedIn = !error && userData;
+    const isLoggedIn = user != null;
     const [open, setOpen] = useState(false)
     const [view, setView] = useState<'login' | 'register' | 'info'>('login')
+    const { success } = useNotification()
+
 
     const handleOpenChange = (newOpen: boolean) => {
         setOpen(newOpen)
@@ -38,42 +27,32 @@ export function UserLogo() {
         }
     }
 
-    const handleLoginSuccess = async () => {
-        // 3. 登录成功后，关键一步！
-        // 调用 mutate() 告诉 SWR："数据脏了，重新去 /users/me 拉一次"
-        // 这样头像会自动变成用户头像，不需要手动 setIsLoggedIn
-        await mutate()
-        setOpen(false)
-    }
-
-    const handleLogout = async () => {
-        // 如果你有退出登录逻辑，清理 token 后：
-        localStorage.removeItem("token"); // 或者调用 logoutAPI
-        await mutate(null, false) // 立即把本地缓存清空，UI 变回未登录状态
-    }
 
     const handleRegisterSuccess = () => {
-        // Switch to login after successful registration
+        success('注册成功', '您可以使用新注册的账号登录')
         setView('login')
     }
-    const handleUpdateUser = async () => {
-        // 假设 UserInfo 组件里已经发了 updateAPI 请求
-        // 这里只需要刷新数据
-        await mutate()
-        setOpen(false)
+    const handleLoginSuccess = (data?: any) => {
+        success('登录成功', `欢迎回来: ${data?.nickname ?? user?.nickname}`)
+        handleOpenChange(false)
     }
-    // const handleUpdateUser = (newData: { username: string; nickname: string; avatar: string }) => {
-    //     setUser(newData)
-    //     setOpen(false)
-    // }
+    useEffect(() => {
+        refresh().then((res) => {
+            console.log(res)
 
+            if (res.ok) {
+                success("获取用户信息成功", `欢迎回来: ${res.data?.nickname}`)
+            } else {
+                handleOpenChange(false)
+            }
+        })
+    }, [])
     return (
         <div>
-            {/* 如果用户已登录，显示头像；否则显示登录按钮 */}
             {isLoggedIn ? (
                 <Avatar onClick={() => handleOpenChange(true)} className="cursor-pointer hover:opacity-80 transition-opacity">
-                    <AvatarImage src={userData?.avatar} alt={userData?.nickname} />
-                    <AvatarFallback>{userData?.nickname[0]}</AvatarFallback>
+                    <AvatarImage src={user?.avatar} alt={user?.nickname} />
+                    <AvatarFallback>{user?.nickname[0]}</AvatarFallback>
                 </Avatar>
             ) : (
                 <Button onClick={() => handleOpenChange(true)} variant="ghost" size="icon" className="rounded-full">
@@ -81,7 +60,6 @@ export function UserLogo() {
                     <span className="sr-only">Login</span>
                 </Button>
             )}
-            { /* 如果弹窗打开，显示登录/注册/个人信息弹窗 */}
             {open && createPortal(
                 <div
                     className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm"
@@ -96,14 +74,16 @@ export function UserLogo() {
                         )}
                         {view === 'register' && (
                             <Register
-                            // onLoginClick={() => setView('login')}
-                            // onRegisterSuccess={handleRegisterSuccess}
+                                onLoginClick={() => setView('login')}
+                                onRegisterSuccess={handleRegisterSuccess}
                             />
                         )}
                         {view === 'info' && (
                             <UserInfo
-                                initialUser={userData}
-                                onSave={handleUpdateUser}
+                                onLogout={() => {
+                                    setView('login')
+                                    handleOpenChange(false)
+                                }}
                             />
                         )}
                     </div>

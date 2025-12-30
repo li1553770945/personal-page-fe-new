@@ -4,8 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useNotification } from "@/context/notification-context"
-
+import { useNotification } from "@/context/notification"
 import {
   Card,
   CardContent,
@@ -15,38 +14,63 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { useTranslation } from "react-i18next"
+import { useUser } from "@/context/user"
 
-export interface UserInfoProps {
-  initialUser: {
-    username: string
-    nickname: string
-    avatar: string
-  }
-  onSave: (data: { username: string; nickname: string; avatar: string }) => void
+type UserInfoFormData = {
+  username: string
+  nickname: string
+  avatar: string
 }
 
-export function UserInfo({ initialUser, onSave }: UserInfoProps) {
+type UserInfoProps = {
+  onLogout?: () => void
+}
+
+export function UserInfo({ onLogout }: UserInfoProps) {
   const { t } = useTranslation()
   const { success, error, warning, info } = useNotification()
-  const [formData, setFormData] = useState(initialUser)
+  const { user, logout } = useUser()
+  const [formData, setFormData] = useState<UserInfoFormData>({
+    username: user?.username || "",
+    nickname: user?.nickname || "",
+    avatar: user?.avatar || "",
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
-    setFormData((prev) => ({ ...prev, [id]: value }))
+    if (id === "username") {
+      setFormData((prev) => ({ ...prev, username: value }))
+      return
+    }
+    if (id === "nickname") {
+      setFormData((prev) => ({ ...prev, nickname: value }))
+      return
+    }
+    if (id === "avatar") {
+      setFormData((prev) => ({ ...prev, avatar: value }))
+      return
+    }
   }
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    success("Profile updated successfully","Profile updated successfully")
-    // onSave(formData)
+    warning(t('common.notice'), "该功能暂未实现")
+    // success("Profile updated successfully","Profile updated successfully")
+  }
+
+  const handleLogout = () => {
+    logout()
+    success(t('auth.logoutSuccess'),"")
+    onLogout && onLogout()
   }
 
   return (
     <Card className="w-[400px]">
       <CardHeader>
-        <CardTitle>Edit Profile</CardTitle>
+        <CardTitle>{t('userInfo.title')}</CardTitle>
         <CardDescription>
-          Make changes to your profile here. Click save when you're done.
+          {t('userInfo.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -54,18 +78,18 @@ export function UserInfo({ initialUser, onSave }: UserInfoProps) {
           <div className="grid gap-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="username" className="text-right">
-                {t('auth.username') || "Username"}
+                {t('auth.username')}
               </Label>
               <Input
                 id="username"
                 value={formData.username}
-                onChange={handleChange}
+                disabled
                 className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="nickname" className="text-right">
-                Nickname
+                {t('userInfo.nickname')}
               </Label>
               <Input
                 id="nickname"
@@ -76,7 +100,7 @@ export function UserInfo({ initialUser, onSave }: UserInfoProps) {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="avatar" className="text-right">
-                Avatar URL
+                {t('userInfo.avatarUrl')}
               </Label>
               <Input
                 id="avatar"
@@ -88,8 +112,13 @@ export function UserInfo({ initialUser, onSave }: UserInfoProps) {
           </div>
         </form>
       </CardContent>
-      <CardFooter className="flex justify-end">
-        <Button type="submit" form="user-info-form">Save changes</Button>
+      <CardFooter className="flex justify-between">
+        <Button variant="outline" onClick={handleLogout}>
+          {t('auth.logout')}
+        </Button>
+        <Button type="submit" form="user-info-form">
+          {t('auth.saveChanges') }
+        </Button>
       </CardFooter>
     </Card>
   )

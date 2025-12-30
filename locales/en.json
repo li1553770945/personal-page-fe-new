@@ -2,7 +2,9 @@
   "common": {
     "notFound": "404 - Page Not Found",
     "pageNotFound": "Sorry, the page you visited does not exist.",
-    "returnHome": "Return to Home"
+    "returnHome": "Return to Home",
+    "notice": "Notice",
+    "justNow": "Just Now"
   },
   "nav": {
     "home": "Home",
@@ -128,7 +130,16 @@
     "passwordPlaceholder": "Enter your password",
     "activeCode": "Active Code",
     "activeCodePlaceholder": "Enter your active code",
-    "loginFailed": "Login failed, please check your username or password"
+    "loginFailed": "Login failed, please check your username or password",
+    "logout": "Logout",
+    "logoutSuccess": "Logged out successfully",
+    "saveChanges": "Save Changes"
+  },
+  "userInfo": {
+    "title": "Edit Profile",
+    "description": "Make changes to your profile here. Click save when you're done.",
+    "nickname": "Nickname",
+    "avatarUrl": "Avatar URL"
   },
   "appreciate": {
     "title": "Appreciate",
@@ -170,6 +181,74 @@
         "titleRequired": "Please enter a title",
         "uuidRequired": "Please enter Message ID"
     }
+  },
+  "files": {
+    "title": "File Management",
+    "description": "Securely upload, share, and manage your files.",
+    "upload": {
+      "title": "Upload File",
+      "description": "Upload files and generate a shareable link.",
+      "dropzone": {
+        "default": "Click to select a file",
+        "limit": "Max 1 file at a time",
+        "remove": "Remove"
+      },
+      "customKey": "Custom File Key (Optional)",
+      "customKeyPlaceholder": "Leave empty for auto-generated",
+      "maxDownloads": "Max Downloads",
+      "unlimited": "0 = Unlimited",
+      "shareLink": "Share Link",
+      "shareLinkDesc": "Share this link to allow others to download the file directly.",
+      "button": "Upload File",
+      "uploading": "Uploading..."
+    },
+    "download": {
+      "title": "Download File",
+      "fromShare": "From Share Link",
+      "description": "Enter a file key to download shared content.",
+      "keyLabel": "File Key",
+      "keyPlaceholder": "Enter file key...",
+      "button": "Download",
+      "buttonShared": "Download Shared File",
+      "preparing": "Preparing Download..."
+    },
+    "delete": {
+      "title": "Delete File",
+      "description": "Permanently remove files from the server.",
+      "keyLabel": "File Key",
+      "keyPlaceholder": "Enter file key to delete...",
+      "button": "Delete",
+      "confirmTitle": "Confirm Deletion",
+      "confirmContent": "Are you sure you want to delete the file \"{{name}}\"? This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Confirm Delete",
+      "deleting": "Deleting..."
+    },
+    "notifications": {
+      "shareDetected": "Detected Share Link",
+      "shareDetectedDesc": "File key has been automatically filled. Click download to start.",
+      "noFile": "No file selected",
+      "noFileDesc": "Please select a file to upload.",
+      "uploadSuccess": "Upload Successful",
+      "uploadSuccessDesc": "File uploaded successfully. Key: {{key}}",
+      "uploadFailed": "Upload Failed",
+      "uploadFailedDesc": "An error occurred during upload.",
+      "copySuccess": "Copied",
+      "copySuccessDesc": "Share link copied to clipboard",
+      "copyFailed": "Copy Failed",
+      "copyFailedDesc": "Could not copy link to clipboard",
+      "missingKey": "Missing Key",
+      "missingKeyDesc": "Please enter a file key.",
+      "downloadStarted": "Download Started",
+      "downloadStartedDesc": "Your download should begin shortly.",
+      "downloadFailed": "Download Failed",
+      "downloadFailedDesc": "Could not retrieve download link.",
+      "infoError": "Error",
+      "infoErrorDesc": "Could not find file info.",
+      "deleteSuccess": "Deleted",
+      "deleteSuccessDesc": "File \"{{name}}\" has been deleted.",
+      "deleteFailed": "Delete Failed",
+      "deleteFailedDesc": "Could not delete file."
+    }
   }
 }
-

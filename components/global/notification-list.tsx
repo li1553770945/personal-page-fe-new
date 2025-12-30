@@ -3,9 +3,16 @@
 import { cn } from "@/lib/utils"
 import { AnimatedListItem } from "@/components/ui/animated-list"
 import { AnimatePresence } from "motion/react"
-import { useNotification, NotificationItem } from "@/context/notification-context"
+import { useNotification, NotificationItem } from "@/context/notification"
+import { X } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-const Notification = ({ name, description, icon, color, time }: NotificationItem) => {
+interface NotificationProps extends NotificationItem {
+  onClose?: () => void
+}
+
+const Notification = ({ name, description, icon, color, time, onClose }: NotificationProps) => {
+  const { t } = useTranslation()
   return (
     <figure
       className={cn(
@@ -29,23 +36,32 @@ const Notification = ({ name, description, icon, color, time }: NotificationItem
             <span className="text-lg">{icon}</span>
           </div>
         )}
-        <div className="flex flex-col overflow-hidden">
+        <div className="flex flex-col overflow-hidden flex-1">
           <figcaption className="flex flex-row items-center text-lg font-medium whitespace-pre dark:text-white">
             <span className="text-sm sm:text-lg">{name}</span>
             <span className="mx-1">·</span>
-            <span className="text-xs text-gray-500">{time}</span>
+            <span className="text-xs text-gray-500">{time || t("common.justNow")}</span>
           </figcaption>
           <p className="text-sm font-normal dark:text-white/60">
             {description}
           </p>
         </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            onClose?.()
+          }}
+          className="rounded-full p-1 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+        >
+          <X className="size-4 text-gray-500" />
+        </button>
       </div>
     </figure>
   )
 }
 
 export function NotificationList() {
-  const { notifications } = useNotification()
+  const { notifications, removeNotification } = useNotification()
 
   return (
     <div className="fixed top-4 right-4 z-[1000] flex flex-col gap-2 w-full max-w-[400px] pointer-events-none">
@@ -53,7 +69,10 @@ export function NotificationList() {
         {notifications.map((item) => (
           <AnimatedListItem key={item.id}>
              <div className="pointer-events-auto">
-               <Notification {...item} />
+               <Notification 
+                {...item} 
+                onClose={() => removeNotification(item.id)}
+              />
              </div>
           </AnimatedListItem>
         ))}

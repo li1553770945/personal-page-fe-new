@@ -14,42 +14,34 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useTranslation } from "react-i18next"
 import { ShimmerButton } from "@/components/ui/shimmer-button"
-import { loginAPI } from "@/api"
-
+import { useUser } from "@/context/user"
+import { useNotification } from "@/context/notification"
 interface LoginProps {
     onRegisterClick: () => void
-    onLoginSuccess: () => void
+    onLoginSuccess: (data:any) => void
 }
 
 export function Login({ onRegisterClick, onLoginSuccess }: LoginProps) {
     const { t } = useTranslation()
+    const { success, error } = useNotification()
+    const { login } = useUser()
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
-    const [error, setError] = useState("")
+
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
-        setError("")
         setLoading(true)
-
         try {
-            const res: any = await loginAPI({ username, password })
-            console.log("Login response:", res)
-            if (!res) {
-                setError(t('auth.loginFailed') || "Login failed")
+            const res = await login({ username, password })
+            if (!res.ok) {
+                error(t('auth.loginFailed'), res.message);
                 return
             }
-
-            if (res.code != 0) {
-                setError(res.message || t('auth.loginFailed'));
-                return
-            }
-            localStorage.setItem("token", res.data.token)
-            onLoginSuccess()
+            onLoginSuccess(res.data)
         } catch (err: any) {
-            console.error("Login error:", err)
-            setError(err.response?.message || t('auth.loginFailed') || "Login failed")
+            error(t('auth.loginFailed'), err?.message ?? String(err))
         } finally {
             setLoading(false)
         }
@@ -89,11 +81,6 @@ export function Login({ onRegisterClick, onLoginSuccess }: LoginProps) {
                                 disabled={loading}
                             />
                         </div>
-                        {error && (
-                            <div className="text-sm text-red-500 font-medium">
-                                {error}
-                            </div>
-                        )}
                         {/* Hidden submit button to handle Enter key */}
                         <button type="submit" className="hidden" disabled={loading} />
                     </div>

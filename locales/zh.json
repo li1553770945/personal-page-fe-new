@@ -2,7 +2,9 @@
   "common": {
     "notFound": "404 - 页面未找到",
     "pageNotFound": "抱歉，你访问的页面不存在。",
-    "returnHome": "返回首页"
+    "returnHome": "返回首页",
+    "notice": "提示",
+    "justNow": "刚刚"
   },
   "nav": {
     "home": "主页",
@@ -136,7 +138,16 @@
     "passwordPlaceholder": "请输入您的密码",
     "activeCode": "激活码",
     "activeCodePlaceholder": "请输入您的激活码",
-    "loginFailed": "登录失败，请检查用户名或密码"
+    "loginFailed": "登录失败，请检查用户名或密码",
+    "logout": "退出登录",
+    "logoutSuccess": "退出成功",
+    "saveChanges": "保存更改"
+  },
+  "userInfo": {
+    "title": "编辑资料",
+    "description": "在这里修改您的个人资料。完成后点击保存。",
+    "nickname": "昵称",
+    "avatarUrl": "头像链接"
   },
   "appreciate": {
     "title": "赞赏支持",
@@ -178,6 +189,74 @@
         "titleRequired": "请输入标题",
         "uuidRequired": "请输入留言ID"
     }
+  },
+  "files": {
+    "title": "文件管理",
+    "description": "安全上传、分享和管理您的文件。",
+    "upload": {
+      "title": "上传文件",
+      "description": "上传文件并生成分享链接。",
+      "dropzone": {
+        "default": "点击选择文件",
+        "limit": "每次最多上传 1 个文件",
+        "remove": "移除"
+      },
+      "customKey": "自定义文件 Key (可选)",
+      "customKeyPlaceholder": "留空则自动生成",
+      "maxDownloads": "最大下载次数",
+      "unlimited": "0 = 无限制",
+      "shareLink": "分享链接",
+      "shareLinkDesc": "分享此链接以允许他人直接下载文件。",
+      "button": "上传文件",
+      "uploading": "上传中..."
+    },
+    "download": {
+      "title": "下载文件",
+      "fromShare": "来自文件分享",
+      "description": "输入文件 Key 以下载分享内容。",
+      "keyLabel": "文件 Key",
+      "keyPlaceholder": "输入文件 Key...",
+      "button": "下载",
+      "buttonShared": "下载分享文件",
+      "preparing": "准备下载..."
+    },
+    "delete": {
+      "title": "删除文件",
+      "description": "从服务器永久删除文件。",
+      "keyLabel": "文件 Key",
+      "keyPlaceholder": "输入文件 Key 以删除...",
+      "button": "删除",
+      "confirmTitle": "确认删除",
+      "confirmContent": "您确定要删除文件“{{name}}”吗？此操作无法撤销。",
+      "cancel": "取消",
+      "confirm": "确认删除",
+      "deleting": "删除中..."
+    },
+    "notifications": {
+      "shareDetected": "检测到分享链接",
+      "shareDetectedDesc": "文件 Key 已自动填充。点击下载即可开始。",
+      "noFile": "未选择文件",
+      "noFileDesc": "请选择要上传的文件。",
+      "uploadSuccess": "上传成功",
+      "uploadSuccessDesc": "文件上传成功。Key: {{key}}",
+      "uploadFailed": "上传失败",
+      "uploadFailedDesc": "上传过程中发生错误。",
+      "copySuccess": "已复制",
+      "copySuccessDesc": "分享链接已复制到剪贴板",
+      "copyFailed": "复制失败",
+      "copyFailedDesc": "无法将链接复制到剪贴板",
+      "missingKey": "缺少 Key",
+      "missingKeyDesc": "请输入文件 Key。",
+      "downloadStarted": "开始下载",
+      "downloadStartedDesc": "您的下载即将开始。",
+      "downloadFailed": "下载失败",
+      "downloadFailedDesc": "无法获取下载链接。",
+      "infoError": "错误",
+      "infoErrorDesc": "无法找到文件信息。",
+      "deleteSuccess": "已删除",
+      "deleteSuccessDesc": "文件“{{name}}”已被删除。",
+      "deleteFailed": "删除失败",
+      "deleteFailedDesc": "无法删除文件。"
+    }
   }
 }
-

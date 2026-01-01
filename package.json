@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "cross-env PROXY_MODE=prod next dev --webpack",
     "dev-local": "cross-env PROXY_MODE=local next dev --webpack",
-    "build": "next build",
-    "start": "next start",
+    "build": "next build --webpack",
+    "start": "next start --webpack",
     "lint": "eslint",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"

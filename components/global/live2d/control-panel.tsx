@@ -18,26 +18,6 @@ export default function ControlPanel() {
       >
         戳一戳
       </button>
-
-      <button 
-        className="btn-secondary"
-        onClick={() => {
-          // Wink 逻辑：结合 Store 的方法
-          setParam('ParamEyeLOpen', 0) // 闭左眼
-          setParam('ParamCheek', 1)    // 脸红
-          setParam('ParamMouthForm', 1)// 微笑
-          say('Wink! 😉')
-          
-          // 1秒后复原 (手动控制更精准)
-          setTimeout(() => {
-             setParam('ParamEyeLOpen', 1)
-             setParam('ParamCheek', 0)
-             setParam('ParamMouthForm', 0)
-          }, 1000)
-        }}
-      >
-        Wink 😉
-      </button>
     </div>
   )
 }

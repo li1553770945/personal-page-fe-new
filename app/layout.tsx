@@ -8,7 +8,9 @@ import Footer from "@/components/global/footer/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { NotificationList } from "@/components/global/notification-list";
 
-
+import dynamic from 'next/dynamic';
+// 禁用 SSR
+const Live2D = dynamic(() => import("@/components/global/live2d"), { ssr: false });
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -46,6 +48,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <NotificationList />
+          <Live2D  />
         </ThemeProvider>
       </body>
     </html>

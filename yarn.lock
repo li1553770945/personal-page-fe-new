@@ -9151,6 +9151,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"oh-my-live2d@npm:^0.19.3":
+  version: 0.19.3
+  resolution: "oh-my-live2d@npm:0.19.3"
+  checksum: 10c0/125415daf46b8dee2088de30908c3f6aced2656ebd47fb8e8ba083171c7bd72d34590dbb186fdfead7a2d1e42decb8107003669ed02c7133e420cce0d723ab64
+  languageName: node
+  linkType: hard
+
 "on-finished@npm:^2.4.1":
   version: 2.4.1
   resolution: "on-finished@npm:2.4.1"
@@ -9344,6 +9351,7 @@ __metadata:
     motion: "npm:^12.23.26"
     next: "npm:16.1.0"
     next-themes: "npm:^0.4.6"
+    oh-my-live2d: "npm:^0.19.3"
     react: "npm:19.2.3"
     react-dom: "npm:19.2.3"
     react-hook-form: "npm:^7.69.0"

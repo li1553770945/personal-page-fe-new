@@ -33,6 +33,17 @@ const nextConfig: NextConfig = {
       // 注意：Next.js 的 rewrites 原生不支持 WebSocket (ws) 代理
     ];
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // 强制不处理 fs 和 path 模块
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

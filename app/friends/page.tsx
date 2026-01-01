@@ -5,7 +5,8 @@ import { motion } from "motion/react"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
+import { useEffect } from "react"
+import { useLive2D } from "@/context/live2d"
 interface Friend {
   name: string
   description: string
@@ -90,7 +91,13 @@ const item = {
 
 export default function FriendsPage() {
   const { t } = useTranslation()
-
+  const live2d = useLive2D()
+  
+  useEffect(() => {
+    if (live2d) {
+      live2d.say('这些都是很厉害的朋友~')
+    }
+  }, [live2d])
   return (
     <div className="container mx-auto py-12 px-4 min-h-[calc(100vh-4rem)]">
       <motion.div

@@ -7,10 +7,11 @@ import Header from "@/components/global/header/Header";
 import Footer from "@/components/global/footer/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { NotificationList } from "@/components/global/notification-list";
-
+import Live2DUI from "@/components/global/live2d/control-panel";
 import dynamic from 'next/dynamic';
 // 禁用 SSR
-const Live2D = dynamic(() => import("@/components/global/live2d"), { ssr: false });
+const Live2D = dynamic(() => import("@/components/global/live2d/initializer"), { ssr: false });
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -49,6 +50,7 @@ export default function RootLayout({
           </div>
           <NotificationList />
           <Live2D  />
+          {/* <Live2DUI /> */}
         </ThemeProvider>
       </body>
     </html>

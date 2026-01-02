@@ -1,5 +1,6 @@
 "use client"
 import { useLive2D } from "@/context/live2d"
+import ChatDialog from "./chat-dialog"
 
 export default function ControlPanel() {
   // 只需要解构出你想要的方法
@@ -18,6 +19,7 @@ export default function ControlPanel() {
       >
         戳一戳
       </button>
+      <ChatDialog />
     </div>
   )
 }

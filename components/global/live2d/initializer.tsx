@@ -19,7 +19,20 @@ export default function Live2d() {
 
       const instance = await loadOml2d({
         dockedPosition: 'right',
-        menus: { disable: true },
+        menus: {
+          disable: false,
+          items: [
+            {
+              id: 'chat',
+              icon: 'icon-about',
+              title: '聊天',
+              onClick: () => {
+                // 发送自定义事件打开聊天对话框
+                window.dispatchEvent(new CustomEvent('openChatDialog'));
+              }
+            }
+          ]
+        },
         models: [
           {
             path: '/models/hiyori/hiyori_pro_t11.model3.json',
@@ -66,7 +79,7 @@ export default function Live2d() {
       setInstance(instance);
       // 挂载到window上，方便在浏览器控制台调试
       window.oml2d = instance;
-      console.log('✅ Live2D loaded and stored in Zustand');
+      console.log('✅ Live2D 初始化完成');
     };
 
     initLive2D();

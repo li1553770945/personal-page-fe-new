@@ -24,11 +24,11 @@ export const fileInfoAPI = (key: string) =>
   instance.get(`/files?key=${key}`);
 
 
-export const deleteFileAPI = (key:string) =>
-  instance.delete(`/files`,{data:{key:key}});
+export const deleteFileAPI = (key: string) =>
+  instance.delete(`/files`, { data: { key: key } });
 
-export const uploadFileAPI = (data:any) =>
-  instance.post(`/files`,data);
+export const uploadFileAPI = (data: any) =>
+  instance.post(`/files`, data);
 
 export const allFeedbackCategoriesAPI = (): Promise<ApiResponse<FeedbackCategory[]>> =>
   instance.get('/feedback/categories')
@@ -52,20 +52,106 @@ export const notReadFeedbackAPI = () =>
 export const getProjectsNumAPI = () =>
   instance.get("/projects/num");
 
-export const getProjectsAPI = (start:number,end:number,status:number,order:string) =>
-  instance.get("/projects?start="+start+"&end="+end+"&status="+status+"&order="+order);
+export const getProjectsAPI = (start: number, end: number, status: number, order: string) =>
+  instance.get("/projects?start=" + start + "&end=" + end + "&status=" + status + "&order=" + order);
 
-export const addProjectAPI = (data:any) =>
-  instance.post("/projects",data);
+export const addProjectAPI = (data: any) =>
+  instance.post("/projects", data);
 
-export const deleteProjectAPI = (id:number) =>
-  instance.delete("/projects/"+id);
+export const deleteProjectAPI = (id: number) =>
+  instance.delete("/projects/" + id);
 
-export const createRoomAPI = () => 
+export const createRoomAPI = () =>
   instance.post("/rooms");
 
-export const joinRoomAPI = (roomId:string) => 
+export const joinRoomAPI = (roomId: string) =>
   instance.post(`/rooms/join/?roomId=${roomId}`);
 
+// AI聊天接口，使用SSE
+interface ChatMessage {
+  event_type: string;
+  message: string;
+}
 
-  
+// 定义回调接口
+export interface SSECallback {
+  onMessage: (content: ChatMessage) => void;
+  onFinished: () => void;
+  onError: (error: Error) => void;
+}
+
+export const aiChatAPI = async (message: string, callbacks: SSECallback) => {
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || ''; // 确保有默认值
+  const endpoint = `${baseURL}/aichat`;
+
+  // 获取 Token (token外部传递)
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // 1. 在这里带上 Bearer Token
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ message }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    if (!response.body) {
+      throw new Error('ReadableStream not supported in this browser.');
+    }
+
+    // 2. 解析 SSE 响应流
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      // 将二进制流解码为文本
+      const chunk = decoder.decode(value, { stream: true });
+      buffer += chunk;
+
+      const lines = buffer.split('\n');
+      // 保留最后一行（因为它可能是不完整的，等待下一次循环拼接）
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        // 过滤掉空行、注释行、id 行、event 行，只处理 data 行
+        if (!trimmedLine || !line.startsWith('data:')) {
+          continue;
+        }
+      
+        const dataStr = line.replace('data:', '').trim();
+
+        try {
+          const data = JSON.parse(dataStr);
+          console.debug('Received SSE JSON content:', data);
+          callbacks.onMessage(data);
+        } catch (e) {
+          // 如果JSON解析失败，直接使用原始文本
+          console.warn('JSON parse failed, using raw text:', e, 'Data:', dataStr);
+          if (dataStr && typeof dataStr === 'string') {
+            console.debug('Received SSE raw text:', dataStr);
+            callbacks.onMessage({ event_type: 'message', message: dataStr });
+          }
+        }
+
+      }
+    }
+
+    // 循环结束，任务完成
+    callbacks.onFinished();
+
+  } catch (error) {
+    callbacks.onError(error as Error);
+  }
+};

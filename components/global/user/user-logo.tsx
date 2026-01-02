@@ -38,8 +38,6 @@ export function UserLogo() {
     }
     useEffect(() => {
         refresh().then((res) => {
-            console.log(res)
-
             if (res.ok) {
                 success("获取用户信息成功", `欢迎回来: ${res.data?.nickname}`)
             } else {

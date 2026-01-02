@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { X, Send, MessageSquare } from 'lucide-react'
 import { aiChatAPI } from '@/api'
+import ReactMarkdown from 'react-markdown'
 
 interface Message {
   id: string
@@ -146,7 +147,9 @@ export default function ChatDialog() {
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-none'
                     }`}
                   >
-                    <p>{message.text}</p>
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <ReactMarkdown>{message.text}</ReactMarkdown>
+                    </div>
                   </div>
                 </div>
               ))}

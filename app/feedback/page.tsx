@@ -7,7 +7,7 @@ import * as z from "zod"
 import { useTranslation } from "react-i18next"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Star, Send, Search, Loader2, CheckCircle2 } from "lucide-react"
+import { Star, Send, Search, Loader2, CheckCircle2, Bell } from "lucide-react"
 import { motion } from "motion/react"
 
 import { Button } from "@/components/ui/button"
@@ -43,6 +43,7 @@ import { allFeedbackCategoriesAPI, saveFeedbackAPI, getFeedbackAPI } from "@/api
 import { cn } from "@/lib/utils"
 import { ApiResponse, FeedbackCategory } from "@/types/api"
 import { useNotification } from "@/context/notification"
+import { useUser } from "@/context/user"
 
 export default function FeedbackPage() {
   const { t } = useTranslation()
@@ -51,7 +52,8 @@ export default function FeedbackPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [submittedUuid, setSubmittedUuid] = useState("")
-const { notificationSuccess, notificationError } = useNotification()
+  const { notificationSuccess, notificationError } = useNotification()
+  const { user } = useUser()
 
   // Fetch categories
   useEffect(() => {
@@ -152,6 +154,17 @@ const { notificationSuccess, notificationError } = useNotification()
                 <CardDescription>
                     {t("feedback.sectionTitle")}
                 </CardDescription>
+                {/* 管理员未读消息按钮 */}
+                {user?.role === "admin" && (
+                    <div className="mt-4">
+                        <Link href="/feedback/unread">
+                            <Button variant="destructive" className="flex items-center gap-2">
+                                <Bell className="h-4 w-4" />
+                                查看未读反馈
+                            </Button>
+                        </Link>
+                    </div>
+                )}
             </CardHeader>
           <CardContent className="p-6">
             <Tabs defaultValue="message" className="w-full">

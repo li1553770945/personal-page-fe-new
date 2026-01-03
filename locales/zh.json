@@ -195,7 +195,15 @@
       "titleRequired": "请输入标题",
       "uuidRequired": "请输入留言ID"
     },
-    "queryIdDesc": "请输入您提交留言后收到的ID，以查询回复。"
+    "queryIdDesc": "请输入您提交留言后收到的ID，以查询回复。",
+    "viewFeedback": "查看反馈",
+    "submittedAt": "提交于: ",
+    "noReply": "该建议暂未回复",
+    "addReply": "添加回复",
+    "replyContent": "回复内容",
+    "replyContentPlaceholder": "请输入回复内容",
+    "submitting": "提交中",
+    "submitReply": "提交回复"
   },
   "files": {
     "title": "文件管理",

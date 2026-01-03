@@ -178,7 +178,7 @@
     "dialogContent": "Message ID: {{uuid}} Please record this ID, it is the only way to retrieve the reply...",
     "confirm": "Confirm",
     "successTitle": "Success",
-    "successMessage": "Received your valuable suggestion, thank you!",
+    "successMessage": "Received your valuable suggestion, thank you for the feedback",
     "validation": {
       "categoryRequired": "Please select a category",
       "contentRequired": "Please enter content",
@@ -187,7 +187,15 @@
       "titleRequired": "Please enter a title",
       "uuidRequired": "Please enter Message ID"
     },
-    "queryIdDesc": "Please enter the ID you received after submitting your feedback, to query the reply."
+    "queryIdDesc": "Please enter the ID you received after submitting your feedback, to query the reply.",
+    "viewFeedback": "View Feedback",
+    "submittedAt": "Submitted at: ",
+    "noReply": "No reply yet",
+    "addReply": "Add Reply",
+    "replyContent": "Reply Content",
+    "replyContentPlaceholder": "Please enter reply content",
+    "submitting": "Submitting...",
+    "submitReply": "Submit Reply"
   },
   "files": {
     "title": "File Management",

@@ -147,10 +147,10 @@ export default function ReadFeedbackPage() {
       >
         <Card className="border-none shadow-lg bg-background/60 backdrop-blur-sm">
           <CardHeader className="text-center pb-2">
-            <CardTitle className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
-              查看反馈
-            </CardTitle>
-          </CardHeader>
+              <CardTitle className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+                {t("feedback.viewFeedback")}
+              </CardTitle>
+            </CardHeader>
           <CardContent className="p-6">
             {/* Feedback Content */}
             <div className="space-y-8">
@@ -174,7 +174,7 @@ export default function ReadFeedbackPage() {
                     </div>
                   )}
                   <div>
-                    <span className="font-medium">提交于: </span>
+                    <span className="font-medium">{t("feedback.submittedAt")}</span>
                     {formatDate(feedback.createdAt)}
                   </div>
                 </div>
@@ -193,7 +193,7 @@ export default function ReadFeedbackPage() {
                   </div>
                 ) : (
                   <Alert variant="destructive">
-                    <AlertDescription>该建议暂未回复</AlertDescription>
+                    <AlertDescription>{t("feedback.noReply")}</AlertDescription>
                   </Alert>
                 )}
               </div>
@@ -201,7 +201,7 @@ export default function ReadFeedbackPage() {
               {/* Add Reply Form (only for admin) */}
               {user?.role === "admin" && (
                 <div>
-                  <h3 className="text-xl font-semibold mb-4">添加回复</h3>
+                  <h3 className="text-xl font-semibold mb-4">{t("feedback.addReply")}</h3>
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                       <FormField
@@ -209,10 +209,10 @@ export default function ReadFeedbackPage() {
                         name="content"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>回复内容</FormLabel>
+                            <FormLabel>{t("feedback.replyContent")}</FormLabel>
                             <FormControl>
                               <Textarea
-                                placeholder="请输入回复内容"
+                                placeholder={t("feedback.replyContentPlaceholder")}
                                 className="min-h-[150px] resize-none"
                                 {...field}
                               />
@@ -225,12 +225,12 @@ export default function ReadFeedbackPage() {
                         {isSubmitting ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            提交中
+                            {t("feedback.submitting")}
                           </>
                         ) : (
                           <>
                             <Send className="mr-2 h-4 w-4" />
-                            提交回复
+                            {t("feedback.submitReply")}
                           </>
                         )}
                       </Button>

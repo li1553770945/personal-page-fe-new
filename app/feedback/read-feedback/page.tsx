@@ -1,13 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
+export const dynamic = 'force-dynamic'
+
+import { useEffect, useState, Suspense } from "react" // 1. 引入 Suspense
 import { useSearchParams, useRouter } from "next/navigation"
 import { useTranslation } from "react-i18next"
 import { motion } from "motion/react"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
@@ -22,12 +23,22 @@ import {
   AlertDescription,
 } from "@/components/ui/alert"
 
-export default function ReadFeedbackPage() {
+// 2. 创建一个 Loading 组件用于 Suspense fallback (复用原本的 loading 样式)
+function PageLoader() {
+  return (
+    <div className="container max-w-4xl mx-auto py-10 px-4 min-h-screen flex justify-center items-center">
+      <Loader2 className="h-8 w-8 animate-spin" />
+    </div>
+  )
+}
+
+// 3. 将原本的主逻辑改名为 FeedbackContent (不作为默认导出)
+function FeedbackContent() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
   const router = useRouter()
   const uuid = searchParams.get("uuid")
-  const { notificationError,notificationSuccess } = useNotification()
+  const { notificationError } = useNotification()
 
   const [feedback, setFeedback] = useState<any>(null)
   const [reply, setReply] = useState<any>(null)
@@ -38,7 +49,7 @@ export default function ReadFeedbackPage() {
   // Fetch feedback data
   useEffect(() => {
     if (!uuid) {
-      notificationError("查询失败","No feedback UUID provided")
+      notificationError("查询失败", "No feedback UUID provided")
       setIsLoading(false)
       return
     }
@@ -51,17 +62,17 @@ export default function ReadFeedbackPage() {
           setFeedback(res.data)
           fetchReply(uuid)
         } else {
-          notificationError("查询失败",res.message || "Failed to fetch feedback")
+          notificationError("查询失败", res.message || "Failed to fetch feedback")
         }
       } catch (err) {
-        notificationError("查询失败",String(err))
+        notificationError("查询失败", String(err))
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchFeedback()
-  }, [uuid])
+  }, [uuid]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch reply data
   const fetchReply = async (feedbackUuid: string) => {
@@ -70,10 +81,10 @@ export default function ReadFeedbackPage() {
       if (res.code === 0) {
         setReply(res.data)
       } else if (res.code !== 4004) {
-        notificationError("查询失败",res.message || "Failed to fetch reply")
+        notificationError("查询失败", res.message || "Failed to fetch reply")
       }
     } catch (err) {
-      notificationError("查询失败",String(err))
+      notificationError("查询失败", String(err))
     }
   }
 
@@ -104,10 +115,10 @@ export default function ReadFeedbackPage() {
         await fetchReply(uuid)
         form.reset()
       } else {
-        notificationError("提交失败",res.message || "Failed to submit reply")
+        notificationError("提交失败", res.message || "Failed to submit reply")
       }
     } catch (error) {
-      notificationError("提交失败",String(error))
+      notificationError("提交失败", String(error))
     } finally {
       setIsSubmitting(false)
     }
@@ -120,13 +131,8 @@ export default function ReadFeedbackPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="container max-w-4xl mx-auto py-10 px-4 min-h-screen flex justify-center items-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    )
+    return <PageLoader />
   }
-
 
   if (!feedback) {
     return (
@@ -147,10 +153,10 @@ export default function ReadFeedbackPage() {
       >
         <Card className="border-none shadow-lg bg-background/60 backdrop-blur-sm">
           <CardHeader className="text-center pb-2">
-              <CardTitle className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
-                {t("feedback.viewFeedback")}
-              </CardTitle>
-            </CardHeader>
+            <CardTitle className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+              {t("feedback.viewFeedback")}
+            </CardTitle>
+          </CardHeader>
           <CardContent className="p-6">
             {/* Feedback Content */}
             <div className="space-y-8">
@@ -243,5 +249,14 @@ export default function ReadFeedbackPage() {
         </Card>
       </motion.div>
     </div>
+  )
+}
+
+// 4. 默认导出包裹了 Suspense 的组件
+export default function ReadFeedbackPage() {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <FeedbackContent />
+    </Suspense>
   )
 }

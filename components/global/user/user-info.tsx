@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card"
 import { useTranslation } from "react-i18next"
 import { useUser } from "@/context/user"
+import { warning } from "framer-motion"
 
 type UserInfoFormData = {
   username: string
@@ -23,12 +24,12 @@ type UserInfoFormData = {
 }
 
 type UserInfoProps = {
-  onLogout?: () => void
+  onLogoutAction?: () => void
 }
 
-export function UserInfo({ onLogout }: UserInfoProps) {
+export function UserInfo({ onLogoutAction }: UserInfoProps) {
   const { t } = useTranslation()
-  const { success, error, warning, info } = useNotification()
+  const { notificationSuccess, notificationError, notificationWarning, notificationInfo } = useNotification()
   const { user, logout } = useUser()
   const [formData, setFormData] = useState<UserInfoFormData>({
     username: user?.username || "",
@@ -55,14 +56,14 @@ export function UserInfo({ onLogout }: UserInfoProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    warning(t('common.notice'), "该功能暂未实现")
+    notificationWarning(t('common.notice'), "该功能暂未实现")
     // success("Profile updated successfully","Profile updated successfully")
   }
 
   const handleLogout = () => {
     logout()
-    success(t('auth.logoutSuccess'),"")
-    onLogout && onLogout()
+    notificationSuccess(t('auth.logoutSuccess'),"")
+    onLogoutAction && onLogoutAction()
   }
 
   return (

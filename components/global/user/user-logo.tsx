@@ -18,7 +18,7 @@ export function UserLogo() {
     const isLoggedIn = user != null;
     const [open, setOpen] = useState(false)
     const [view, setView] = useState<'login' | 'register' | 'info'>('login')
-    const { success } = useNotification()
+    const { notificationSuccess } = useNotification()
 
 
     const handleOpenChange = (newOpen: boolean) => {
@@ -31,17 +31,17 @@ export function UserLogo() {
 
 
     const handleRegisterSuccess = () => {
-        success(t('auth.registerSuccess'), t('auth.registerSuccessDesc'))
+        notificationSuccess(t('auth.registerSuccess'), t('auth.registerSuccessDesc'))
         setView('login')
     }
     const handleLoginSuccess = (data?: any) => {
-        success(t('auth.loginSuccess'), t('auth.welcomeBack', { nickname: data?.nickname ?? user?.nickname }))
+        notificationSuccess(t('auth.loginSuccess'), t('auth.welcomeBack', { nickname: data?.nickname ?? user?.nickname }))
         handleOpenChange(false)
     }
     useEffect(() => {
         refresh().then((res) => {
             if (res.ok) {
-                success(t('auth.getUserInfoSuccess'), t('auth.welcomeBack', { nickname: res.data?.nickname }))
+                notificationSuccess(t('auth.getUserInfoSuccess'), t('auth.welcomeBack', { nickname: res.data?.nickname }))
             } else {
                 handleOpenChange(false)
             }
@@ -80,7 +80,7 @@ export function UserLogo() {
                         )}
                         {view === 'info' && (
                             <UserInfo
-                                onLogout={() => {
+                                onLogoutAction={() => {
                                     setView('login')
                                     handleOpenChange(false)
                                 }}

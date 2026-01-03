@@ -23,7 +23,7 @@ interface LoginProps {
 
 export function Login({ onRegisterClick, onLoginSuccess }: LoginProps) {
     const { t } = useTranslation()
-    const { success, error } = useNotification()
+    const { notificationSuccess, notificationError } = useNotification()
     const { login } = useUser()
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
@@ -35,13 +35,13 @@ export function Login({ onRegisterClick, onLoginSuccess }: LoginProps) {
         setLoading(true)
         try {
             const res = await login({ username, password })
-            if (!res.ok) {
-                error(t('auth.loginFailed'), res.message);
+                if (!res.ok) {
+                notificationError(t('auth.loginFailed'), res.message);
                 return
             }
             onLoginSuccess(res.data)
         } catch (err: any) {
-            error(t('auth.loginFailed'), err?.message ?? String(err))
+            notificationError(t('auth.loginFailed'), err?.message ?? String(err))
         } finally {
             setLoading(false)
         }

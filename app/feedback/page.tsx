@@ -39,11 +39,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { allFeedbackCategoriesAPI, saveFeedbackAPI } from "@/api"
+import { allFeedbackCategoriesAPI, saveFeedbackAPI, getFeedbackAPI } from "@/api"
 import { cn } from "@/lib/utils"
 import { ApiResponse, FeedbackCategory } from "@/types/api"
-
-
+import { useNotification } from "@/context/notification"
 
 export default function FeedbackPage() {
   const { t } = useTranslation()
@@ -52,18 +51,18 @@ export default function FeedbackPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [submittedUuid, setSubmittedUuid] = useState("")
+const { notificationSuccess, notificationError } = useNotification()
 
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res: ApiResponse<FeedbackCategory[]> = await allFeedbackCategoriesAPI()
-        console.log(res)
         if (res.code === 0) {
           setCategories(res.data)
         }
       } catch (error) {
-        console.error("Failed to fetch categories", error)
+        notificationError("获取消息类别失败",  String(error))
       }
     }
     fetchCategories()
@@ -99,9 +98,9 @@ export default function FeedbackPage() {
         setSubmittedUuid(res.data.uuid)
         setDialogOpen(true)
         form.reset()
+        notificationSuccess("提交成功","已经收到您的反馈")
       } else {
-        // You might want to add a toast here
-        console.error(res.msg)
+        notificationError("提交失败", res.msg)
       }
     } catch (error) {
       console.error(error)
@@ -123,7 +122,19 @@ export default function FeedbackPage() {
   })
 
   function onQuerySubmit(values: z.infer<typeof querySchema>) {
-    router.push(`/read-msg/${values.uuid}`)
+    const checkFeedback = async () => {
+      try {
+        const res:any = await getFeedbackAPI(values.uuid);
+        if (res.code === 0) {
+          router.push(`/feedback/read-feedback?uuid=${values.uuid}`);
+        } else {
+          notificationError("查询失败", res.message);
+        }
+      } catch (error) {
+        notificationError("查询失败", String(error));
+      }
+    };
+    checkFeedback();
   }
 
   return (

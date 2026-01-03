@@ -68,9 +68,9 @@ export function useNotification() {
   const notifications = useNotificationStore((s) => s.notifications)
   const addNotification = useNotificationStore((s) => s.addNotification)
   const removeNotification = useNotificationStore((s) => s.removeNotification)
-  const success = useNotificationStore((s) => s.success)
-  const error = useNotificationStore((s) => s.error)
-  const warning = useNotificationStore((s) => s.warning)
-  const info = useNotificationStore((s) => s.info)
-  return { notifications, addNotification, removeNotification, success, error, warning, info }
+  const notificationSuccess = useNotificationStore((s) => s.success)
+  const notificationError = useNotificationStore((s) => s.error)
+  const notificationWarning = useNotificationStore((s) => s.warning)
+  const notificationInfo = useNotificationStore((s) => s.info)
+  return { notifications, addNotification, removeNotification, notificationSuccess, notificationError, notificationWarning, notificationInfo }
 }

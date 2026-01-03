@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next"
 import { useNotification } from "@/context/notification"
 import { useUser } from "@/context/user"
 import { useState } from "react"
+import { error } from "console"
 
 export interface RegisterProps {
   onLoginClick: () => void
@@ -29,7 +30,7 @@ type RegisterParams = {
 }
 export function Register({ onLoginClick, onRegisterSuccess }: RegisterProps) {
   const { t } = useTranslation()
-  const { success, error } = useNotification()
+  const { notificationSuccess, notificationError } = useNotification()
   const { register } = useUser()
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState<RegisterParams>({
@@ -44,12 +45,12 @@ export function Register({ onLoginClick, onRegisterSuccess }: RegisterProps) {
     try {
       const res = await register(form)
       if (!res.ok) {
-        error(t('auth.registerFailed'), res.message);
+        notificationError(t('auth.registerFailed'), res.message);
         return
       }
       onRegisterSuccess()
     } catch (err: any) {
-      error(t('auth.registerFailed'), err?.message ?? String(err))
+      notificationError(t('auth.registerFailed'), err?.message ?? String(err))
     } finally {
       setLoading(false)
     }

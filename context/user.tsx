@@ -7,6 +7,7 @@ type User = {
   username: string
   nickname: string
   avatar: string
+  role: string
 } | null
 
 type State = {

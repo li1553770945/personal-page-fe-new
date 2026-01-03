@@ -15,10 +15,11 @@ import axios from "axios"
 import { motion, AnimatePresence } from "motion/react"
 import { cn } from "@/lib/utils"
 import { useTranslation } from "react-i18next"
+import { error } from "console"
 
 function FileManagementContent() {
   const { user } = useUser()
-  const { success, error, info } = useNotification()
+  const { notificationSuccess, notificationError, notificationInfo } = useNotification()
   const searchParams = useSearchParams()
   const { t } = useTranslation()
 
@@ -48,7 +49,7 @@ function FileManagementContent() {
     if (key) {
       setDownloadKey(key)
       setIsFromShare(true)
-      info(t("files.notifications.shareDetected"), t("files.notifications.shareDetectedDesc"))
+      notificationInfo(t("files.notifications.shareDetected"), t("files.notifications.shareDetectedDesc"))
       
       // Scroll to download section
       const downloadSection = document.getElementById("download-section")
@@ -56,7 +57,7 @@ function FileManagementContent() {
         downloadSection.scrollIntoView({ behavior: "smooth", block: "center" })
       }
     }
-  }, [searchParams, info, t])
+  }, [searchParams, notificationInfo, t])
 
   // File Selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +70,7 @@ function FileManagementContent() {
   // Upload Logic
   const handleUpload = async () => {
     if (!uploadFile) {
-      error(t("files.notifications.noFile"), t("files.notifications.noFileDesc"))
+      notificationError(t("files.notifications.noFile"), t("files.notifications.noFileDesc"))
       return
     }
 
@@ -95,8 +96,7 @@ function FileManagementContent() {
         }
       })
 
-      // 3. Success
-      success(t("files.notifications.uploadSuccess"), t("files.notifications.uploadSuccessDesc", { key }))
+      notificationSuccess(t("files.notifications.uploadSuccess"), t("files.notifications.uploadSuccessDesc", { key }))
       const link = `${window.location.origin}/files?downloadKey=${key}`
       setShareLink(link)
       setUploadFile(null)
@@ -105,7 +105,7 @@ function FileManagementContent() {
       if (fileInputRef.current) fileInputRef.current.value = ""
 
     } catch (err: any) {
-      error(t("files.notifications.uploadFailed"), err.message || t("files.notifications.uploadFailedDesc"))
+      notificationError(t("files.notifications.uploadFailed"), err.message || t("files.notifications.uploadFailedDesc"))
     } finally {
       setUploading(false)
     }
@@ -116,17 +116,17 @@ function FileManagementContent() {
     try {
       await navigator.clipboard.writeText(shareLink)
       setCopied(true)
-      success(t("files.notifications.copySuccess"), t("files.notifications.copySuccessDesc"))
+      notificationSuccess(t("files.notifications.copySuccess"), t("files.notifications.copySuccessDesc"))
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
-      error(t("files.notifications.copyFailed"), t("files.notifications.copyFailedDesc"))
+      notificationError(t("files.notifications.copyFailed"), t("files.notifications.copyFailedDesc  "))
     }
   }
 
   // Download Logic
   const handleDownload = async () => {
     if (!downloadKey) {
-      error(t("files.notifications.missingKey"), t("files.notifications.missingKeyDesc"))
+      notificationError(t("files.notifications.missingKey"), t("files.notifications.missingKeyDesc"))
       return
     }
 
@@ -151,10 +151,10 @@ function FileManagementContent() {
       if (isFromShare) {
         setIsFromShare(false) // Reset highlight
       }
-      success(t("files.notifications.downloadStarted"), t("files.notifications.downloadStartedDesc"))
+      notificationSuccess(t("files.notifications.downloadStarted"), t("files.notifications.downloadStartedDesc"))
 
     } catch (err: any) {
-      error(t("files.notifications.downloadFailed"), err.message || t("files.notifications.downloadFailedDesc"))
+      notificationError(t("files.notifications.downloadFailed"), err.message || t("files.notifications.downloadFailedDesc"))
     } finally {
       setDownloading(false)
     }
@@ -163,7 +163,7 @@ function FileManagementContent() {
   // Delete Logic - Check File Info
   const handleDeleteCheck = async () => {
     if (!deleteKey) {
-      error(t("files.notifications.missingKey"), t("files.notifications.missingKeyDesc"))
+      notificationError(t("files.notifications.missingKey"), t("files.notifications.missingKeyDesc"))
       return
     }
 
@@ -177,7 +177,7 @@ function FileManagementContent() {
       setDeleteDialogOpen(true)
 
     } catch (err: any) {
-      error(t("files.notifications.infoError"), err.message || t("files.notifications.infoErrorDesc"))
+      notificationError(t("files.notifications.infoError"), err.message || t("files.notifications.infoErrorDesc"))
     }
   }
 
@@ -192,7 +192,7 @@ function FileManagementContent() {
         throw new Error(res.message)
       }
 
-      success(t("files.notifications.deleteSuccess"), t("files.notifications.deleteSuccessDesc", { name: fileToDelete.name }))
+      notificationSuccess(t("files.notifications.deleteSuccess"), t("files.notifications.deleteSuccessDesc", { name: fileToDelete.name }))
       setDeleteDialogOpen(false)
       setFileToDelete(null)
       setDeleteKey("")

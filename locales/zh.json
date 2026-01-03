@@ -272,6 +272,33 @@
     "aiThinking": "AI正在思考...",
     "errorMessage": "抱歉，出错了，请稍后再试。",
     "inputPlaceholder": "输入消息...",
-    "sendMessage": "发送消息"
+    "sendMessage": "发送消息",
+    "assistantTitle": "AI 助手",
+    "basedOnLLMTech": "基于 LLM 技术",
+    "clearChat": "清空对话",
+    "welcomeQuestion": "有什么可以帮你的吗？",
+    "welcomeDesc": "你可以问我关于 PeaceSheep 的任何问题",
+    "aiDisclaimer": "AI 内容由大模型生成，请仔细甄别"
+  },
+  "live2d": {
+    "menu": {
+      "sleep": "睡觉（隐藏）",
+      "chat": "聊天"
+    },
+    "messages": {
+      "sleep": "我要去睡觉啦，刷新页面后点击右下角图标可以唤醒我~",
+      "welcome": {
+        "morning": "早上好，点击我左侧聊天按钮可以和我聊天开启新的一天吧~",
+        "noon": "现在是午餐时间！点击我左侧聊天按钮可以和我聊聊天哦～",
+        "afternoon": "下午好，点击我左侧聊天按钮可以和我对话哦～",
+        "dusk": "傍晚了，工作一天幸苦啦~点击我左侧聊天按钮和我聊聊天吧~",
+        "night": "晚上好，点击我左侧聊天按钮可以和我对话哦～",
+        "lateNight": "晚上好，点击我左侧聊天按钮可以和我对话哦～ 已经这么晚了呀，早点休息吧，晚安~",
+        "weeHours": "点击我左侧聊天按钮可以和我对话哦～这么晚还不睡吗？当心熬夜秃头哦！"
+      },
+      "idle": {
+        "tip": "点击我左侧的聊天按钮可以和我对话哦～"
+      }
+    }
   }
 }

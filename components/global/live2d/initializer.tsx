@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLive2D } from '@/context/live2d'; // 引入刚才创建的 store
-
+import "@/public/live2d/chat.js"
 declare global {
   interface Window {
     oml2d: any;
@@ -12,15 +13,21 @@ declare global {
 export default function Live2d() {
   // 从 Store 中获取设置方法
   const { setInstance, setOpenChatDialog, openChatDialog } = useLive2D();
+  const { t } = useTranslation();
 
-  // 创建 ref 来存储最新的 openChatDialog 值
+  // 创建 ref 来存储最新的 openChatDialog 值和 t 函数
   const openChatDialogRef = useRef(openChatDialog);
+  const tRef = useRef(t);
   const initializedRef = useRef(false);
 
-  // 当 openChatDialog 变化时更新 ref
+  // 当 openChatDialog 或 t 变化时更新 ref
   useEffect(() => {
     openChatDialogRef.current = openChatDialog;
   }, [openChatDialog]);
+
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
 
   useEffect(() => {
     if (initializedRef.current) return;
@@ -29,8 +36,7 @@ export default function Live2d() {
       const { loadOml2d } = await import('oh-my-live2d');
       // 创建状态变量来跟踪消息类型，true 表示显示 wordTheDay，false 表示显示自定义 message
       let showWordTheDay = true;
-      let instance: any = null;
-      instance = await loadOml2d({
+      const instance = await loadOml2d({
         dockedPosition: 'right',
         menus: {
           disable: false,
@@ -38,20 +44,27 @@ export default function Live2d() {
             {
               id: 'sleep',
               icon: 'icon-rest',
-              title: '睡觉（隐藏）',
+              title: t('live2d.menu.sleep'),
               onClick: () => {
-                instance?.stageSlideOut();
+                instance.tipsMessage(tRef.current('live2d.messages.sleep'),3000,3)
+                setTimeout(() => {
+                  instance.stageSlideOut();
+                }, 3000);
               }
             },
             {
               id: 'chat',
-              icon: 'icon-about',
-              title: '聊天',
+              icon: 'icon-chat',
+              title: t('live2d.menu.chat'),
               onClick: () => {
                 setOpenChatDialog(true);
               }
             }
-          ]
+          ],
+          itemStyle: {
+            width: 40,
+            height: 40,
+          }
         },
         models: [
           {
@@ -77,13 +90,13 @@ export default function Live2d() {
         tips: {
           welcomeTips: {
             message: {
-              morning: '早上好，点击我左侧聊天按钮可以和我聊天开启新的一天吧~',
-              noon: '现在是午餐时间！点击我左侧聊天按钮可以和我聊聊天哦～',
-              afternoon: '下午好，点击我左侧聊天按钮可以和我对话哦～',
-              dusk: "傍晚了，工作一天幸苦啦~点击我左侧聊天按钮和我聊聊天吧~",
-              night: '晚上好，点击我左侧聊天按钮可以和我对话哦～',
-              lateNight: '点击我左侧聊天按钮可以和我对话哦～ 已经这么晚了呀，早点休息吧，晚安~',
-              weeHours: '点击我左侧聊天按钮可以和我对话哦～这么晚还不睡吗？当心熬夜秃头哦！',
+              morning: t('live2d.messages.welcome.morning'),
+              noon: t('live2d.messages.welcome.noon'),
+              afternoon: t('live2d.messages.welcome.afternoon'),
+              dusk: t('live2d.messages.welcome.dusk'),
+              night: t('live2d.messages.welcome.night'),
+              lateNight: t('live2d.messages.welcome.lateNight'),
+              weeHours: t('live2d.messages.welcome.weeHours'),
             }
           },
           style: {
@@ -101,7 +114,7 @@ export default function Live2d() {
           idleTips: {
             // 自定义提示语列表
             message: [
-              '点击右下角的聊天按钮可以和我对话哦～',
+              t('live2d.messages.idle.tip'),
             ],
             wordTheDay(wordTheDayData) {
               // 如果聊天对话框已经打开，直接返回 wordTheDay 内容
@@ -114,7 +127,7 @@ export default function Live2d() {
               // 切换状态，为下一次调用做准备
               showWordTheDay = !showWordTheDay;
               // 根据当前状态返回不同的消息
-              return currentShowWordTheDay ? `${wordTheDayData.hitokoto}` : '点击我左侧的聊天按钮可以和我对话哦～';
+              return currentShowWordTheDay ? `${wordTheDayData.hitokoto}` : tRef.current('live2d.messages.idle.tip');
             },
             interval: 10000, // 缩短间隔时间到5秒
           }

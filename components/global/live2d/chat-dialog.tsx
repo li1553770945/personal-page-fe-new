@@ -121,7 +121,7 @@ export default function ChatDialog() {
                    [&>button]:hidden" // 隐藏 Shadcn 默认的关闭按钮
       >
         <DialogDescription className="hidden">
-          AI Assistant Chat Interface
+          {t('chatDialog.title')}
         </DialogDescription>
         <ShineBorder
           className="flex flex-col h-full w-full border bg-background/95 backdrop-blur-md overflow-hidden relative"
@@ -142,12 +142,12 @@ export default function ChatDialog() {
                   <Sparkles className="w-4 h-4 text-primary" />
                 </div>
                 <div>
-                  <DialogTitle className="text-base font-medium">AI 助手</DialogTitle>
-                  <p className="text-[10px] text-muted-foreground font-normal">Based on LLM Tech</p>
+                  <DialogTitle className="text-base font-medium">{t('chatDialog.assistantTitle')}</DialogTitle>
+                  <p className="text-[10px] text-muted-foreground font-normal">{t('chatDialog.basedOnLLMTech')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <button onClick={handleClear} className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground" title="清空对话">
+                <button onClick={handleClear} className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground" title={t('chatDialog.clearChat')}>
                   <Eraser className="w-4 h-4" />
                 </button>
                 <DialogClose className="p-2 hover:bg-red-50 hover:text-red-500 rounded-full transition-colors text-muted-foreground">
@@ -164,8 +164,8 @@ export default function ChatDialog() {
                     <Sparkles className="h-8 w-8 text-primary/40" />
                   </div>
                   <div className="text-center space-y-1">
-                    <p className="font-medium text-sm">有什么可以帮你的吗？</p>
-                    <p className="text-xs opacity-70">你可以问我关于 PeaceSheep 的任何问题</p>
+                    <p className="font-medium text-sm">{t('chatDialog.welcomeQuestion')}</p>
+                    <p className="text-xs opacity-70">{t('chatDialog.welcomeDesc')}</p>
                   </div>
                 </div>
               ) : (
@@ -241,7 +241,7 @@ export default function ChatDialog() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="输入消息..."
+                  placeholder={t('chatDialog.inputPlaceholder')}
                   disabled={isLoading}
                   className="flex-1 min-h-[44px] max-h-[120px] py-3 pl-4 pr-10 bg-transparent resize-none text-sm focus:outline-none scrollbar-hide"
                   rows={1}
@@ -265,8 +265,8 @@ export default function ChatDialog() {
                 </button>
               </div>
               <div className="text-[10px] text-center text-muted-foreground/40 mt-2">
-                AI 内容由大模型生成，请仔细甄别
-              </div>
+                  {t('chatDialog.aiDisclaimer')}
+                </div>
             </div>
 
           </div>

@@ -12,23 +12,25 @@ declare global {
 export default function Live2d() {
   // 从 Store 中获取设置方法
   const { setInstance, setOpenChatDialog, openChatDialog } = useLive2D();
-  
+
   // 创建 ref 来存储最新的 openChatDialog 值
   const openChatDialogRef = useRef(openChatDialog);
-  
+  const initializedRef = useRef(false);
+
   // 当 openChatDialog 变化时更新 ref
   useEffect(() => {
     openChatDialogRef.current = openChatDialog;
   }, [openChatDialog]);
 
   useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
     const initLive2D = async () => {
       const { loadOml2d } = await import('oh-my-live2d');
-
       // 创建状态变量来跟踪消息类型，true 表示显示 wordTheDay，false 表示显示自定义 message
       let showWordTheDay = true;
-
-      const instance = await loadOml2d({
+      let instance: any = null;
+      instance = await loadOml2d({
         dockedPosition: 'right',
         menus: {
           disable: false,
@@ -103,8 +105,8 @@ export default function Live2d() {
             ],
             wordTheDay(wordTheDayData) {
               // 如果聊天对话框已经打开，直接返回 wordTheDay 内容
-              if (openChatDialogRef.current) { 
-                return `${wordTheDayData.hitokoto}`; 
+              if (openChatDialogRef.current) {
+                return `${wordTheDayData.hitokoto}`;
               }
 
               // 保存当前状态

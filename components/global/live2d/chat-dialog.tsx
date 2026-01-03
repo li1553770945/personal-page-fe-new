@@ -5,7 +5,7 @@ import { aiChatAPI, AIChatRequest } from '@/api'
 import ReactMarkdown from 'react-markdown'
 import { useTranslation } from 'react-i18next'
 import { useLive2D } from '@/context/live2d'
-import { getWelcomeMessage } from './initializer'
+import { getMotionStrategy } from './utils'
 import { ShineBorder } from "@/components/ui/shine-border"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -30,7 +30,7 @@ export default function ChatDialog() {
   const [isLoading, setIsLoading] = useState(false)
   const [conversationId, setConversationId] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const { openChatDialog, setOpenChatDialog, slideIn,say } = useLive2D()
+  const { openChatDialog, setOpenChatDialog, slideIn, playMotion } = useLive2D()
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -74,7 +74,7 @@ export default function ChatDialog() {
 
     let accumulatedText = '';
     const request: AIChatRequest = { message: userMessage.text };
-    if (conversationId) request.conversationId = conversationId;
+    if (conversationId!="") request.conversationId = conversationId;
 
     await aiChatAPI(request, {
       onMessage: (chunk) => {
@@ -97,6 +97,12 @@ export default function ChatDialog() {
               return newMessages;
             });
             break;
+          case 'motion':
+            handleMotion(chunk.data)
+            break;
+          default:
+            console.warn(`未知的事件类型: ${chunk.event_type}`);
+            break;
         }
       },
       onFinished: () => setIsLoading(false),
@@ -112,6 +118,10 @@ export default function ChatDialog() {
   const handleSparklesClick = () => {
     setOpenChatDialog(true)
     slideIn()
+  }
+  const handleMotion = (motion: string) => {
+    const strategy = getMotionStrategy(motion)
+    playMotion(strategy.group, strategy.index)
   }
   return (
     <>

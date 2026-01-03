@@ -142,7 +142,12 @@
     "loginFailed": "登录失败，请检查用户名或密码",
     "logout": "退出登录",
     "logoutSuccess": "退出成功",
-    "saveChanges": "保存更改"
+    "saveChanges": "保存更改",
+    "loginSuccess": "登录成功",
+    "welcomeBack": "欢迎回来: {{nickname}}",
+    "registerSuccess": "注册成功",
+    "registerSuccessDesc": "您可以使用新注册的账号登录",
+    "getUserInfoSuccess": "获取用户信息成功"
   },
   "userInfo": {
     "title": "编辑资料",

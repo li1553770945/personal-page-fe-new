@@ -134,7 +134,12 @@
     "loginFailed": "Login failed, please check your username or password",
     "logout": "Logout",
     "logoutSuccess": "Logged out successfully",
-    "saveChanges": "Save Changes"
+    "saveChanges": "Save Changes",
+    "loginSuccess": "Login Successful",
+    "welcomeBack": "Welcome back: {{nickname}}",
+    "registerSuccess": "Registration Successful",
+    "registerSuccessDesc": "You can now log in with your new account",
+    "getUserInfoSuccess": "User information retrieved successfully"
   },
   "userInfo": {
     "title": "Edit Profile",

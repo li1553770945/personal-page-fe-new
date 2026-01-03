@@ -10,8 +10,10 @@ import { UserInfo } from "./user-info"
 import { User } from "lucide-react"
 import { useUser } from "@/context/user"
 import { useNotification } from "@/context/notification"
+import { useTranslation } from "react-i18next"
 export function UserLogo() {
     const { user, refresh } = useUser()
+    const { t } = useTranslation()
 
     const isLoggedIn = user != null;
     const [open, setOpen] = useState(false)
@@ -29,17 +31,17 @@ export function UserLogo() {
 
 
     const handleRegisterSuccess = () => {
-        success('注册成功', '您可以使用新注册的账号登录')
+        success(t('auth.registerSuccess'), t('auth.registerSuccessDesc'))
         setView('login')
     }
     const handleLoginSuccess = (data?: any) => {
-        success('登录成功', `欢迎回来: ${data?.nickname ?? user?.nickname}`)
+        success(t('auth.loginSuccess'), t('auth.welcomeBack', { nickname: data?.nickname ?? user?.nickname }))
         handleOpenChange(false)
     }
     useEffect(() => {
         refresh().then((res) => {
             if (res.ok) {
-                success("获取用户信息成功", `欢迎回来: ${res.data?.nickname}`)
+                success(t('auth.getUserInfoSuccess'), t('auth.welcomeBack', { nickname: res.data?.nickname }))
             } else {
                 handleOpenChange(false)
             }
@@ -55,7 +57,7 @@ export function UserLogo() {
             ) : (
                 <Button onClick={() => handleOpenChange(true)} variant="ghost" size="icon" className="rounded-full">
                     <User className="h-[1.2rem] w-[1.2rem]" />
-                    <span className="sr-only">Login</span>
+                    <span className="sr-only">{t('auth.login')}</span>
                 </Button>
             )}
             {open && createPortal(

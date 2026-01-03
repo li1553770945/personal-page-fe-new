@@ -1,6 +1,5 @@
 import { Oml2dProperties, Oml2dMethods, Oml2dEvents } from "oh-my-live2d"
 import { create } from "zustand"
-import { persist, createJSONStorage } from "zustand/middleware" // 1. 引入 persist
 type ExtendedInstance = Oml2dProperties & Oml2dMethods & Oml2dEvents & {
     tips: {
         notification: (text: string, duration?: number, priority?: number) => void
@@ -47,96 +46,107 @@ type Live2DActions = {
 
 
 export const useLive2D = create<Live2DState & Live2DActions>()(
-    persist(
-        (set, get) => ({
-            instance: null, // 初始为空
-            isReady: false,
-            openChatDialog: false,
-            isStageVisible: true, // 默认 true，如果有缓存会覆盖这个值
+    (set, get) => ({
+        instance: null, // 初始为空
+        isReady: false,
+        openChatDialog: false,
+        isStageVisible: true, // 默认 true，如果有缓存会覆盖这个值
 
-            setInstance: (instance) => {
-                set({ instance: instance as Live2DInstance, isReady: true })
-            },
+        setInstance: (instance) => {
+            set({ instance: instance as Live2DInstance, isReady: true })
+            instance.onStageSlideIn(() => {
+                set({ isStageVisible: true });
+            });
+            instance.onStageSlideOut(() => {
+                set({ isStageVisible: false });
+            });
+        },
 
-            setOpenChatDialog: (chatDialogShow) => set({ openChatDialog: chatDialogShow }),
+        setOpenChatDialog: (chatDialogShow) => set({ openChatDialog: chatDialogShow }),
 
-            say: (text, duration = 3000, priority = 3) => {
-                const { instance } = get()
-                if (instance && instance.tips) {
-                    instance.tips.notification(text, duration, priority)
+        say: (text, duration = 3000, priority = 3) => {
+            const { instance } = get()
+            if (instance && instance.tips) {
+                instance.tips.notification(text, duration, priority)
+            }
+        },
+
+        playMotion: (groupName, index = 0) => {
+            const { instance } = get()
+            // ✅ models 也不报错了，且知道是一个数组
+            const model = instance?.models?.model
+            const internal = model?.internalModel
+
+            if (internal?.motionManager) {
+                internal.motionManager.startMotion(groupName, index, 3)
+                console.log(`Live2D 播放动作: ${groupName}`)
+            } else {
+                console.warn("Live2D 动作管理器未就绪")
+            }
+        },
+
+        setParam: (paramId, value, duration = 0) => {
+            const { instance } = get()
+            const core = instance?.models?.model?.internalModel?.coreModel
+
+            if (core) {
+                core.setParameterValueById(paramId, value)
+                const idIndex = core._parameterIds.indexOf(paramId)
+
+                if (idIndex === -1) {
+                    console.warn(`⚠️ 当前模型不存在参数: ${paramId}，已跳过。`)
+                    return // 直接退出，防止报错
                 }
-            },
-
-            playMotion: (groupName, index = 0) => {
-                const { instance } = get()
-                // ✅ models 也不报错了，且知道是一个数组
-                const model = instance?.models?.model
-                const internal = model?.internalModel
-
-                if (internal?.motionManager) {
-                    internal.motionManager.startMotion(groupName, index, 3)
-                    console.log(`Live2D 播放动作: ${groupName}`)
-                } else {
-                    console.warn("Live2D 动作管理器未就绪")
-                }
-            },
-
-            setParam: (paramId, value, duration = 0) => {
-                const { instance } = get()
-                const core = instance?.models?.model?.internalModel?.coreModel
-
-                if (core) {
-                    core.setParameterValueById(paramId, value)
-                    const idIndex = core._parameterIds.indexOf(paramId)
-
-                    if (idIndex === -1) {
-                        console.warn(`⚠️ 当前模型不存在参数: ${paramId}，已跳过。`)
-                        return // 直接退出，防止报错
-                    }
-                    if (duration > 0) {
-                        setTimeout(() => {
-                            core.setParameterValueById(paramId, 0)
-                        }, duration)
-                    }
-                }
-            },
-            setExpression: (expressionId) => {
-                const { instance } = get()
-                const model = instance?.models?.model
-                if (!model) {
-                    console.warn("Live2D 模型未就绪")
-                    return
-                }
-                
-                // 设置表情
-                model.expression(expressionId)
-                console.log(`Live2D 设置表情: ${expressionId}`)
-
-            },
-
-            slideIn: () => {
-                const { instance, isStageVisible, openChatDialog } = get()
-                // 只有当状态为 hidden 时才执行
-                if (!instance || isStageVisible) return
-                instance.stageSlideIn()
-                set({ isStageVisible: true })
-            },
-
-            slideOut: () => {
-                const { instance, isStageVisible } = get()
-                // 只有当状态为 visible 时才执行
-                if (instance && isStageVisible) {
-                    instance.stageSlideOut()
-                    set({ isStageVisible: false })
+                if (duration > 0) {
+                    setTimeout(() => {
+                        core.setParameterValueById(paramId, 0)
+                    }, duration)
                 }
             }
-        }),
-        {
-            name: 'live2d-storage', // localStorage 中的 key 名称
-            storage: createJSONStorage(() => localStorage), // 指定使用 localStorage
-            partialize: (state) => ({
-                isStageVisible: state.isStageVisible
-            }),
+        },
+        setExpression: (expressionId) => {
+            const { instance } = get()
+            const model = instance?.models?.model
+            const internal = model?.internalModel
+
+            if (!model || !internal?.motionManager) {
+                console.warn("Live2D 模型未就绪")
+                return
+            }
+
+            // 设置表情
+            model.expression(expressionId)
+            console.log(`Live2D 设置表情: ${expressionId}`)
+
+        },
+
+        slideIn: () => {
+            const { instance, isStageVisible } = get();
+            // 核心逻辑: 如果已经在显示了 (isStageVisible为true)，直接中断，不执行任何操作
+            if (!instance || isStageVisible) {
+                console.log("Live2D 已在舞台，忽略 slideIn");
+                return;
+            }
+
+            console.log("执行 slideIn");
+            instance.statusBarClose();
+            instance.stageSlideIn();
+            // 状态更新交给上面的 onStageSlideIn 回调，或者在这里立即更新也可以
+
+            set({ isStageVisible: true });
+        },
+
+        slideOut: () => {
+            const { instance, isStageVisible } = get();
+            // 核心逻辑: 如果已经隐藏了 (isStageVisible为false)，直接中断
+            if (!instance || !isStageVisible) {
+                console.log("Live2D 已隐藏，忽略 slideOut");
+                return;
+            }
+
+            console.log("执行 slideOut");
+            instance.stageSlideOut();
+            set({ isStageVisible: false });
         }
-    )
+    })
 )

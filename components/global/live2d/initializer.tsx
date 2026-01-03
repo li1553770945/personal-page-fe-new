@@ -30,13 +30,22 @@ export default function Live2d() {
   }, [t]);
 
   useEffect(() => {
-    if (initializedRef.current) return;
+    if (window.oml2d || initializedRef.current) {
+      console.log("Live2D 实例已存在，跳过初始化");
+      return;
+    }
     initializedRef.current = true;
 
     const initLive2D = async () => {
       const { loadOml2d } = await import('oh-my-live2d');
       let showWordTheDay = true;
+      const status = localStorage.getItem('OML2D_STATUS') ;
+      console.log('👀 检测到本地 OML2D_STATUS:', status);
 
+      // 这里的逻辑是：库会自动根据 OML2D_STATUS 决定显不显示
+      // 我们只需要把这个状态同步给 React 即可
+      const isActuallyVisible = status == null || status === 'active';
+      useLive2D.setState({ isStageVisible: isActuallyVisible });
       const instance = await loadOml2d({
         dockedPosition: 'right',
         menus: {
@@ -51,7 +60,6 @@ export default function Live2d() {
                 instance.tipsMessage(tRef.current('live2d.messages.sleep'), 3000, 5);
                 setTimeout(() => {
                   // 使用 Zustand 的 getState() 获取最新的 action
-                  // 这样会同时更新 React 状态 + localStorage + 执行动画
                   useLive2D.getState().slideOut();
                 }, 3000);
               }
@@ -106,11 +114,11 @@ export default function Live2d() {
         }
       });
       instance.onStageSlideIn(() => {
-        instance.tipsMessage(getWelcomeMessage(tRef.current, !openChatDialogRef.current), 3000, 10);
+        instance.tipsMessage(getWelcomeMessage(tRef.current, !openChatDialogRef.current), 3000, 3);
       })
       setInstance(instance as Live2DInstance);
       window.oml2d = instance;
-      console.log('✅ Live2D 初始化完成');
+      console.log(`✅ Live2D 初始化完成，当前状态: ${isActuallyVisible ? '显示' : '隐藏'}`);
     };
 
 

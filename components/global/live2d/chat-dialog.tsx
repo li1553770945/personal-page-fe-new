@@ -1,10 +1,20 @@
 "use client"
 import React, { useState, useRef, useEffect } from 'react'
-import * as Dialog from '@radix-ui/react-dialog'
-import { X, Send, MessageSquare } from 'lucide-react'
+import {  Send, MessageSquare } from 'lucide-react'
 import { aiChatAPI, AIChatRequest } from '@/api'
 import ReactMarkdown from 'react-markdown'
 import { useTranslation } from 'react-i18next'
+import { useLive2D } from '@/context/live2d'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface Message {
   id: string
@@ -21,6 +31,7 @@ export default function ChatDialog() {
   const [isLoading, setIsLoading] = useState(false) // 用于控制输入框和按钮的禁用状态
   const [conversationId, setConversationId] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const { say } = useLive2D()
 
   useEffect(() => {
     // 监听自定义事件打开对话框
@@ -120,83 +131,88 @@ export default function ChatDialog() {
   };
 
   return (
-    <div className="relative">
-      {/* 聊天按钮 */}
-      <button
-        onClick={() => setOpen(true)}
-        className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
-        aria-label={t('chatDialog.openChat')}
-      >
-        <MessageSquare size={24} />
-      </button>
-
-      {/* 聊天对话框 */}
-      <Dialog.Root open={open} onOpenChange={setOpen}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
-          <Dialog.Content className="fixed bottom-8 right-8 w-full max-w-md max-h-[80vh] bg-white dark:bg-gray-900 rounded-lg shadow-2xl flex flex-col z-[10000]">
-            {/* 对话框头部 */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-              <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-white">
-              {t('chatDialog.title')}
-            </Dialog.Title>
-              <Dialog.Close asChild>
-                <button
-                  className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-                  aria-label={t('chatDialog.closeDialog')}
-                >
-                  <X size={20} />
-                </button>
-              </Dialog.Close>
-            </div>
-
-            {/* 消息列表 */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {messages.map((message) => (
+    <div className="fixed bottom-20 right-20 z-50 w-full max-w-md">
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="rounded-xl shadow-2xl border border-border bg-card text-card-foreground max-h-[70vh] flex flex-col overflow-hidden">
+          <DialogHeader className="border-b border-border p-4">
+            <DialogTitle className="text-xl font-semibold flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-primary" />
+              AI 助手
+            </DialogTitle>
+            <DialogClose className="rounded-full hover:bg-muted transition-colors">
+            </DialogClose>
+          </DialogHeader>
+          
+          {/* 聊天消息区域 */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                <MessageSquare className="h-12 w-12 mb-2 opacity-20" />
+                <p>开始与 AI 助手聊天吧</p>
+              </div>
+            ) : (
+              messages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[80%] p-3 rounded-lg ${message.isUser
-                      ? 'bg-blue-500 text-white rounded-br-none'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-none'
-                      }`}
+                    className={`max-w-[80%] rounded-lg p-3 ${message.isUser 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground'}`}
                   >
-                    <div className="prose prose-sm dark:prose-invert max-w-none">
-                      <ReactMarkdown>{message.text}</ReactMarkdown>
+                    <div className="prose prose-sm max-w-none">
+                      <ReactMarkdown
+                        components={{
+                          p: ({ ...props }) => <p {...props} className="mb-0" />,
+                          code: ({ ...props }) => (
+                            <code {...props} className="bg-muted-foreground/20 px-1 py-0.5 rounded text-sm" />
+                          ),
+                          pre: ({ children, ...props }) => (
+                            <pre {...props} className="bg-muted-foreground/10 p-2 rounded overflow-x-auto">
+                              {children}
+                            </pre>
+                          ),
+                          blockquote: ({ ...props }) => (
+                            <blockquote {...props} className="border-l-2 border-primary pl-3 italic my-0" />
+                          ),
+                          ul: ({ ...props }) => <ul {...props} className="my-0 pl-5" />,
+                          ol: ({ ...props }) => <ol {...props} className="my-0 pl-5" />,
+                          li: ({ ...props }) => <li {...props} className="mb-1" />,
+                        }}
+                      >
+                        {message.text}
+                      </ReactMarkdown>
                     </div>
                   </div>
                 </div>
-              ))}
-              <div ref={messagesEndRef} />
+              ))
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+          
+          {/* 输入区域 */}
+          <div className="border-t border-border p-4">
+            <div className="flex items-end gap-2">
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="输入消息..."
+                disabled={isLoading}
+                className="flex-1 min-h-[60px] max-h-[120px] resize-none rounded-lg border border-input bg-background p-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              <button
+                onClick={handleSend}
+                disabled={isLoading || !input.trim()}
+                className="rounded-lg bg-primary text-primary-foreground p-3 hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Send className="h-4 w-4" />
+              </button>
             </div>
-
-            {/* 输入区域 */}
-            <div className="p-4 border-t border-gray-200 dark:border-gray-800">
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder={t('chatDialog.inputPlaceholder')}
-                  className="flex-1 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-                  disabled={isLoading}
-                />
-                <button
-                  onClick={handleSend}
-                  disabled={isLoading || !input.trim()}
-                  className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  aria-label={t('chatDialog.sendMessage')}
-                >
-                  <Send size={20} />
-                </button>
-              </div>
-            </div>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

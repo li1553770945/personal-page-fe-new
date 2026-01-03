@@ -17,6 +17,9 @@ export default function Live2d() {
     const initLive2D = async () => {
       const { loadOml2d } = await import('oh-my-live2d');
 
+      // 创建状态变量来跟踪消息类型，true 表示显示 wordTheDay，false 表示显示自定义 message
+      let showWordTheDay = true;
+      
       const instance = await loadOml2d({
         dockedPosition: 'right',
         menus: {
@@ -52,9 +55,20 @@ export default function Live2d() {
             }
           }
         ],
-
+        
         // 4. 【关键】自定义气泡样式
         tips: {
+          welcomeTips: {
+            message: {
+              morning: '早上好，点击我左侧聊天按钮可以和我聊天开启新的一天吧~',
+              noon: '现在是午餐时间！点击我左侧聊天按钮可以和我聊聊天哦～',
+              afternoon: '下午好，点击我左侧聊天按钮可以和我对话哦～',
+              dusk: "傍晚了，工作一天幸苦啦~点击我左侧聊天按钮和我聊聊天吧~",
+              night: '晚上好，点击我左侧聊天按钮可以和我对话哦～',
+              lateNight: '点击我左侧聊天按钮可以和我对话哦～ 已经这么晚了呀，早点休息吧，晚安~',
+              weeHours: '点击我左侧聊天按钮可以和我对话哦～这么晚还不睡吗？当心熬夜秃头哦！',
+            }
+          },
           style: {
             position: 'absolute',
             top: '100px',  // 越大越往下
@@ -66,12 +80,21 @@ export default function Live2d() {
             textAlign: 'center',
             zIndex: 9999,   // 确保气泡在最上层，不会被模型遮挡
           },
-          // 空闲时显示的文案，wordTheDay表示每日一言
+          // 空闲时显示的文案，增加主动说话内容和缩短间隔
           idleTips: {
+            // 自定义提示语列表
+            message: [
+              '点击右下角的聊天按钮可以和我对话哦～',
+            ],
             wordTheDay(wordTheDayData) {
-              return `${wordTheDayData.hitokoto}`;
+              // 保存当前状态
+              const currentShowWordTheDay = showWordTheDay;
+              // 切换状态，为下一次调用做准备
+              showWordTheDay = !showWordTheDay;
+              // 根据当前状态返回不同的消息
+              return currentShowWordTheDay ? `${wordTheDayData.hitokoto}` : '点击我左侧的聊天按钮可以和我对话哦～';
             },
-            interval: 10000,
+            interval: 10000, // 缩短间隔时间到5秒
           }
         }
       });

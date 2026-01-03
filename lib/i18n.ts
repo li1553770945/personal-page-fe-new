@@ -13,14 +13,8 @@ const resources = {
   }
 };
 
-// 从本地存储获取语言设置
-const getSavedLanguage = () => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('i18nextLng') || 'zh';
-  }
-  return 'zh';
-};
-
+// 服务器端和客户端初始渲染使用相同的默认语言
+// 客户端会在水合后通过useEffect应用本地存储的语言设置
 i18n
   // pass the i18n instance to react-i18next.
   .use(initReactI18next)
@@ -28,7 +22,8 @@ i18n
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
     resources,
-    lng: getSavedLanguage(), // 从本地存储读取语言设置
+    lng: 'zh', // 初始渲染使用默认语言
+    fallbackLng: 'zh',
     // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
     // if you're using a language detector, do not define the lng option
 

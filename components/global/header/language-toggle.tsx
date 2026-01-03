@@ -15,8 +15,13 @@ export function LanguageToggle({ className }: LanguageToggleProps) {
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
+      // 水合完成后，应用本地存储的语言设置
+    const savedLanguage = localStorage.getItem('i18nextLng')
+    if (savedLanguage && savedLanguage !== i18n.language) {
+      i18n.changeLanguage(savedLanguage)
+    }
     setMounted(true)
-  }, [])
+  }, [i18n])
 
   // mounted之前禁止切换
   if (!mounted) {

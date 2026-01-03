@@ -38,11 +38,13 @@ type ExtendedInstance = BaseInstance & {
 type Live2DState = {
     instance: ExtendedInstance | null
     isReady: boolean
+    openChatDialog: boolean
 }
 
 // 4. 定义 Actions
 type Live2DActions = {
     setInstance: (instance: any) => void // 这里入口可以用 any 方便传入，内部存的时候会兼容
+    setOpenChatDialog: (chatDialogShow: boolean) => void
     say: (text: string, duration?: number, priority?: number) => void
     playMotion: (groupName: string, index?: number) => void
     setParam: (paramId: string, value: number, duration?: number) => void
@@ -51,9 +53,11 @@ type Live2DActions = {
 const useLive2DStore = create<Live2DState & Live2DActions>((set, get) => ({
     instance: null,
     isReady: false,
+    openChatDialog: false,
 
     // 这里接收的时候用 any 也没关系，因为我们已经知道它的结构了
     setInstance: (instance) => set({ instance: instance as ExtendedInstance, isReady: true }),
+    setOpenChatDialog: (chatDialogShow) => set({ openChatDialog: chatDialogShow }),
 
     say: (text, duration = 3000, priority = 3) => {
         const { instance } = get()
@@ -82,7 +86,6 @@ const useLive2DStore = create<Live2DState & Live2DActions>((set, get) => ({
         const core = instance?.models?.model?.internalModel?.coreModel
 
         if (core) {
-            // ✅ coreModel 也有了提示
             core.setParameterValueById(paramId, value)
             const idIndex = core._parameterIds.indexOf(paramId)
 

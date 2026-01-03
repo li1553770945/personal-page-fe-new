@@ -25,20 +25,13 @@ interface Message {
 
 export default function ChatDialog() {
   const { t } = useTranslation()
-  const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false) // 用于控制输入框和按钮的禁用状态
   const [conversationId, setConversationId] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const { say } = useLive2D()
+  const { say, setOpenChatDialog, openChatDialog } = useLive2D()
 
-  useEffect(() => {
-    // 监听自定义事件打开对话框
-    const handleOpenChatDialog = () => setOpen(true);
-    window.addEventListener('openChatDialog', handleOpenChatDialog);
-    return () => window.removeEventListener('openChatDialog', handleOpenChatDialog);
-  }, []);
   // 滚动到底部
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -132,7 +125,7 @@ export default function ChatDialog() {
 
   return (
     <div className="fixed bottom-20 right-20 z-50 w-full max-w-md">
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={openChatDialog} onOpenChange={setOpenChatDialog}>
         <DialogContent className="rounded-xl shadow-2xl border border-border bg-card text-card-foreground max-h-[70vh] flex flex-col overflow-hidden">
           <DialogHeader className="border-b border-border p-4">
             <DialogTitle className="text-xl font-semibold flex items-center gap-2">

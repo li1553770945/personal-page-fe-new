@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLive2D } from '@/context/live2d'; // 引入刚才创建的 store
 
 declare global {
@@ -11,7 +11,15 @@ declare global {
 
 export default function Live2d() {
   // 从 Store 中获取设置方法
-  const { setInstance } = useLive2D();
+  const { setInstance, setOpenChatDialog, openChatDialog } = useLive2D();
+  
+  // 创建 ref 来存储最新的 openChatDialog 值
+  const openChatDialogRef = useRef(openChatDialog);
+  
+  // 当 openChatDialog 变化时更新 ref
+  useEffect(() => {
+    openChatDialogRef.current = openChatDialog;
+  }, [openChatDialog]);
 
   useEffect(() => {
     const initLive2D = async () => {
@@ -19,19 +27,26 @@ export default function Live2d() {
 
       // 创建状态变量来跟踪消息类型，true 表示显示 wordTheDay，false 表示显示自定义 message
       let showWordTheDay = true;
-      
+
       const instance = await loadOml2d({
         dockedPosition: 'right',
         menus: {
           disable: false,
           items: [
             {
+              id: 'sleep',
+              icon: 'icon-rest',
+              title: '睡觉（隐藏）',
+              onClick: () => {
+                instance?.stageSlideOut();
+              }
+            },
+            {
               id: 'chat',
               icon: 'icon-about',
               title: '聊天',
               onClick: () => {
-                // 发送自定义事件打开聊天对话框
-                window.dispatchEvent(new CustomEvent('openChatDialog'));
+                setOpenChatDialog(true);
               }
             }
           ]
@@ -55,7 +70,7 @@ export default function Live2d() {
             }
           }
         ],
-        
+
         // 4. 【关键】自定义气泡样式
         tips: {
           welcomeTips: {
@@ -87,6 +102,11 @@ export default function Live2d() {
               '点击右下角的聊天按钮可以和我对话哦～',
             ],
             wordTheDay(wordTheDayData) {
+              // 如果聊天对话框已经打开，直接返回 wordTheDay 内容
+              if (openChatDialogRef.current) { 
+                return `${wordTheDayData.hitokoto}`; 
+              }
+
               // 保存当前状态
               const currentShowWordTheDay = showWordTheDay;
               // 切换状态，为下一次调用做准备

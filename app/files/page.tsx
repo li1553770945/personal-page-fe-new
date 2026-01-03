@@ -15,7 +15,6 @@ import axios from "axios"
 import { motion, AnimatePresence } from "motion/react"
 import { cn } from "@/lib/utils"
 import { useTranslation } from "react-i18next"
-import { error } from "console"
 
 function FileManagementContent() {
   const { user } = useUser()
@@ -198,7 +197,7 @@ function FileManagementContent() {
       setDeleteKey("")
 
     } catch (err: any) {
-      error(t("files.notifications.deleteFailed"), err.message || t("files.notifications.deleteFailedDesc"))
+      notificationError(t("files.notifications.deleteFailed"), err.message || t("files.notifications.deleteFailedDesc"))
     } finally {
       setDeleting(false)
     }

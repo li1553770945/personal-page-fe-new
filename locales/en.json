@@ -256,5 +256,14 @@
   "friends": {
     "title": "My Friends",
     "description": "Here are some interesting friends and their homepages."
+  },
+  "chatDialog": {
+    "openChat": "Open Chat",
+    "title": "Chat with AI Avatar",
+    "closeDialog": "Close Dialog",
+    "aiThinking": "AI is thinking...",
+    "errorMessage": "Sorry, something went wrong. Please try again later.",
+    "inputPlaceholder": "Type a message...",
+    "sendMessage": "Send Message"
   }
 }

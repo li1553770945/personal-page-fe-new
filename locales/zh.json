@@ -264,5 +264,14 @@
   "friends": {
     "title": "我的朋友们",
     "description": "这里是一些有趣的朋友和他们的主页。"
+  },
+  "chatDialog": {
+    "openChat": "打开聊天",
+    "title": "与AI分身对话",
+    "closeDialog": "关闭对话框",
+    "aiThinking": "AI正在思考...",
+    "errorMessage": "抱歉，出错了，请稍后再试。",
+    "inputPlaceholder": "输入消息...",
+    "sendMessage": "发送消息"
   }
 }

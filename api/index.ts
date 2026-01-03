@@ -70,7 +70,7 @@ export const joinRoomAPI = (roomId: string) =>
 // AI聊天接口，使用SSE
 interface ChatMessage {
   event_type: string;
-  message: string;
+  data: string;
 }
 
 // 定义回调接口
@@ -80,7 +80,11 @@ export interface SSECallback {
   onError: (error: Error) => void;
 }
 
-export const aiChatAPI = async (message: string, callbacks: SSECallback) => {
+export interface AIChatRequest {
+  message: string;
+  conversationId?: string;
+}
+export const aiChatAPI = async (request: AIChatRequest, callbacks: SSECallback) => {
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || ''; // 确保有默认值
   const endpoint = `${baseURL}/aichat`;
 
@@ -95,7 +99,7 @@ export const aiChatAPI = async (message: string, callbacks: SSECallback) => {
         // 1. 在这里带上 Bearer Token
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ ...request }),
     });
 
     if (!response.ok) {
@@ -141,7 +145,7 @@ export const aiChatAPI = async (message: string, callbacks: SSECallback) => {
           console.warn('JSON parse failed, using raw text:', e, 'Data:', dataStr);
           if (dataStr && typeof dataStr === 'string') {
             console.debug('Received SSE raw text:', dataStr);
-            callbacks.onMessage({ event_type: 'message', message: dataStr });
+            callbacks.onMessage({ event_type: 'message', data: dataStr });
           }
         }
 

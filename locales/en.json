@@ -297,8 +297,8 @@
         "afternoon_chat_tip": "Good afternoon! Click the chat button on my left to talk with me~",
         "dusk_chat_tip": "Evening has come, you've worked hard all day~ Click the chat button on my left to chat with me~",
         "night_chat_tip": "Good evening! Click the chat button on my left to talk with me~",
-        "lateNight_chat_tip": "Good evening! Click the chat button on my left to talk with me~ It's already so late, go to bed early, good night~",
-        "weeHours_chat_tip": "Click the chat button on my left to talk with me~ Still awake so late? Be careful of staying up late and losing hair!"
+        "lateNight_chat_tip": "Good evening! Click the chat button on my left to talk with me~ ",
+        "weeHours_chat_tip": "Still awake so late? Click the chat button on my left to talk with me~"
       },
       "idle": {
         "tip": "Click the chat button on my left to talk with me~"

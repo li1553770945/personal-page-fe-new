@@ -106,7 +106,7 @@ export default function Live2d() {
             wordTheDay(wordTheDayData) {
               // 如果聊天对话框已经打开，直接返回 wordTheDay 内容
               if (openChatDialogRef.current) {
-                return `${wordTheDayData.hitokoto}`;
+                return ``;
               }
 
               // 保存当前状态

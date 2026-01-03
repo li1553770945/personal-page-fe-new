@@ -1,20 +1,21 @@
 "use client"
 import React, { useState, useRef, useEffect } from 'react'
-import {  Send, MessageSquare } from 'lucide-react'
+import { Send, Sparkles, Bot, X, Eraser, User } from 'lucide-react'
 import { aiChatAPI, AIChatRequest } from '@/api'
 import ReactMarkdown from 'react-markdown'
 import { useTranslation } from 'react-i18next'
 import { useLive2D } from '@/context/live2d'
+import { ShineBorder } from "@/components/ui/shine-border"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogDescription, // 必须引入这个
+  DialogClose,
 } from "@/components/ui/dialog"
+import { cn } from "@/lib/utils"
 
 interface Message {
   id: string
@@ -22,17 +23,15 @@ interface Message {
   isUser: boolean
 }
 
-
 export default function ChatDialog() {
   const { t } = useTranslation()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
-  const [isLoading, setIsLoading] = useState(false) // 用于控制输入框和按钮的禁用状态
+  const [isLoading, setIsLoading] = useState(false)
   const [conversationId, setConversationId] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const { say, setOpenChatDialog, openChatDialog } = useLive2D()
+  const { openChatDialog, setOpenChatDialog } = useLive2D()
 
-  // 滚动到底部
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
@@ -40,43 +39,43 @@ export default function ChatDialog() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
     }
   }
+
+  const handleClear = () => {
+    setMessages([])
+    setConversationId('')
+  }
+
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    // 1. 添加用户消息
     const userMessage: Message = {
       id: Date.now().toString(),
       text: input,
       isUser: true
     };
 
-   
     const aiMessageId = (Date.now() + 1).toString();
     const aiPlaceholder: Message = {
       id: aiMessageId,
-      text: t('chatDialog.aiThinking'), // 初始显示提示文本
+      text: '',
       isUser: false
     };
 
     setMessages(prev => [...prev, userMessage, aiPlaceholder]);
     setInput('');
-    setIsLoading(true); // 禁用输入框和发送按钮
+    setIsLoading(true);
 
-    // 用于累积流式文本的变量（避免闭包陷阱）
     let accumulatedText = '';
-    const request: AIChatRequest = {
-      message: userMessage.text,
-    };
-    if (conversationId != "") {
-      request.conversationId = conversationId;
-    }
-    // 3. 调用 API
+    const request: AIChatRequest = { message: userMessage.text };
+    if (conversationId) request.conversationId = conversationId;
+
     await aiChatAPI(request, {
       onMessage: (chunk) => {
         switch (chunk.event_type) {
@@ -92,120 +91,187 @@ export default function ChatDialog() {
             break;
           case 'message':
             accumulatedText += chunk.data;
-            // 实时更新最后那条 AI 消息的内容
             setMessages(prev => {
               const newMessages = [...prev];
               newMessages[newMessages.length - 1].text = accumulatedText;
               return newMessages;
             });
             break;
-          default:
-            console.warn('Unknown event_type:', chunk.event_type);
-            break;
         }
-
       },
-      onFinished: () => {
-        setIsLoading(false); // 启用输入框和发送按钮
-      },
+      onFinished: () => setIsLoading(false),
       onError: (error) => {
         console.error('Chat error:', error);
-        // 更新AI消息为错误提示
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === aiMessageId
-              ? { ...msg, text: t('chatDialog.errorMessage') }
-              : msg
-          )
-        );
-        setIsLoading(false); // 启用输入框和发送按钮
+        setMessages(prev => prev.map(msg =>
+          msg.id === aiMessageId ? { ...msg, text: t('chatDialog.errorMessage') || "Error" } : msg
+        ));
+        setIsLoading(false);
       }
     });
   };
 
   return (
-    <div className="fixed bottom-20 right-20 z-50 w-full max-w-md">
-      <Dialog open={openChatDialog} onOpenChange={setOpenChatDialog}>
-        <DialogContent className="rounded-xl shadow-2xl border border-border bg-card text-card-foreground max-h-[70vh] flex flex-col overflow-hidden">
-          <DialogHeader className="border-b border-border p-4">
-            <DialogTitle className="text-xl font-semibold flex items-center gap-2">
-              <MessageSquare className="h-5 w-5 text-primary" />
-              AI 助手
-            </DialogTitle>
-            <DialogClose className="rounded-full hover:bg-muted transition-colors">
-            </DialogClose>
-          </DialogHeader>
-          
-          {/* 聊天消息区域 */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                <MessageSquare className="h-12 w-12 mb-2 opacity-20" />
-                <p>开始与 AI 助手聊天吧</p>
+    <Dialog open={openChatDialog} onOpenChange={setOpenChatDialog} modal={false}>
+      <DialogContent
+        className="fixed z-50 gap-0 p-0 outline-none
+                   right-4 bottom-20 sm:right-[300px] sm:bottom-40 
+                   w-[90vw] sm:w-[400px] h-[600px] max-h-[70vh]
+                   top-auto left-auto translate-x-0 translate-y-0
+                   border-none shadow-2xl 
+                   [&>button]:hidden" // 隐藏 Shadcn 默认的关闭按钮
+      >
+        <DialogDescription className="hidden">
+          AI Assistant Chat Interface
+        </DialogDescription>
+        <ShineBorder
+          className="flex flex-col h-full w-full border bg-background/95 backdrop-blur-md overflow-hidden relative"
+          // borderRadius={16}
+          shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+        >
+
+          {/* 【关键修复】
+            增加一个 div 容器，强制 z-index 为 10，防止被 ShineBorder 的光效层遮挡。
+            同时设置 relative 确保层级生效。
+          */}
+          <div className="flex flex-col h-full w-full relative z-[100]">
+
+            {/* Header */}
+            <div className="px-4 py-3 border-b border-border/50 flex flex-row items-center justify-between bg-muted/20 shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-primary/10 rounded-full">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <DialogTitle className="text-base font-medium">AI 助手</DialogTitle>
+                  <p className="text-[10px] text-muted-foreground font-normal">Based on LLM Tech</p>
+                </div>
               </div>
-            ) : (
-              messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-lg p-3 ${message.isUser 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-muted-foreground'}`}
-                  >
-                    <div className="prose prose-sm max-w-none">
-                      <ReactMarkdown
-                        components={{
-                          p: ({ ...props }) => <p {...props} className="mb-0" />,
-                          code: ({ ...props }) => (
-                            <code {...props} className="bg-muted-foreground/20 px-1 py-0.5 rounded text-sm" />
-                          ),
-                          pre: ({ children, ...props }) => (
-                            <pre {...props} className="bg-muted-foreground/10 p-2 rounded overflow-x-auto">
-                              {children}
-                            </pre>
-                          ),
-                          blockquote: ({ ...props }) => (
-                            <blockquote {...props} className="border-l-2 border-primary pl-3 italic my-0" />
-                          ),
-                          ul: ({ ...props }) => <ul {...props} className="my-0 pl-5" />,
-                          ol: ({ ...props }) => <ol {...props} className="my-0 pl-5" />,
-                          li: ({ ...props }) => <li {...props} className="mb-1" />,
-                        }}
-                      >
-                        {message.text}
-                      </ReactMarkdown>
-                    </div>
+              <div className="flex items-center gap-1">
+                <button onClick={handleClear} className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground" title="清空对话">
+                  <Eraser className="w-4 h-4" />
+                </button>
+                <DialogClose className="p-2 hover:bg-red-50 hover:text-red-500 rounded-full transition-colors text-muted-foreground">
+                  <X className="w-4 h-4" />
+                </DialogClose>
+              </div>
+            </div>
+
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+              {messages.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-4">
+                  <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-2">
+                    <Sparkles className="h-8 w-8 text-primary/40" />
+                  </div>
+                  <div className="text-center space-y-1">
+                    <p className="font-medium text-sm">有什么可以帮你的吗？</p>
+                    <p className="text-xs opacity-70">你可以问我关于 PeaceSheep 的任何问题</p>
                   </div>
                 </div>
-              ))
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-          
-          {/* 输入区域 */}
-          <div className="border-t border-border p-4">
-            <div className="flex items-end gap-2">
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="输入消息..."
-                disabled={isLoading}
-                className="flex-1 min-h-[60px] max-h-[120px] resize-none rounded-lg border border-input bg-background p-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-              <button
-                onClick={handleSend}
-                disabled={isLoading || !input.trim()}
-                className="rounded-lg bg-primary text-primary-foreground p-3 hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Send className="h-4 w-4" />
-              </button>
+              ) : (
+                messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={cn(
+                      "flex gap-3 w-full",
+                      message.isUser ? "justify-end" : "justify-start"
+                    )}
+                  >
+                    {!message.isUser && (
+                      <Avatar className="h-8 w-8 mt-1 border border-border/50">
+                        <AvatarFallback className="bg-primary/10 text-primary text-xs"><Bot size={14} /></AvatarFallback>
+                      </Avatar>
+                    )}
+
+                    <div className={cn(
+                      "flex flex-col max-w-[80%]",
+                      message.isUser ? "items-end" : "items-start"
+                    )}>
+                      <div
+                        className={cn(
+                          "rounded-2xl px-4 py-2.5 text-sm shadow-sm",
+                          message.isUser
+                            ? "bg-primary text-primary-foreground rounded-tr-sm"
+                            : "bg-muted/80 text-foreground border border-border/50 rounded-tl-sm backdrop-blur-sm"
+                        )}
+                      >
+                        {(!message.isUser && message.text === '' && isLoading) ? (
+                          <div className="flex gap-1 py-1 h-5 items-center">
+                            <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                            <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                            <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"></span>
+                          </div>
+                        ) : (
+                          <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:p-0 prose-pre:bg-transparent">
+                            <ReactMarkdown
+                              components={{
+                                p: ({ node, ...props }) => <p {...props} className="m-0 break-words" />,
+                                a: ({ node, ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline" />,
+                                code: ({ node, ...props }) => {
+                                  // @ts-ignore
+                                  const inline = props.inline
+                                  return inline
+                                    ? <code {...props} className="bg-black/10 dark:bg-white/10 px-1 py-0.5 rounded font-mono text-xs" />
+                                    : <code {...props} className="block bg-black/10 dark:bg-white/10 p-2 rounded-lg font-mono text-xs overflow-x-auto my-2" />
+                                }
+                              }}
+                            >
+                              {message.text}
+                            </ReactMarkdown>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {message.isUser && (
+                      <Avatar className="h-8 w-8 mt-1">
+                        <AvatarFallback className="bg-slate-200 text-slate-600"><User size={14} /></AvatarFallback>
+                      </Avatar>
+                    )}
+                  </div>
+                ))
+              )}
+              <div ref={messagesEndRef} />
             </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-background/50 backdrop-blur-sm border-t border-border/50 shrink-0">
+              <div className="relative flex items-center bg-muted/50 rounded-full border border-border/50 focus-within:border-primary/50 focus-within:bg-background transition-all shadow-sm">
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="输入消息..."
+                  disabled={isLoading}
+                  className="flex-1 min-h-[44px] max-h-[120px] py-3 pl-4 pr-10 bg-transparent resize-none text-sm focus:outline-none scrollbar-hide"
+                  rows={1}
+                  style={{ height: '44px' }}
+                />
+                <button
+                  onClick={handleSend}
+                  disabled={isLoading || !input.trim()}
+                  className={cn(
+                    "absolute right-1.5 p-2 rounded-full transition-all duration-200",
+                    (input.trim() && !isLoading)
+                      ? "bg-primary text-primary-foreground hover:scale-105 shadow-md"
+                      : "bg-transparent text-muted-foreground cursor-not-allowed opacity-50"
+                  )}
+                >
+                  {isLoading ? (
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+              <div className="text-[10px] text-center text-muted-foreground/40 mt-2">
+                AI 内容由大模型生成，请仔细甄别
+              </div>
+            </div>
+
           </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+        </ShineBorder>
+      </DialogContent>
+    </Dialog>
   )
 }

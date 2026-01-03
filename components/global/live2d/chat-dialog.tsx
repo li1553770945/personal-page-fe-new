@@ -81,7 +81,7 @@ export default function ChatDialog() {
 
     let accumulatedText = '';
     const request: AIChatRequest = { message: userMessage.text };
-    if (conversationId!="") request.conversationId = conversationId;
+    if (conversationId !== "") request.conversation_id = conversationId;
 
     await aiChatAPI(request, {
       onMessage: (chunk) => {

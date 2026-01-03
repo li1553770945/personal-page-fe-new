@@ -82,7 +82,7 @@ export interface SSECallback {
 
 export interface AIChatRequest {
   message: string;
-  conversationId?: string;
+  conversation_id?: string;
 }
 export const aiChatAPI = async (request: AIChatRequest, callbacks: SSECallback) => {
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || ''; // 确保有默认值

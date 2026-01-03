@@ -1,46 +1,33 @@
-
-export function getMotionStrategy(tag: string): { group: string; index: number } {
-  // 将 tag 转为小写以防万一
+export function getMotionStrategy(tag: string): { group: string; index: number; expression: string } {
+  // 去掉尖括号并转小写
   const standardizedTag = tag.toLowerCase().replaceAll('<', '').replaceAll('>', '');
-  console.log(`LLM情绪: ${standardizedTag}`)
 
   switch (standardizedTag) {
     case "joy":
     case "happy":
-      // 对应 m03: 元气动作
-      return { group: "Flick", index: 0 };
+      // 现在的 expression 直接写 "joy"，对应 model3.json 里的 Name
+      return { group: "Flick", index: 0, expression: "joy" }; 
     
     case "sad":
     case "sorry":
-      // 对应 m04: 低头/失落
-      return { group: "FlickDown", index: 0 };
+      return { group: "FlickDown", index: 0, expression: "sad" };
     
-    case "wave":
-    case "hello":
-      // 对应 m07: 打招呼
-      // Tap 组有两个动作，m07 通常是第一个
-      return { group: "Tap", index: 0 };
-
     case "think":
     case "idea":
-      // 对应 m08: 思考 (Tap 组的第二个动作)
-      // 或者用 m06 (FlickUp) 表示灵感
-      return { group: "Tap", index: 1 };
-    
-    case "shy":
-    case "modest":
-      // 对应 m09: 害羞
-      return { group: "Tap@Body", index: 0 };
+      return { group: "Tap", index: 1, expression: "think" };
     
     case "shock":
     case "surprise":
-      // 对应 m10: 惊讶
-      return { group: "Flick@Body", index: 0 };
+      return { group: "Flick@Body", index: 0, expression: "shock" };
+      
+    case "shy":
+      // 害羞的时候也可以用开心的表情(joy)，或者你有专门的 shy.exp3.json
+      return { group: "Tap@Body", index: 0, expression: "joy" };
 
     case "idle":
     default:
-      // 默认返回 Idle 组，让 Live2D 随机播放 (index: -1 通常代表随机，具体看你的播放器实现)
-      // 或者指定 m01 (index 0)
-      return { group: "Idle", index: 0 };
+      // 这里的 "normal" 需要你在 model3.json 里也注册一个 normal.exp3.json
+      // 如果不想创建文件，也可以传 undefined 或者 "joy" 作为默认
+      return { group: "Idle", index: 0, expression: "normal" }; 
   }
 }

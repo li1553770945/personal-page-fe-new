@@ -20,7 +20,7 @@ export function ModeToggle() {
   }
 
   // 是否使用深色模式
-  const isDark = resolvedTheme === "dark"
+  const isDark = !!(resolvedTheme === "dark")
 
   return (
     <Switch

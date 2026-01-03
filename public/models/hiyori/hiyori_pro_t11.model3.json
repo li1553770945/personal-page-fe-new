@@ -9,6 +9,28 @@
 		"Physics": "hiyori_pro_t11.physics3.json",
 		"Pose": "hiyori_pro_t11.pose3.json",
 		"DisplayInfo": "hiyori_pro_t11.cdi3.json",
+		"Expressions": [
+			{
+				"Name": "joy", 
+				"File": "expressions/joy.exp3.json"
+			},
+			{
+				"Name": "sad",
+				"File": "expressions/sad.exp3.json"
+			},
+			{
+				"Name": "think",
+				"File": "expressions/think.exp3.json"
+			},
+			{
+				"Name": "shock",
+				"File": "expressions/shock.exp3.json"
+			},
+			{
+				"Name": "normal", 
+				"File": "expressions/normal.exp3.json"
+			}
+		],
 		"Motions": {
 			"Idle": [
 				{

@@ -30,7 +30,7 @@ export default function ChatDialog() {
   const [isLoading, setIsLoading] = useState(false)
   const [conversationId, setConversationId] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const { openChatDialog, setOpenChatDialog, slideIn, playMotion } = useLive2D()
+  const { openChatDialog, setOpenChatDialog, slideIn, playMotion, setExpression } = useLive2D()
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -39,6 +39,13 @@ export default function ChatDialog() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  useEffect(() => {
+  if (!openChatDialog) {
+    // 关闭时切回普通表情
+    setExpression("normal") // 或者 "joy"
+  }
+}, [openChatDialog, setExpression])
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -122,6 +129,7 @@ export default function ChatDialog() {
   const handleMotion = (motion: string) => {
     const strategy = getMotionStrategy(motion)
     playMotion(strategy.group, strategy.index)
+    setExpression(strategy.expression)
   }
   return (
     <>

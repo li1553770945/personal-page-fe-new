@@ -20,6 +20,7 @@ type ExtendedInstance = Oml2dProperties & Oml2dMethods & Oml2dEvents & {
                     _parameterIds: string[]
                 }
             }
+            expression: (id: string) => void
         }
     }
 }
@@ -39,6 +40,7 @@ type Live2DActions = {
     say: (text: string, duration?: number, priority?: number) => void
     playMotion: (groupName: string, index?: number) => void
     setParam: (paramId: string, value: number, duration?: number) => void
+    setExpression: (expressionId: string) => void
     slideIn: () => void
     slideOut: () => void
 }
@@ -97,6 +99,19 @@ export const useLive2D = create<Live2DState & Live2DActions>()(
                         }, duration)
                     }
                 }
+            },
+            setExpression: (expressionId) => {
+                const { instance } = get()
+                const model = instance?.models?.model
+                if (!model) {
+                    console.warn("Live2D 模型未就绪")
+                    return
+                }
+                
+                // 设置表情
+                model.expression(expressionId)
+                console.log(`Live2D 设置表情: ${expressionId}`)
+
             },
 
             slideIn: () => {

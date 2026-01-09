@@ -34,16 +34,6 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  async redirects() {
-    return [
-      {
-        source: '/home',
-        destination: '/',
-        permanent: true, // 301 永久重定向
-      },
-    ];
-  },
-
   webpack: (config, { isServer }) => {
     if (!isServer) {
       // 强制不处理 fs 和 path 模块

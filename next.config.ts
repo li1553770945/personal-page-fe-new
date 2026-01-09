@@ -33,6 +33,17 @@ const nextConfig: NextConfig = {
       // 注意：Next.js 的 rewrites 原生不支持 WebSocket (ws) 代理
     ];
   },
+
+  async redirects() {
+    return [
+      {
+        source: '/home',
+        destination: '/',
+        permanent: true, // 301 永久重定向
+      },
+    ];
+  },
+
   webpack: (config, { isServer }) => {
     if (!isServer) {
       // 强制不处理 fs 和 path 模块

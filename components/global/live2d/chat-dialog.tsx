@@ -228,8 +228,10 @@ export default function ChatDialog() {
       },
       onError: (error) => {
         console.error('Chat error:', error);
+        const fallback = t('chatDialog.errorMessage') || "Error";
+        const finalText = error?.message ? `${fallback}: ${error.message}` : fallback;
         setMessages(prev => prev.map(msg =>
-          msg.id === aiMessageId ? { ...msg, text: t('chatDialog.errorMessage') || "Error" } : msg
+          msg.id === aiMessageId ? { ...msg, text: finalText } : msg
         ));
         setIsLoading(false);
       }

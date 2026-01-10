@@ -102,15 +102,46 @@ export const aiChatAPI = async (request: AIChatRequest, callbacks: SSECallback) 
       body: JSON.stringify({ ...request }),
     });
 
+    const contentType = (response.headers.get('content-type') || '').toLowerCase();
+
+    // 非 2xx 的响应：尽量读取服务端错误信息并抛出
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      try {
+        if (contentType.includes('application/json')) {
+          const errJson = await response.json();
+          const msg = errJson?.message || errJson?.error || JSON.stringify(errJson);
+          throw new Error(`HTTP ${response.status}: ${msg}`);
+        } else {
+          const errText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errText || response.statusText}`);
+        }
+      } catch (e) {
+        // 如果解析失败，回退到通用错误
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+    }
+
+    // 2xx 但非 SSE 的普通 JSON 响应：当作错误处理，避免前端卡死
+    if (!contentType.includes('text/event-stream')) {
+      try {
+        const data = await response.json();
+        const msg = data?.message || data?.error || (data?.code ? `code=${data.code}` : '') || '非SSE响应';
+        // 直接走错误回调，让上层展示错误信息
+        callbacks.onError(new Error(msg));
+        return;
+      } catch (e) {
+        // 不是 JSON，就读取文本并抛错
+        const text = await response.text();
+        callbacks.onError(new Error(text || '非SSE响应且内容不可解析'));
+        return;
+      }
     }
 
     if (!response.body) {
       throw new Error('ReadableStream not supported in this browser.');
     }
 
-    // 2. 解析 SSE 响应流
+    // 3. 解析 SSE 响应流
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
@@ -133,7 +164,7 @@ export const aiChatAPI = async (request: AIChatRequest, callbacks: SSECallback) 
         if (!trimmedLine || !line.startsWith('data:')) {
           continue;
         }
-      
+
         const dataStr = line.replace('data:', '').trim();
 
         try {

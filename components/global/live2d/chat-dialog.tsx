@@ -6,8 +6,9 @@ import ReactMarkdown from 'react-markdown'
 import { useTranslation } from 'react-i18next'
 import { useLive2D } from '@/context/live2d'
 import { getMotionStrategy } from './utils'
+import { MessageParser } from './message-parser'
 import { ShineBorder } from "@/components/ui/shine-border"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   Dialog,
   DialogContent,
@@ -23,13 +24,25 @@ interface Message {
   isUser: boolean
 }
 
+interface WorkflowStatus {
+  isActive: boolean
+  currentNode: string | null
+  nodeTitle: string | null
+}
+
 export default function ChatDialog() {
   const { t } = useTranslation()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [conversationId, setConversationId] = useState('')
+  const [workflowStatus, setWorkflowStatus] = useState<WorkflowStatus>({
+    isActive: false,
+    currentNode: null,
+    nodeTitle: null
+  })
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messageParserRef = useRef<MessageParser>(new MessageParser())
   const { openChatDialog, setOpenChatDialog, slideIn, playMotion, setExpression } = useLive2D()
 
   const scrollToBottom = () => {
@@ -57,18 +70,19 @@ export default function ChatDialog() {
   const handleClear = () => {
     setMessages([])
     setConversationId('')
+    messageParserRef.current.clear()
   }
 
   const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       text: input,
       isUser: true
     };
 
-    const aiMessageId = (Date.now() + 1).toString();
+    const aiMessageId = crypto.randomUUID();
     const aiPlaceholder: Message = {
       id: aiMessageId,
       text: '',
@@ -79,6 +93,8 @@ export default function ChatDialog() {
     setInput('');
     setIsLoading(true);
 
+    // 为新消息重置解析器
+    messageParserRef.current.clear();
     let accumulatedText = '';
     const request: AIChatRequest = { message: userMessage.text };
     if (conversationId !== "") request.conversation_id = conversationId;
@@ -97,7 +113,18 @@ export default function ChatDialog() {
             });
             break;
           case 'message':
-            accumulatedText += chunk.data;
+            // 使用消息解析器处理包含感情控制块的消息
+            const parseResult = messageParserRef.current.parse(chunk.data);
+            
+            // 累积显示文本
+            accumulatedText += parseResult.displayText;
+            
+            // 处理检测到的emotion
+            parseResult.emotions.forEach(emotion => {
+              handleMotion(emotion);
+            });
+            
+            // 更新消息
             setMessages(prev => {
               const newMessages = [...prev];
               newMessages[newMessages.length - 1].text = accumulatedText;
@@ -107,12 +134,98 @@ export default function ChatDialog() {
           case 'motion':
             handleMotion(chunk.data)
             break;
+          case 'workflowStarted':
+          case 'workflow_started':
+            try {
+              const parsedData = typeof chunk.data === 'string' ? JSON.parse(chunk.data) : chunk.data;
+              console.log('工作流开始:', parsedData);
+              setWorkflowStatus({
+                isActive: true,
+                currentNode: null,
+                nodeTitle: t('chatDialog.workflowStarted')
+              });
+            } catch (e) {
+              console.error('解析workflowStarted失败:', e);
+            }
+            break;
+          case 'nodeStarted':
+          case 'node_started':
+            try {
+              const parsedData = typeof chunk.data === 'string' ? JSON.parse(chunk.data) : chunk.data;
+              const nodeType = parsedData.node_type;
+              const nodeTitle = parsedData.title;
+              console.log('节点开始:', nodeType, nodeTitle);
+              let displayTitle = nodeTitle;
+              
+              // 根据节点类型设置显示文本
+              switch (nodeType) {
+                case 'question-classifier':
+                  displayTitle = t('chatDialog.intentRecognition');
+                  break;
+                case 'knowledge-retrieval':
+                  displayTitle = t('chatDialog.knowledgeRetrieval');
+                  break;
+                case 'llm':
+                  displayTitle = t('chatDialog.llmProcessing');
+                  break;
+                case 'start':
+                  displayTitle = t('chatDialog.processingInput');
+                  break;
+                default:
+                  displayTitle = nodeTitle || t('chatDialog.processing');
+              }
+              
+              setWorkflowStatus({
+                isActive: true,
+                currentNode: nodeType,
+                nodeTitle: displayTitle
+              });
+            } catch (e) {
+              console.error('解析nodeStarted失败:', e);
+            }
+            break;
+          case 'nodeFinished':
+          case 'node_finished':
+            // 节点完成后可以选择保持状态一小段时间或立即清除
+            // 这里暂时不做处理，等待下一个节点或workflow结束
+            break;
+          case 'workflowFinished':
+          case 'workflow_finished':
+          case 'error':
+            // 工作流结束，清除状态
+            setWorkflowStatus({
+              isActive: false,
+              currentNode: null,
+              nodeTitle: null
+            });
+            break;
+          case 'messageEnd':
+            // 可选处理：消息结束时的动作
+            break;
           default:
             console.warn(`未知的事件类型: ${chunk.event_type}`);
             break;
         }
       },
-      onFinished: () => setIsLoading(false),
+      onFinished: () => {
+        // 处理缓存中可能残留的不完整控制块
+        const remaining = messageParserRef.current.finalize();
+        if (remaining.length > 0) {
+          accumulatedText += remaining;
+          setMessages(prev => {
+            const newMessages = [...prev];
+            newMessages[newMessages.length - 1].text = accumulatedText;
+            return newMessages;
+          });
+        }
+        
+        setIsLoading(false);
+        setWorkflowStatus({
+          isActive: false,
+          currentNode: null,
+          nodeTitle: null
+        });
+      },
       onError: (error) => {
         console.error('Chat error:', error);
         setMessages(prev => prev.map(msg =>
@@ -227,19 +340,27 @@ export default function ChatDialog() {
                           )}
                         >
                           {(!message.isUser && message.text === '' && isLoading) ? (
-                            <div className="flex gap-1 py-1 h-5 items-center">
-                              <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                              <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                              <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"></span>
+                            <div className="flex flex-col gap-2">
+                              {workflowStatus.isActive && workflowStatus.nodeTitle && (
+                                <div className="text-xs text-muted-foreground/80 flex items-center gap-2 mb-1">
+                                  <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                                  <span>{workflowStatus.nodeTitle}</span>
+                                </div>
+                              )}
+                              <div className="flex gap-1 py-1 h-5 items-center">
+                                <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"></span>
+                              </div>
                             </div>
                           ) : (
                             <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:p-0 prose-pre:bg-transparent">
                               <ReactMarkdown
                                 components={{
-                                  p: ({ node, ...props }) => <p {...props} className="m-0 break-words" />,
-                                  a: ({ node, ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline" />,
-                                  code: ({ node, ...props }) => {
-                                    // @ts-ignore
+                                  p: ({ ...props }) => <p {...props} className="m-0 break-words" />,
+                                  a: ({ ...props }) => <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline" />,
+                                  code: ({ ...props }) => {
+                                    // @ts-expect-error - ReactMarkdown types don't include inline property
                                     const inline = props.inline
                                     return inline
                                       ? <code {...props} className="bg-black/10 dark:bg-white/10 px-1 py-0.5 rounded font-mono text-xs" />

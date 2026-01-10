@@ -291,7 +291,13 @@
     "clearChat": "清空对话",
     "welcomeQuestion": "欢迎使用 AI 助手！",
     "welcomeDesc": "点击右下角的聊天按钮或直接在下方输入框提问，我会为你解答关于 PeaceSheep 的问题",
-    "aiDisclaimer": "AI 内容由大模型生成，请仔细甄别"
+    "aiDisclaimer": "AI 内容由大模型生成，请仔细甄别",
+    "workflowStarted": "工作流开始...",
+    "intentRecognition": "正在进行意图识别...",
+    "knowledgeRetrieval": "正在检索知识库...",
+    "llmProcessing": "正在生成回答...",
+    "processingInput": "正在处理输入...",
+    "processing": "处理中..."
   },
   "live2d": {
     "menu": {

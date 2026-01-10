@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-
+  compress: false,
   async rewrites() {
     const env = process.env.NODE_ENV;
     if (!env || env !== 'development') {

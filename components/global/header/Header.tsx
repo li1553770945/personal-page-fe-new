@@ -71,11 +71,12 @@ export default function Header() {
                     icon: FileOutlinedIcon,
                     href: "/files",
                 },
-                {
-                    label: t('nav.temporaryChat'),
-                    icon: UserGroupIcon,
-                    href: "/chat",
-                }
+                // {
+                //     label: t('nav.temporaryChat'),
+                //     icon: UserGroupIcon,
+                //     href: "/chat",
+                // }
+                // TODO: 临时群聊暂未完成
             ]
         },
         {

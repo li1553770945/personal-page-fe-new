@@ -28,7 +28,11 @@
         "department": "Aicheng Technology",
         "type": "Internship",
         "position": "Distributed Infrastructure",
-        "description": "Responsible for MCP protocol adaptation work for Alibaba's gateway Higress, using Go to write Envoy plugins and load them as dynamic libraries, exposing Alibaba's existing HSF services in MCP protocol form from the gateway level, enabling Agents to directly call Alibaba's existing microservices. Optimized the original plugin compilation process, reducing single test time from 10 minutes to less than 1 minute, wrote multi-language gateway end-to-end tests, completed CI process design for plugins, implemented MCPServer metrics monitoring using OTEL and Grafana, and collaborated on developing MCPServer management page frontend and backend"
+        "description": [
+          "Responsible for **MCP protocol** adaptation work for Alibaba's gateway Higress, using Go to write Envoy plugins and load them as dynamic libraries, **exposing Alibaba's existing HSF services in MCP protocol form from the gateway level, enabling Agents to directly call Alibaba's existing microservices**.",
+          "Optimized the original plugin compilation process, reducing single test time from **10 minutes to less than 1 minute**, wrote multi-language gateway end-to-end tests, completed **CI process** design for plugins.",
+          "Implemented MCPServer metrics monitoring using **OTEL** and **Grafana**, and collaborated on developing MCPServer management page frontend and backend."
+        ]
       },
       {
         "period": "Nov 2022 - Feb 2023",
@@ -36,7 +40,10 @@
         "department": "Data Department",
         "type": "Internship",
         "position": "Backend Development",
-        "description": "Developed RPC services for ByteDance's commercialization data platform backend, refactored the existing project's Kitex dependency from local to overpass, greatly shortening the microservice version upgrade process. Used Google's open-source component library go-wire to implement dependency injection mechanism, refactored the extensive use of global variables in existing DDD architecture projects with inversion of control, making the project structure clearer"
+        "description": [
+          "Developed RPC services for ByteDance's commercialization data platform backend, refactored the existing project's **Kitex** dependency from local to **overpass**, greatly shortening the microservice version upgrade process.",
+          "Used Google's open-source component library **go-wire** to implement dependency injection mechanism, refactored the extensive use of global variables in existing **DDD architecture** projects with inversion of control, making the project structure clearer."
+        ]
       },
       {
         "period": "Jul 2022 - Aug 2022",
@@ -44,13 +51,93 @@
         "department": "Magic Cube Studio",
         "type": "Internship",
         "position": "Backend Development",
-        "description": "Designed and developed an object storage system using C++ language, capable of processing uploads and downloads of 100k small files within 1 minute. The system fully utilized epoll's IO multiplexing mechanism. Metadata used leveldb, and network transmission comprehensively used TCP and UDP protocols according to different scenarios to optimize data transmission performance"
+        "description": [
+          "Designed and developed an object storage system using **C++** language, capable of **processing uploads and downloads of 100k small files within 1 minute**. The system fully utilized **epoll**'s **IO multiplexing** mechanism.",
+          "Metadata used **leveldb**, and network transmission comprehensively used **TCP** and **UDP** protocols according to different scenarios to optimize data transmission performance."
+        ]
       }
     ]
   },
   "skills": {
     "title": "Skills",
     "content": "Go / Rust / K8s / Redis / MQ"
+  },
+  "awards": {
+    "title": "Awards & Competitions",
+    "items": [
+      {
+        "name": "Jiangsu Collegiate Programming Contest",
+        "award": "Gold Medal",
+        "tier": "gold",
+        "category": "Programming Contest"
+      },
+      {
+        "name": "ICPC Asia EC-Final",
+        "award": "Bronze Medal",
+        "tier": "bronze",
+        "category": "Algorithm Contest"
+      },
+      {
+        "name": "China Graduate Mathematical Contest in Modeling",
+        "award": "National Second Prize",
+        "tier": "silver",
+        "category": "Math Modeling"
+      },
+      {
+        "name": "ICPC Asia Regional",
+        "award": "Silver Medal",
+        "tier": "silver",
+        "category": "Algorithm Contest"
+      },
+      {
+        "name": "Lanqiao Cup National Finals",
+        "award": "Second Prize",
+        "tier": "silver",
+        "category": "Software & IT"
+      },
+      {
+        "name": "China Graduate Mathematical Modeling",
+        "award": "National Second Prize",
+        "tier": "silver",
+        "category": "Math Modeling"
+      },
+      {
+        "name": "China Graduate OS Open Innovation",
+        "award": "Third Prize",
+        "tier": "bronze",
+        "category": "Systems & Open Source"
+      },
+      {
+        "name": "Huawei Hackathon Software Challenge",
+        "award": "Code Star",
+        "tier": "special",
+        "category": "Hackathon"
+      }
+    ]
+  },
+  "publications": {
+    "title": "Publications",
+    "items": [
+      {
+        "title": "Addressing Heterogeneity in Federated Learning with Client Selection via Submodular Optimization",
+        "authors": [
+          "Jinghui Zhang",
+          "Jiawei Wang",
+          "Yaning Li",
+          "Fa Xin",
+          "Fang Dong",
+          "Junzhou Luo",
+          "Zhihua Wu"
+        ],
+        "journal": "ACM Transactions on Sensor Networks",
+        "year": "2024",
+        "volume": "20",
+        "issue": "2",
+        "articleNo": "48",
+        "pages": "1–32",
+        "type": "CCF-B"
+      }
+    ]
   },
   "education": {
     "title": "Education",

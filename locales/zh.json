@@ -28,7 +28,11 @@
         "department": "爱橙科技",
         "type": "实习",
         "position": "分布式基础技术",
-        "description": "负责阿里网关Higress的MCP协议适配工作，使用Go编写Envoy插件并以动态库形式加载，从网关层面将阿里现有HSF服务以MCP协议形式暴露，使得Agent能够直接调用阿里现有微服务。优化原有插件编译流程，单次测试时间从10分钟降低到小于1分钟，编写了多语言网关端到端测试，完成了插件的CI流程设计，使用OTEL和Grafana实现MCPServer指标监控，并配合开发MCPServer管理页面前后端"
+        "description": [
+          "负责阿里网关 Higress 的 **MCP协议** 适配工作，使用 Go 编写 Envoy插件 并以动态库形式加载，从网关层面将阿里现有 **HSF服务以MCP协议形式暴露，使得 Agent 能够直接调用阿里现有微服务**。",
+          "优化原有插件编译流程，单次测试时间从**10分钟降低到小于1分钟**，编写了多语言网关端到端测试，完成了插件的 **CI流程** 设计。",
+          "使用 **OTEL** 和 **Grafana** 实现 MCPServer 指标监控，并配合开发MCPServer管理页面前后端。"
+        ]
       },
       {
         "period": "2022年11月-2023年2月",
@@ -36,7 +40,10 @@
         "department": "Data部门",
         "type": "实习",
         "position": "后端开发",
-        "description": "为字节跳动商业化数据平台后端开发 RPC 服务，将现有项目的Kitex依赖从本地重构为 overpass，极大缩短微服务版本升级流程。采用 Google 开源组件库 go-wire 实现依赖注入机制，对现有DDD架构项目中大量使用全局变量的情况进行控制反转重构，使项目结构更清晰"
+        "description": [
+          "为字节跳动商业化数据平台后端开发 RPC 服务，将现有项目的 **Kitex** 依赖从本地重构为 **overpass**，极大缩短微服务版本升级流程。",
+          "采用 Google 开源组件库 **go-wire** 实现依赖注入机制，对现有 **DDD架构** 项目中大量使用全局变量的情况进行控制反转重构，使项目结构更清晰。"
+        ]
       },
       {
         "period": "2022年7月-2022年8月",
@@ -44,7 +51,10 @@
         "department": "魔方工作室",
         "type": "实习",
         "position": "后台开发",
-        "description": "使用 C++ 语言设计并开发了一款对象存储系统，能够在1分钟内处理10w小文件的上传和下载。系统充分利用了 epoll 的 IO 多路复用机制。元信息使用leveldb，网络传输根据不同场景综合使用 TCP 和 UDP 协议，优化数据传输性能"
+        "description": [
+          "使用 **C++** 语言设计并开发了一款对象存储系统，能够在**1分钟内处理10w小文件的上传和下载**。系统充分利用了 **epoll** 的 **IO 多路复用** 机制。",
+          "元信息使用 **leveldb**，网络传输根据不同场景综合使用 **TCP** 和 **UDP** 协议，优化数据传输性能。"
+        ]
       }
     ]
   },
@@ -53,8 +63,81 @@
     "content": "Go / Rust / K8s / Redis / MQ"
   },
   "awards": {
-    "title": "奖项",
-    "content": "ICPC / 竞赛 / 亮点"
+    "title": "竞赛获奖",
+    "items": [
+      {
+        "name": "江苏省大学生程序设计竞赛",
+        "award": "金奖",
+        "tier": "gold",
+        "category": "程序设计"
+      },
+      {
+        "name": "ICPC 国际大学生程序设计竞赛亚洲区域赛",
+        "award": "银奖",
+        "tier": "silver",
+        "category": "算法竞赛"
+      },
+      {
+        "name": "ICPC 国际大学生程序设计竞赛亚洲区总决赛（EC-Final）",
+        "award": "铜奖",
+        "tier": "bronze",
+        "category": "算法竞赛"
+      },
+      {
+        "name": "全国研究生数学建模竞赛",
+        "award": "国家二等奖",
+        "tier": "silver",
+        "category": "数学建模"
+      },
+      {
+        "name": "“蓝桥杯”全国软件和信息技术专业人才大赛全国总决赛",
+        "award": "二等奖",
+        "tier": "silver",
+        "category": "软件开发"
+      },
+      {
+        "name": "中国研究生数学建模竞赛",
+        "award": "国家二等奖",
+        "tier": "silver",
+        "category": "数学建模"
+      },
+      {
+        "name": "全国研究生操作系统开源创新大赛",
+        "award": "三等奖",
+        "tier": "bronze",
+        "category": "系统与开源"
+      },
+      {
+        "name": "华为 Hackathon 软件难题挑战赛",
+        "award": "软件之星",
+        "tier": "special",
+        "category": "Hackathon"
+      }
+    ]
+  },
+  "publications": {
+    "title": "论文发表",
+    "items": [
+      {
+        "title": "Addressing Heterogeneity in Federated Learning with Client Selection via Submodular Optimization",
+        "authors": [
+          "Jinghui Zhang",
+          "Jiawei Wang",
+          "Yaning Li",
+          "Fa Xin",
+          "Fang Dong",
+          "Junzhou Luo",
+          "Zhihua Wu"
+        ],
+        "journal": "ACM Transactions on Sensor Networks",
+        "year": "2024",
+        "volume": "20",
+        "issue": "2",
+        "articleNo": "48",
+        "pages": "1–32",
+        "type": "CCF-B"
+      }
+    ]
   },
   "blog": {
     "title": "博客",

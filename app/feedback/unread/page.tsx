@@ -43,7 +43,7 @@ export default function UnreadFeedbackPage() {
         if (res.code === 0) {
           setFeedbacks(res.data)
         } else {
-          notificationError("获取失败", res.msg || "获取未读反馈失败")
+          notificationError("获取失败", res.message || "获取未读反馈失败")
         }
       } catch (error) {
         notificationError("获取失败", String(error))

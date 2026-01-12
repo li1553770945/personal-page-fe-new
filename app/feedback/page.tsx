@@ -102,7 +102,7 @@ export default function FeedbackPage() {
         form.reset()
         notificationSuccess("提交成功","已经收到您的反馈")
       } else {
-        notificationError("提交失败", res.msg)
+        notificationError("提交失败", res.message)
       }
     } catch (error) {
       console.error(error)

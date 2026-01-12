@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from "react-i18next";
 import { useChatStore } from '@/store/chatStore';
@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Share2 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
-export default function ChatPage() {
+function ChatContent() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const { toast } = useToast();
@@ -110,5 +110,13 @@ export default function ChatPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense>
+      <ChatContent />
+    </Suspense>
   );
 }

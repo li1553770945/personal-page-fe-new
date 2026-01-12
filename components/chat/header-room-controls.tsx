@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Card } from '@/components/ui/card';
 import { useTranslation } from 'react-i18next';
 import { Share2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface HeaderRoomControlsProps {
   actions?: ReactNode;

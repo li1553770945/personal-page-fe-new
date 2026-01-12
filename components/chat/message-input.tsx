@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { useTranslation } from 'react-i18next';
 import { FileUp, X, Send } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { uploadFileAPI } from '@/api';
 import axios from 'axios';
 

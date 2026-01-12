@@ -29,7 +29,7 @@ import { FriendsIcon } from "@/components/ui/icons/friends"
 import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { UserLogo } from "@/components/global/user/user-logo"
+import { UserLogo } from "@/components/user/user-logo"
 import { ScrollProgress } from "@/components/ui/scroll-progress"
 
 // 导航项接口

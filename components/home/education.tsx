@@ -122,7 +122,10 @@ export default function Education() {
                                                 </div>
                                                 {hasDetails && (
                                                     <button
-                                                        onClick={() => toggleExpand(index)}
+                                                       onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            toggleExpand(index)
+                                                        }}
                                                         className="shrink-0 p-2.5 rounded-full border border-border/70 hover:border-sky-500/60 hover:bg-sky-500/10 transition-colors text-muted-foreground hover:text-foreground"
                                                         aria-label={isExpanded ? '收起' : '展开'}
                                                     >

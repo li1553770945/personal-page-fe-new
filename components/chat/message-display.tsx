@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { FileText, Download } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { downloadFileAPI } from '@/api';
 
 export default function MessageDisplay() {

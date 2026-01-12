@@ -9,7 +9,7 @@ import MessageDisplay from '@/components/chat/message-display';
 import MessageInput from '@/components/chat/message-input';
 import { Button } from '@/components/ui/button';
 import { Share2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function ChatPage() {
   const { t } = useTranslation();

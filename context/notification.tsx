@@ -64,6 +64,9 @@ const useNotificationStore = create<State & Actions>((set, get) => ({
   },
 }))
 
+// 导出store以便在非组件中使用
+export { useNotificationStore }
+
 export function useNotification() {
   const notifications = useNotificationStore((s) => s.notifications)
   const addNotification = useNotificationStore((s) => s.addNotification)

@@ -1,5 +1,5 @@
 import instance from "../lib/requests";
-import type { ApiResponse, FeedbackCategory, FeedbackResponse } from "../types/api";
+import type { ApiResponse, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse } from "../types/api";
 
 export const logoutAPI = () => instance.get("/users/logout");
 
@@ -18,17 +18,17 @@ export const userInfoAPI = () =>
 
 
 export const downloadFileAPI = (key: string) =>
-  instance.get(`/files/download?key=${key}`);
+  instance.get<any, ApiResponse<FileDownloadData>>(`/files/download?key=${key}`);
 
 export const fileInfoAPI = (key: string) =>
-  instance.get(`/files?key=${key}`);
+  instance.get<any, ApiResponse<FileUploadData>>(`/files?key=${key}`);
 
 
 export const deleteFileAPI = (key: string) =>
   instance.delete(`/files`, { data: { key: key } });
 
 export const uploadFileAPI = (data: any) =>
-  instance.post(`/files`, data);
+  instance.post<any, ApiResponse<UploadUrlResponse>>(`/files`, data);
 
 export const allFeedbackCategoriesAPI = (): Promise<ApiResponse<FeedbackCategory[]>> =>
   instance.get('/feedback/categories')
@@ -62,10 +62,10 @@ export const deleteProjectAPI = (id: number) =>
   instance.delete("/projects/" + id);
 
 export const createRoomAPI = () =>
-  instance.post("/rooms");
+  instance.post<any, ApiResponse<RoomData>>("/rooms");
 
 export const joinRoomAPI = (roomId: string) =>
-  instance.post(`/rooms/join/?roomId=${roomId}`);
+  instance.post<any, ApiResponse<RoomData>>(`/rooms/join/?roomId=${roomId}`);
 
 // AI聊天接口，使用SSE
 interface ChatMessage {

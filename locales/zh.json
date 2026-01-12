@@ -4,7 +4,9 @@
     "pageNotFound": "抱歉，你访问的页面不存在。",
     "returnHome": "返回首页",
     "notice": "提示",
-    "justNow": "刚刚"
+    "justNow": "刚刚",
+    "confirm": "确认",
+    "cancel": "取消"
   },
   "nav": {
     "home": "主页",
@@ -409,5 +411,45 @@
         "tip": "点击我左侧的聊天按钮可以和我对话哦～"
       }
     }
+  },
+  "chat": {
+    "status": {
+      "not-connected": "未连接",
+      "connecting": "连接中...",
+      "connected": "已连接",
+      "connect-fail": "连接失败",
+      "connect-interupt": "连接中断"
+    },
+    "roomId": "聊天ID",
+    "clientId": "客户端ID",
+    "createRoom": "创建聊天室",
+    "enterRoomId": "请输入房间ID",
+    "join": "加入",
+    "rejoin": "重新加入",
+    "shareRoom": "分享聊天室",
+    "connectionFailedTitle": "连接失败",
+    "connectionFailedMessage": "与服务器连接失败，请刷新页面并重新创建对话",
+    "downloadStarted": "开始下载",
+    "downloading": "下载中...",
+    "downloadFile": "下载文件",
+    "downloadFailed": "下载失败",
+    "downloadError": "文件下载失败",
+    "selectFile": "选择文件",
+    "inputPlaceholder": "请输入消息内容，按下回车键发送消息（Shift+Enter换行）",
+    "sendMessage": "发送消息",
+    "sendFile": "发送文件",
+    "sendFailed": "发送失败",
+    "selectFileFirst": "请先选择文件",
+    "getUploadUrlFailed": "获取上传链接失败",
+    "sendSuccess": "发送成功",
+    "file": "文件",
+    "sent": "已发送",
+    "uploadFailed": "文件上传失败",
+    "messageEmpty": "消息不能为空",
+    "shareFailed": "分享失败",
+    "noRoomToShare": "当前没有可分享的聊天室",
+    "shareSuccess": "分享成功",
+    "linkCopied": "分享链接已复制到剪贴板",
+    "copyManually": "请手动复制链接"
   }
 }

@@ -4,7 +4,9 @@
     "pageNotFound": "Sorry, the page you visited does not exist.",
     "returnHome": "Return to Home",
     "notice": "Notice",
-    "justNow": "Just Now"
+    "justNow": "Just Now",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   },
   "nav": {
     "home": "Home",
@@ -405,5 +407,45 @@
         "tip": "Click the chat button on my left to talk with me~"
       }
     }
+  },
+  "chat": {
+    "status": {
+      "not-connected": "Not Connected",
+      "connecting": "Connecting...",
+      "connected": "Connected",
+      "connect-fail": "Connection Failed",
+      "connect-interupt": "Connection Interrupted"
+    },
+    "roomId": "Room ID",
+    "clientId": "Client ID",
+    "createRoom": "Create Room",
+    "enterRoomId": "Enter Room ID",
+    "join": "Join",
+    "rejoin": "Rejoin",
+    "shareRoom": "Share Room",
+    "connectionFailedTitle": "Connection Failed",
+    "connectionFailedMessage": "Failed to connect to server. Please refresh the page and create a new conversation.",
+    "downloadStarted": "Download Started",
+    "downloading": "Downloading...",
+    "downloadFile": "Download File",
+    "downloadFailed": "Download Failed",
+    "downloadError": "File download failed",
+    "selectFile": "Select File",
+    "inputPlaceholder": "Enter message content, press Enter to send (Shift+Enter for new line)",
+    "sendMessage": "Send Message",
+    "sendFile": "Send File",
+    "sendFailed": "Send Failed",
+    "selectFileFirst": "Please select a file first",
+    "getUploadUrlFailed": "Failed to get upload URL",
+    "sendSuccess": "Send Success",
+    "file": "File",
+    "sent": "sent",
+    "uploadFailed": "File upload failed",
+    "messageEmpty": "Message cannot be empty",
+    "shareFailed": "Share Failed",
+    "noRoomToShare": "No room available to share",
+    "shareSuccess": "Share Success",
+    "linkCopied": "Share link copied to clipboard",
+    "copyManually": "Please copy the link manually"
   }
 }

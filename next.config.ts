@@ -12,18 +12,13 @@ const nextConfig: NextConfig = {
     if (!env || env !== 'development') {
       return [];
     }
-    const proxyMode = process.env.PROXY_MODE;
-    if (!proxyMode) {
-      throw new Error('PROXY_MODE is not set');
+    
+    // 从环境变量直接读取代理目标，如果没有设置则默认为本地后端
+    const apiTarget = process.env.NEXT_PUBLIC_API_PROXY_URL;
+    if (!apiTarget) {
+      throw new Error('错误: NEXT_PUBLIC_API_PROXY_URL 环境变量未设置.请在.env.development文件中设置(e.g., NEXT_PUBLIC_API_PROXY_URL=http://localhost:9100).');
     }
-    if (proxyMode !== 'prod' && proxyMode !== 'local') {
-      throw new Error('PROXY_MODE must be prod or local');
-    }
-
-    const apiTarget = proxyMode === 'prod'
-      ? 'https://api.peacesheep.xyz'
-      : 'http://localhost:9100';
-    console.log(`PROXY_MODE is set to ${proxyMode}, proxying API requests to ${apiTarget}`);
+    console.log(`Proxying API requests to ${apiTarget}`);
 
     return [
       {

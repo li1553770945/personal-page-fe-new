@@ -42,8 +42,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { allFeedbackCategoriesAPI, saveFeedbackAPI, getFeedbackAPI } from "@/api"
 import { cn } from "@/lib/utils"
 import { ApiResponse, FeedbackCategory } from "@/types/api"
-import { useNotification } from "@/context/notification"
-import { useUser } from "@/context/user"
+import { useNotification } from "@/store/notification"
+import { useUser } from "@/store/user"
 
 export default function FeedbackPage() {
   const { t } = useTranslation()

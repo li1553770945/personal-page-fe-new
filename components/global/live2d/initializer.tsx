@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLive2D, Live2DInstance } from '@/context/live2d'; // 引入刚才创建的 store
+import { useLive2D, Live2DInstance } from '@/store/live2d'; // 引入刚才创建的 store
 import "@/public/live2d/chat.js"
 declare global {
   interface Window {

@@ -14,8 +14,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useTranslation } from "react-i18next"
 import { ShimmerButton } from "@/components/ui/shimmer-button"
-import { useUser } from "@/context/user"
-import { useNotification } from "@/context/notification"
+import { useUser } from "@/store/user"
+import { useNotification } from "@/store/notification"
 interface LoginProps {
     onRegisterClick: () => void
     onLoginSuccess: (data:any) => void

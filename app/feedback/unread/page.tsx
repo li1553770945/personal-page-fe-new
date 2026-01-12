@@ -12,8 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { notReadFeedbackAPI } from "@/api"
-import { useNotification } from "@/context/notification"
-import { useUser } from "@/context/user"
+import { useNotification } from "@/store/notification"
+import { useUser } from "@/store/user"
 
 export default function UnreadFeedbackPage() {
   const { t } = useTranslation()

@@ -4,7 +4,7 @@ import { Send, Sparkles, Bot, X, Eraser, User } from 'lucide-react'
 import { aiChatAPI, AIChatRequest } from '@/api'
 import ReactMarkdown from 'react-markdown'
 import { useTranslation } from 'react-i18next'
-import { useLive2D } from '@/context/live2d'
+import { useLive2D } from '@/store/live2d'
 import { getMotionStrategy } from './utils'
 import { MessageParser } from './message-parser'
 import { ShineBorder } from "@/components/ui/shine-border"

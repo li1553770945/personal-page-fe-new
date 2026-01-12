@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { ConnectionStatus, Message } from '@/types/chat';
 import { createRoomAPI, joinRoomAPI } from '@/api';
-import { useNotificationStore } from '@/context/notification';
+import { useNotificationStore } from '@/store/notification';
 
 interface ChatState {
   // 房间相关

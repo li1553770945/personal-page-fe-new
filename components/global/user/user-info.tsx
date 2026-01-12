@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useNotification } from "@/context/notification"
+import { useNotification } from "@/store/notification"
 import {
   Card,
   CardContent,
@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { useTranslation } from "react-i18next"
-import { useUser } from "@/context/user"
+import { useUser } from "@/store/user"
 import { warning } from "framer-motion"
 
 type UserInfoFormData = {

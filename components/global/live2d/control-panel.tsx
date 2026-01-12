@@ -1,5 +1,5 @@
 "use client"
-import { useLive2D } from "@/context/live2d"
+import { useLive2D } from "@/store/live2d"
 import ChatDialog from "./chat-dialog"
 
 export default function ControlPanel() {

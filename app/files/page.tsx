@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect, useRef, Suspense } from "react"
-import { useUser } from "@/context/user"
-import { useNotification } from "@/context/notification"
+import { useUser } from "@/store/user"
+import { useNotification } from "@/store/notification"
 import { uploadFileAPI, downloadFileAPI, fileInfoAPI, deleteFileAPI } from "@/api"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"

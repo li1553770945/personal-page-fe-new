@@ -15,9 +15,9 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Loader2, Send } from "lucide-react"
-import { useUser } from "@/context/user"
+import { useUser } from "@/store/user"
 import { getFeedbackAPI, getReplyAPI, addReplyAPI } from "@/api"
-import { useNotification } from "@/context/notification"
+import { useNotification } from "@/store/notification"
 import {
   Alert,
   AlertDescription,

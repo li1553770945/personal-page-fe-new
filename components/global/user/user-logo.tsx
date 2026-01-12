@@ -8,8 +8,8 @@ import { Login } from "./login"
 import { Register } from "./register"
 import { UserInfo } from "./user-info"
 import { User } from "lucide-react"
-import { useUser } from "@/context/user"
-import { useNotification } from "@/context/notification"
+import { useUser } from "@/store/user"
+import { useNotification } from "@/store/notification"
 import { useTranslation } from "react-i18next"
 export function UserLogo() {
     const { user, refresh } = useUser()

@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useEffect, useRef } from "react"
-import { useLive2D } from "@/context/live2d"
+import { useLive2D } from "@/store/live2d"
 interface Friend {
   name: string
   description: string

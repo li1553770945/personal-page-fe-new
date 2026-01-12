@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils"
 import { AnimatedListItem } from "@/components/ui/animated-list"
 import { AnimatePresence } from "motion/react"
-import { useNotification, NotificationItem } from "@/context/notification"
+import { useNotification, NotificationItem } from "@/store/notification"
 import { X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 

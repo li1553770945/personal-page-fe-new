@@ -224,7 +224,10 @@
     "passwordPlaceholder": "请输入您的密码",
     "activeCode": "激活码",
     "activeCodePlaceholder": "请输入您的激活码",
+    "nickname": "昵称",
+    "nicknamePlaceholder": "请输入您的昵称",
     "loginFailed": "登录失败，请检查用户名或密码",
+    "registerFailed": "注册失败，请稍后重试",
     "logout": "退出登录",
     "logoutSuccess": "退出成功",
     "saveChanges": "保存更改",
@@ -288,7 +291,8 @@
     "replyContent": "回复内容",
     "replyContentPlaceholder": "请输入回复内容",
     "submitting": "提交中",
-    "submitReply": "提交回复"
+    "submitReply": "提交回复",
+    "notFound": "未找到对应的留言"
   },
   "files": {
     "title": "文件管理",

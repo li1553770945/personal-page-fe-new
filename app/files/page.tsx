@@ -118,7 +118,7 @@ function FileManagementContent() {
       notificationSuccess(t("files.notifications.copySuccess"), t("files.notifications.copySuccessDesc"))
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
-      notificationError(t("files.notifications.copyFailed"), t("files.notifications.copyFailedDesc  "))
+      notificationError(t("files.notifications.copyFailed"), t("files.notifications.copyFailedDesc"))
     }
   }
 

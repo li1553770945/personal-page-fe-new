@@ -220,7 +220,10 @@
     "passwordPlaceholder": "Enter your password",
     "activeCode": "Active Code",
     "activeCodePlaceholder": "Enter your active code",
+    "nickname": "Nickname",
+    "nicknamePlaceholder": "Enter your nickname",
     "loginFailed": "Login failed, please check your username or password",
+    "registerFailed": "Registration failed, please try again later",
     "logout": "Logout",
     "logoutSuccess": "Logged out successfully",
     "saveChanges": "Save Changes",
@@ -284,7 +287,8 @@
     "replyContent": "Reply Content",
     "replyContentPlaceholder": "Please enter reply content",
     "submitting": "Submitting...",
-    "submitReply": "Submit Reply"
+    "submitReply": "Submit Reply",
+    "notFound": "Feedback not found"
   },
   "files": {
     "title": "File Management",

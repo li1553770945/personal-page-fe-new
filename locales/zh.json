@@ -370,7 +370,7 @@
   },
   "slides": {
     "title": "幻灯片",
-    "description": "Slidev 导出的演示文稿列表。将构建产物放到站点目录并维护清单即可纯静态托管；后续可替换为接口数据。",
+    "description": "欢迎来访。这里收录了 PeaceSheep 的一些公开幻灯片与分享稿，随意翻阅即可。",
     "searchPlaceholder": "搜索标题、描述、标签…",
     "loading": "加载列表…",
     "loadError": "无法加载幻灯片清单，请检查 slides-manifest.json 是否存在且格式正确。",

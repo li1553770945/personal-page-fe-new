@@ -11,6 +11,7 @@
   "nav": {
     "home": "Home",
     "blog": "Blog",
+    "lectures": "Talks",
     "tools": "Tools",
     "fileManagement": "File Management",
     "temporaryChat": "Temporary Chat",
@@ -362,6 +363,18 @@
   "friends": {
     "title": "My Friends",
     "description": "Here are some interesting friends and their homepages."
+  },
+  "slides": {
+    "title": "Slides",
+    "description": "Slidev export index. Drop static builds under the public folder and maintain the manifest for fully static hosting; you can swap the data source to an API later.",
+    "searchPlaceholder": "Search title, description, tags…",
+    "loading": "Loading…",
+    "loadError": "Could not load slides-manifest.json. Check that it exists and is valid JSON.",
+    "retry": "Retry",
+    "noResults": "No matching decks",
+    "howToAdd": "When building Slidev, set base to match <id> (trailing slash): slidev build --base /slides/decks/<id>/\nCopy the output to public/slides/decks/<id>/ and add a manifest entry. No manual HTML/JS patching needed.",
+    "createdAt": "Created",
+    "open": "Open deck"
   },
   "chatDialog": {
     "openChat": "Open Chat",

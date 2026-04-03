@@ -26,6 +26,7 @@ import { FileOutlinedIcon } from "@/components/ui/icons/ant-design-file-outlined
 import { CoffeeOutlinedIcon } from "@/components/ui/icons/ant-design-coffee-outlined"
 import { UserGroupIcon } from "@/components/ui/icons/heroicons-user-group"
 import { FriendsIcon } from "@/components/ui/icons/friends"
+import { Presentation } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -61,6 +62,11 @@ export default function Header() {
             icon: BookOpenIcon,
             href: "https://blog.peacesheep.xyz",
             target: "_blank",
+        },
+        {
+            label: t('nav.lectures'),
+            icon: Presentation,
+            href: "/slides",
         },
         {
             label: t('nav.tools'),

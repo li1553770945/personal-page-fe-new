@@ -11,6 +11,7 @@
   "nav": {
     "home": "主页",
     "blog": "博客",
+    "lectures": "讲演",
     "tools": "工具箱",
     "fileManagement": "文件管理",
     "temporaryChat": "临时群聊",
@@ -366,6 +367,18 @@
   "friends": {
     "title": "我的朋友们",
     "description": "这里是一些有趣的朋友和他们的主页。"
+  },
+  "slides": {
+    "title": "幻灯片",
+    "description": "Slidev 导出的演示文稿列表。将构建产物放到站点目录并维护清单即可纯静态托管；后续可替换为接口数据。",
+    "searchPlaceholder": "搜索标题、描述、标签…",
+    "loading": "加载列表…",
+    "loadError": "无法加载幻灯片清单，请检查 slides-manifest.json 是否存在且格式正确。",
+    "retry": "重试",
+    "noResults": "没有匹配的幻灯片",
+    "howToAdd": "在 Slidev 项目构建时指定子路径（与 id 一致，末尾加 /）：slidev build --base /slides/decks/<id>/\n将输出整包复制到 public/slides/decks/<id>/，再在 slides-manifest.json 追加条目。无需每次手改 HTML/JS。",
+    "createdAt": "创建日期",
+    "open": "全屏演示"
   },
   "chatDialog": {
     "openChat": "打开聊天",

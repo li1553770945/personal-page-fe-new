@@ -1,4 +1,23 @@
 {
+  "hero": {
+    "eyebrow": "后端与基础架构工程师",
+    "title": "你好，我是 PeaceSheep，关注可靠的后端系统与 AI 基础设施。",
+    "subtitle": "我主要关注 云原生、基础架构、AI Agent。这个网站记录我的经历、文章、分享、项目和一些顺手做的小工具。",
+    "actions": {
+      "blog": "阅读博客",
+      "slides": "查看分享",
+      "github": "GitHub",
+      "contact": "邮件联系"
+    },
+    "tags": [
+      "Go",
+      "云原生",
+      "分布式系统",
+      "AI Infra",
+      "Kubernetes",
+      "可观测性"
+    ]
+  },
   "common": {
     "notFound": "404 - 页面未找到",
     "pageNotFound": "抱歉，你访问的页面不存在。",

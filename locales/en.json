@@ -1,4 +1,23 @@
 {
+  "hero": {
+    "eyebrow": "Backend and infrastructure engineer",
+    "title": "Hi, I'm PeaceSheep. I build reliable backend systems and AI infrastructure.",
+    "subtitle": "I focus on cloud-native technologies, infrastructure, and AI agents. This site collects my experience, writing, talks, projects, and small tools.",
+    "actions": {
+      "blog": "Read blog",
+      "slides": "View talks",
+      "github": "GitHub",
+      "contact": "Email me"
+    },
+    "tags": [
+      "Go",
+      "Cloud Native",
+      "Distributed Systems",
+      "AI Infrastructure",
+      "Kubernetes",
+      "Observability"
+    ]
+  },
   "common": {
     "notFound": "404 - Page Not Found",
     "pageNotFound": "Sorry, the page you visited does not exist.",

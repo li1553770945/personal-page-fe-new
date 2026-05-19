@@ -1,17 +1,16 @@
 "use client"
 
-
-import { TypingAnimation } from "@/components/ui/typing-animation"
+import { Hero } from "@/components/home/hero"
 import Education from "@/components/home/education"
 import Experience from "@/components/home/experience"
-import { Skills } from '@/components/home/skills'
-import { Awards } from '@/components/home/awards'
-import { Publications } from '@/components/home/publications'
-export default function Home() {
+import { Skills } from "@/components/home/skills"
+import { Awards } from "@/components/home/awards"
+import { Publications } from "@/components/home/publications"
 
+export default function Home() {
   return (
     <div>
-      <TypingAnimation className="text-2xl font-bold mt-10 block">Hello, I&apos;m PeaceSheep 👋</TypingAnimation>
+      <Hero />
       <Experience />
       <Education />
       <Awards />

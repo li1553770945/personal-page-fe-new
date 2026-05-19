@@ -29,6 +29,7 @@
   },
   "nav": {
     "home": "主页",
+    "projects": "项目",
     "blog": "博客",
     "lectures": "讲演",
     "tools": "工具箱",
@@ -40,6 +41,27 @@
     "github": "Github",
     "consultation": "咨询&留言",
     "appreciate": "赞赏"
+  },
+  "projects": {
+    "title": "项目",
+    "description": "这里记录我参与或主导的一些工程项目、开源工具和实验性作品。默认按时间倒序展示，也可以按重要性查看。",
+    "featured": "精选",
+    "sort": {
+      "ariaLabel": "项目排序方式",
+      "time": "按时间倒序",
+      "importance": "按重要性"
+    },
+    "status": {
+      "active": "进行中",
+      "completed": "已完成",
+      "maintained": "维护中",
+      "experiment": "实验"
+    },
+    "fields": {
+      "role": "角色",
+      "techStack": "技术栈",
+      "highlights": "亮点"
+    }
   },
   "experience": {
     "title": "工作/实习经历",

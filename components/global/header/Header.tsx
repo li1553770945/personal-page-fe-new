@@ -4,12 +4,10 @@ import Link from 'next/link';
 import {
     NavigationMenu,
     NavigationMenuContent,
-    NavigationMenuIndicator,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
     NavigationMenuTrigger,
-    NavigationMenuViewport,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { ModeToggle } from "@/components/global/header/mode-toggle"
@@ -26,7 +24,7 @@ import { FileOutlinedIcon } from "@/components/ui/icons/ant-design-file-outlined
 import { CoffeeOutlinedIcon } from "@/components/ui/icons/ant-design-coffee-outlined"
 import { UserGroupIcon } from "@/components/ui/icons/heroicons-user-group"
 import { FriendsIcon } from "@/components/ui/icons/friends"
-import { Presentation } from "lucide-react"
+import { FolderKanban, Presentation } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -56,6 +54,11 @@ export default function Header() {
             label: t('nav.home'),
             icon: HomeIcon,
             href: "/",
+        },
+        {
+            label: t('nav.projects'),
+            icon: FolderKanban,
+            href: "/projects",
         },
         {
             label: t('nav.blog'),

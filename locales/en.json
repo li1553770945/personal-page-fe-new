@@ -29,6 +29,7 @@
   },
   "nav": {
     "home": "Home",
+    "projects": "Projects",
     "blog": "Blog",
     "lectures": "Talks",
     "tools": "Tools",
@@ -40,6 +41,27 @@
     "github": "Github",
     "consultation": "Consultation & Feedback",
     "appreciate": "Appreciate"
+  },
+  "projects": {
+    "title": "Projects",
+    "description": "A collection of engineering projects, open-source tools, and experiments that I have led or contributed to. The default order is reverse chronological, with importance sorting available.",
+    "featured": "Featured",
+    "sort": {
+      "ariaLabel": "Project sort order",
+      "time": "Newest first",
+      "importance": "By importance"
+    },
+    "status": {
+      "active": "Active",
+      "completed": "Completed",
+      "maintained": "Maintained",
+      "experiment": "Experiment"
+    },
+    "fields": {
+      "role": "Role",
+      "techStack": "Tech Stack",
+      "highlights": "Highlights"
+    }
   },
   "experience": {
     "title": "Work Experience",

@@ -71,6 +71,15 @@ const friends: Friend[] = [
     bgColor: "#fff0f5", // LavenderBlush
     titleColor: "#800080", // Purple
     descColor: "#800080"
+  },
+  {
+    name: "枭马葛",
+    description: "健身+技术全能博主",
+    href: "https://jwcommunity.space/",
+    avatar: "https://img.peacesheep.xyz/2026/06/a50f8dd6b4611188e1a7a5151c5b9e6a.png",
+    bgColor: "#fff9c4", // Light Yellow
+    titleColor: "#e65100", // Deep Orange
+    descColor: "#5d4037" // Brown
   }
 ]
 

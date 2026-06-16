@@ -156,7 +156,6 @@ export const projects: Project[] = [
     startDate: "2025-01-01",
     status: "active",
     importance: 95,
-    featured: true,
     role: "产品与核心工程 / 智健启能（北京）科技有限公司",
     tags: ["健身教学", "SaaS", "小程序", "AI"],
     techStack: ["小程序", "Web 平台", "训练数据", "AI 计划生成"],
@@ -203,11 +202,10 @@ export const projects: Project[] = [
     title: "OpenMCP",
     summary:
       "面向 MCP 开发者的开发与调试平台，整合 VS Code 插件、CLI、SDK、调试面板和 Chat/资源管理能力，帮助开发者更快调试、验证和交付 MCP Server。",
-    period: "2025.05 - 至今",
+    period: "2025.05 - 2026.05",
     startDate: "2025-05-01",
-    status: "active",
+    status: "completed",
     importance: 100,
-    featured: true,
     role: "核心开发 / 产品工程",
     tags: ["AI Infra", "MCP", "Developer Tool", "Open Source"],
     techStack: ["TypeScript", "Vue", "VS Code Extension", "CLI", "SDK", "MCP"],
@@ -238,7 +236,7 @@ export const projects: Project[] = [
       en: {
         summary:
           "A development and debugging platform for MCP developers, combining a VS Code extension, CLI, SDK, debug panel, chat, and resource management workflows to help developers validate and ship MCP Servers faster.",
-        period: "May 2025 - Present",
+        period: "May 2025 - May 2026",
         role: "Core development / product engineering",
         highlights: [
           "Provides a visual debugging workflow for MCP Servers, covering tool calls, resource management, prompts, interaction history, and multi-server debugging scenarios.",

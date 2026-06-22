@@ -35,3 +35,35 @@ export interface UploadUrlResponse {
   key: string;
   signedUrl: string;
 }
+
+export type UserRole = "super_admin" | "admin" | "user";
+
+export interface CurrentUserData {
+  id: number;
+  username: string;
+  nickname: string;
+  avatar: string;
+  role: UserRole;
+  can_use: boolean;
+}
+
+export interface AdminUserData extends CurrentUserData {
+  is_activate: boolean;
+  created_at: number;
+  updated_at: number;
+}
+
+export interface ManagedFileData {
+  id: number;
+  user_id: number;
+  username: string;
+  nickname: string;
+  name: string;
+  key: string;
+  kind: "object" | "local";
+  count: number;
+  max_download: number;
+  download_count: number;
+  created_at: number;
+  updated_at: number;
+}

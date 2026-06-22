@@ -2,13 +2,8 @@
 
 import { create } from "zustand"
 import { userInfoAPI, loginAPI,registerAPI } from "@/api"
-import { ApiResponse } from "@/types/api"
-type User = {
-  username: string
-  nickname: string
-  avatar: string
-  role: string
-} | null
+import type { CurrentUserData } from "@/types/api"
+type User = CurrentUserData | null
 
 type State = {
   user: User
@@ -26,7 +21,7 @@ type LoginParams = {
 
 type RegisterParams = LoginParams & {
   nickname: string
-  activeCode: string
+  activeCode?: string
 }
 type Actions = {
   setUser: (u: User) => void

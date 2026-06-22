@@ -1,5 +1,5 @@
 import instance from "../lib/requests";
-import type { ApiResponse, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse } from "../types/api";
+import type { ApiResponse, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, UserRole } from "../types/api";
 
 export const logoutAPI = () => instance.get("/users/logout");
 
@@ -16,6 +16,15 @@ export const generateCodeAPI = (data: any) =>
 export const userInfoAPI = () =>
   instance.get(`/users/me`);
 
+export const adminUsersAPI = (): Promise<ApiResponse<AdminUserData[]>> =>
+  instance.get("/admin/users");
+
+export const updateUserRoleAPI = (id: number, role: UserRole) =>
+  instance.post(`/admin/users/${id}/role`, { role });
+
+export const updateUserStatusAPI = (id: number, canUse: boolean) =>
+  instance.post(`/admin/users/${id}/status`, { can_use: canUse });
+
 
 export const downloadFileAPI = (key: string) =>
   instance.get<any, ApiResponse<FileDownloadData>>(`/files/download?key=${key}`);
@@ -27,8 +36,17 @@ export const fileInfoAPI = (key: string) =>
 export const deleteFileAPI = (key: string) =>
   instance.delete(`/files`, { data: { key: key } });
 
+export const deleteFileByIdAPI = (id: number) =>
+  instance.delete(`/files/${id}`);
+
 export const uploadFileAPI = (data: any) =>
   instance.post<any, ApiResponse<UploadUrlResponse>>(`/files`, data);
+
+export const myFilesAPI = (): Promise<ApiResponse<ManagedFileData[]>> =>
+  instance.get("/files/mine");
+
+export const adminFilesAPI = (): Promise<ApiResponse<ManagedFileData[]>> =>
+  instance.get("/admin/files");
 
 export const allFeedbackCategoriesAPI = (): Promise<ApiResponse<FeedbackCategory[]>> =>
   instance.get('/feedback/categories')

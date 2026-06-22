@@ -23,12 +23,13 @@ import { FileOutlinedIcon } from "@/components/ui/icons/ant-design-file-outlined
 import { CoffeeOutlinedIcon } from "@/components/ui/icons/ant-design-coffee-outlined"
 import { UserGroupIcon } from "@/components/ui/icons/heroicons-user-group"
 import { FriendsIcon } from "@/components/ui/icons/friends"
-import { ChevronDown, FolderKanban, Presentation } from "lucide-react"
+import { ChevronDown, Files, FolderKanban, Presentation, Settings, Users } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { UserLogo } from "@/components/user/user-logo"
 import { ScrollProgress } from "@/components/ui/scroll-progress"
+import { useUser } from "@/store/user"
 
 // 导航项接口
 interface NavItem {
@@ -47,6 +48,7 @@ interface NavItem {
 export default function Header() {
     const { t } = useTranslation();
     const pathname = usePathname();
+    const { user } = useUser()
     const [isHydrated, setIsHydrated] = useState(false)
     const [pendingHref, setPendingHref] = useState<string | null>(null)
 
@@ -72,6 +74,7 @@ export default function Header() {
 
     const isRoutePending = Boolean(pendingHref && pendingHref !== pathname)
     const shouldShowPendingState = !isHydrated || isRoutePending
+    const isSuperAdmin = user?.role === "super_admin"
 
     const handleInternalNavigation = (href?: string, target?: string) => {
         if (!href || target === "_blank" || href.startsWith("http") || href.startsWith("mailto:") || href === pathname) {
@@ -119,6 +122,22 @@ export default function Header() {
                 }
             ]
         },
+        ...(isSuperAdmin ? [{
+            label: "网站管理",
+            icon: Settings,
+            subItem: [
+                {
+                    label: "用户管理",
+                    icon: Users,
+                    href: "/admin/users",
+                },
+                {
+                    label: "总文件管理",
+                    icon: Files,
+                    href: "/admin/files",
+                }
+            ]
+        }] : []),
         {
             label: t('nav.contact'),
             icon: ChatBubbleOvalLeftSolidIcon,

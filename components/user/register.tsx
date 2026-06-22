@@ -16,7 +16,6 @@ import { useTranslation } from "react-i18next"
 import { useNotification } from "@/store/notification"
 import { useUser } from "@/store/user"
 import { useState } from "react"
-import { error } from "console"
 
 export interface RegisterProps {
   onLoginClick: () => void
@@ -24,7 +23,6 @@ export interface RegisterProps {
 }
 type RegisterParams = {
   username: string
-  activeCode: string
   password: string
   nickname: string
 }
@@ -35,7 +33,6 @@ export function Register({ onLoginClick, onRegisterSuccess }: RegisterProps) {
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState<RegisterParams>({
     username: '',
-    activeCode: '',
     password: '',
     nickname: '',
   })
@@ -69,10 +66,6 @@ export function Register({ onLoginClick, onRegisterSuccess }: RegisterProps) {
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="username">{t('auth.username')}</Label>
               <Input id="username" type="username" placeholder={t('auth.usernamePlaceholder')} value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="active-code">{t('auth.activeCode')}</Label>
-              <Input id="active-code" type="active-code" placeholder={t('auth.activeCodePlaceholder')} value={form.activeCode} onChange={(e) => setForm({ ...form, activeCode: e.target.value })} />
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="password">{t('auth.password')}</Label>

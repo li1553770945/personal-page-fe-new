@@ -8,8 +8,8 @@
     "build": "next build --webpack",
     "start": "next start --webpack",
     "lint": "eslint",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+    "preview": "cross-env OPENNEXT_BUILD=1 opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "cross-env OPENNEXT_BUILD=1 opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

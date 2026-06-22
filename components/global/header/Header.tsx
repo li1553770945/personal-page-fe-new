@@ -1,13 +1,12 @@
 "use client"
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
     NavigationMenu,
-    NavigationMenuContent,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-    NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { ModeToggle } from "@/components/global/header/mode-toggle"
@@ -24,7 +23,7 @@ import { FileOutlinedIcon } from "@/components/ui/icons/ant-design-file-outlined
 import { CoffeeOutlinedIcon } from "@/components/ui/icons/ant-design-coffee-outlined"
 import { UserGroupIcon } from "@/components/ui/icons/heroicons-user-group"
 import { FriendsIcon } from "@/components/ui/icons/friends"
-import { FolderKanban, Presentation } from "lucide-react"
+import { ChevronDown, FolderKanban, Presentation } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -48,6 +47,39 @@ interface NavItem {
 export default function Header() {
     const { t } = useTranslation();
     const pathname = usePathname();
+    const [isHydrated, setIsHydrated] = useState(false)
+    const [pendingHref, setPendingHref] = useState<string | null>(null)
+
+    useEffect(() => {
+        const frame = window.requestAnimationFrame(() => {
+            setIsHydrated(true)
+        })
+
+        return () => window.cancelAnimationFrame(frame)
+    }, [])
+
+    useEffect(() => {
+        if (!pendingHref) {
+            return
+        }
+
+        const timeout = window.setTimeout(() => {
+            setPendingHref(null)
+        }, 5000)
+
+        return () => window.clearTimeout(timeout)
+    }, [pendingHref])
+
+    const isRoutePending = Boolean(pendingHref && pendingHref !== pathname)
+    const shouldShowPendingState = !isHydrated || isRoutePending
+
+    const handleInternalNavigation = (href?: string, target?: string) => {
+        if (!href || target === "_blank" || href.startsWith("http") || href.startsWith("mailto:") || href === pathname) {
+            return
+        }
+
+        setPendingHref(href)
+    }
 
     const navItems: NavItem[] = [
         {
@@ -125,6 +157,15 @@ export default function Header() {
     return (
         // 顶部固定：80%透明背景 + 中度背景模糊（毛玻璃效果），并针对支持模糊特性的浏览器优化透明度
         <header className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-md supports-[backdrop-filter]:bg-background/50">
+            <div
+                className={cn(
+                    "pointer-events-none absolute inset-x-0 top-0 h-0.5 overflow-hidden opacity-0 transition-opacity duration-200",
+                    shouldShowPendingState && "opacity-100"
+                )}
+                aria-hidden="true"
+            >
+                <div className="h-full w-1/3 animate-[nav-progress_1.15s_ease-in-out_infinite] rounded-full bg-primary/70 shadow-[0_0_16px_var(--primary)] motion-reduce:animate-none" />
+            </div>
             <div className="flex h-16 items-center justify-between px-4 md:px-6">
                 <NavigationMenu viewport={false}>
                     <NavigationMenuList>
@@ -136,37 +177,76 @@ export default function Header() {
 
                             if (hasSub) {
                                 return (
-                                    <NavigationMenuItem key={item.label} className='hover:border-b-3 hover:border-(--underline-background)'>
-                                        <NavigationMenuTrigger>
+                                    <NavigationMenuItem
+                                        key={item.label}
+                                        className="group/nav-item relative hover:border-b-3 hover:border-(--underline-background)"
+                                    >
+                                        <button
+                                            type="button"
+                                            className={cn(
+                                                navigationMenuTriggerStyle(),
+                                                "group flex-row items-center transition-all duration-200 ease-out active:scale-[0.98] group-hover/nav-item:bg-accent group-hover/nav-item:text-accent-foreground group-focus-within/nav-item:bg-accent group-focus-within/nav-item:text-accent-foreground"
+                                            )}
+                                            aria-haspopup="true"
+                                        >
                                             {IconComp ? <IconComp className="mr-2 size-4 text-foreground" /> : null}
                                             {item.label}
-                                        </NavigationMenuTrigger>
-                                        <NavigationMenuContent>
-                                            <ul className="grid min-w-[150px] w-fit max-w-[360px] gap-3 p-4">
-                                                {item.subItem?.map((sub) => (
-                                                    <li key={sub.label} className='hover:border-b-3 hover:border-(--underline-background)'>
-                                                        <NavigationMenuLink asChild >
+                                            <ChevronDown
+                                                className="relative top-[1px] ml-1 size-3 transition-transform duration-200 group-hover/nav-item:rotate-180 group-focus-within/nav-item:rotate-180"
+                                                aria-hidden="true"
+                                            />
+                                        </button>
+                                        <div className="invisible absolute left-0 top-full min-w-[170px] translate-y-1 pt-2 opacity-0 transition-all duration-200 ease-out group-hover/nav-item:visible group-hover/nav-item:translate-y-0 group-hover/nav-item:opacity-100 group-focus-within/nav-item:visible group-focus-within/nav-item:translate-y-0 group-focus-within/nav-item:opacity-100">
+                                            <div className="rounded-md border bg-popover p-2 text-popover-foreground shadow-lg">
+                                                <ul className="grid gap-1">
+                                                    {item.subItem?.map((sub) => {
+                                                        const SubIcon = sub.icon
+                                                        const isPending = pendingHref === sub.href && sub.href !== pathname
 
-                                                            <Link href={sub.href} className={cn("flex flex-row items-center")} target={sub.target || '_self'}>
-                                                                {sub.icon ? <sub.icon className="mr-2 size-4 text-foreground" /> : null}
-                                                                <div>{sub.label}</div>
-                                                                {sub.target === '_blank' && <LinkOutlinedIcon className="ml-1 size-3 text-muted-foreground" />}
-                                                            </Link>
-                                                        </NavigationMenuLink>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </NavigationMenuContent>
+                                                        return (
+                                                            <li key={sub.label}>
+                                                                <Link
+                                                                    href={sub.href}
+                                                                    className={cn(
+                                                                        "relative flex min-h-9 flex-row items-center rounded-md px-3 py-2 text-sm transition-all duration-200 ease-out hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground focus-visible:outline-none active:scale-[0.98]",
+                                                                        isPending && "bg-accent text-accent-foreground"
+                                                                    )}
+                                                                    target={sub.target || '_self'}
+                                                                    onClick={() => handleInternalNavigation(sub.href, sub.target)}
+                                                                >
+                                                                    {SubIcon ? <SubIcon className="mr-2 size-4 text-foreground" /> : null}
+                                                                    <div>{sub.label}</div>
+                                                                    {isPending && <span className="ml-2 size-1.5 animate-pulse rounded-full bg-primary" aria-hidden="true" />}
+                                                                    {sub.target === '_blank' && <LinkOutlinedIcon className="ml-1 size-3 text-muted-foreground" />}
+                                                                </Link>
+                                                            </li>
+                                                        )
+                                                    })}
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </NavigationMenuItem>
                                 )
                             }
 
                             return (
                                 <NavigationMenuItem key={item.label} className={cn('hover:border-b-3 hover:border-(--underline-background)', isActive && 'border-b-3 hover:border-(--underline-background)')}>
-                                    <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "flex-row items-center ")}>
-                                        <Link href={item.href || '#'} target={item.target}>
+                                    <NavigationMenuLink
+                                        asChild
+                                        className={cn(
+                                            navigationMenuTriggerStyle(),
+                                            "relative flex-row items-center transition-all duration-200 ease-out active:scale-[0.98]",
+                                            pendingHref === item.href && item.href !== pathname && "bg-accent text-accent-foreground"
+                                        )}
+                                    >
+                                        <Link
+                                            href={item.href || '#'}
+                                            target={item.target}
+                                            onClick={() => handleInternalNavigation(item.href, item.target)}
+                                        >
                                             {IconComp ? <IconComp className="mr-2 size-4 text-foreground" /> : null}
                                             {item.label}
+                                            {pendingHref === item.href && item.href !== pathname && <span className="ml-2 size-1.5 animate-pulse rounded-full bg-primary" aria-hidden="true" />}
                                             {item.target === '_blank' && <LinkOutlinedIcon className="ml-1 size-3 text-muted-foreground" />}
                                         </Link>
                                     </NavigationMenuLink>

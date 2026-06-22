@@ -4,6 +4,19 @@
 html:focus-within {
   scroll-behavior: smooth;
 }
+
+@keyframes nav-progress {
+  0% {
+    transform: translateX(-120%);
+  }
+  55% {
+    transform: translateX(160%);
+  }
+  100% {
+    transform: translateX(340%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html:focus-within {
     scroll-behavior: auto;

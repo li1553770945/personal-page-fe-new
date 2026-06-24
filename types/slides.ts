@@ -16,7 +16,7 @@ export interface SlideDeckMeta {
   descriptionEn?: string
   /** ISO 8601，用于展示与排序 */
   createdAt: string
-  /** 站点根路径下的封面图，如 /slides/decks/foo/cover.png */
+  /** 站点根路径下的封面图，如 /slides/decks/foo/cover.webp */
   cover?: string
   /** 演示入口；默认 /slides/decks/{id}/（由 Next fallback rewrite 回退到 index.html；勿在 URL 中写 index.html 以免 Slidev 路由误判） */
   entry?: string

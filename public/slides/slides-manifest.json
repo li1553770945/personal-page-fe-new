@@ -1,14 +1,3 @@
 {
-  "slides": [
-    {
-      "id": "2026-employment-experience-sharing",
-      "title": "2026就业经验分享",
-      "titleEn": "2026 Employment Experience Sharing",
-      "description": "2026就业经验分享",
-      "descriptionEn": "2026 Employment Experience Sharing",
-      "createdAt": "2026-02-04",
-      "cover": "/slides/decks/2026-employment-experience-sharing/cover.webp",
-      "tags": ["分享", "就业"]
-    }
-  ]
+  "slides": []
 }

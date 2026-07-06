@@ -116,6 +116,8 @@ type BrowserSlideFile = {
 }
 
 const slideDeckBasePattern = /\/slides\/decks\/[^/"'()\s]+\/?/g
+const legacySlideGuardPattern =
+  /<script>\s*\(function\s*\(\)\s*\{[\s\S]*?protected-slide:[\s\S]*?\/slides\/protected\/[\s\S]*?\}\)\(\);\s*<\/script>\s*/g
 
 const contentTypesByExt: Record<string, string> = {
   ".css": "text/css; charset=utf-8",
@@ -168,7 +170,9 @@ const shouldRewriteSlideAssetRefs = (name: string) =>
   [".html", ".js", ".mjs", ".css"].includes(extensionOf(name))
 
 const rewriteSlideAssetRefs = (content: string, slug: string) =>
-  content.replace(slideDeckBasePattern, `/api/slides/${slug}/assets/`)
+  content
+    .replace(legacySlideGuardPattern, "")
+    .replace(slideDeckBasePattern, `/api/slides/${slug}/assets/`)
 
 const stripCommonZipRoot = (files: BrowserSlideFile[]) => {
   if (files.length === 0) return files

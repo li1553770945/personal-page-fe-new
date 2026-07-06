@@ -20,6 +20,8 @@ export interface SlideDeckMeta {
   cover?: string
   /** 演示入口；默认 /slides/decks/{id}/（由 Next fallback rewrite 回退到 index.html；勿在 URL 中写 index.html 以免 Slidev 路由误判） */
   entry?: string
+  /** 仅用于前端展示与软访问控制提示，不代表真正的服务端权限保护。 */
+  protected?: boolean
   tags?: string[]
 }
 

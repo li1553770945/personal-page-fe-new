@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight, BookOpen, Github, Mail, Sparkles } from "lucide-react"
+import { ArrowRight, BookOpen, Github, Mail, Presentation, Sparkles } from "lucide-react"
 import { motion } from "motion/react"
 import { useTranslation } from "react-i18next"
 
@@ -26,6 +26,12 @@ export function Hero() {
       href: "https://blog.peacesheep.xyz",
       external: true,
       icon: BookOpen,
+    },
+    {
+      label: t("hero.actions.slides"),
+      href: "/slides",
+      variant: "outline",
+      icon: Presentation,
     },
     {
       label: t("hero.actions.github"),

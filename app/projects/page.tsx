@@ -130,23 +130,25 @@ export default function ProjectsPage() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                {project.links.map((link) => {
-                  const Icon = linkIcon[link.type]
-                  return (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={cn(buttonVariants({ variant: link.type === "website" ? "default" : "outline", size: "sm" }))}
-                    >
-                      <Icon className="size-4" />
-                      {link.label}
-                    </Link>
-                  )
-                })}
-              </div>
+              {project.links.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {project.links.map((link) => {
+                    const Icon = linkIcon[link.type]
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(buttonVariants({ variant: link.type === "website" ? "default" : "outline", size: "sm" }))}
+                      >
+                        <Icon className="size-4" />
+                        {link.label}
+                      </Link>
+                    )
+                  })}
+                </div>
+              ) : null}
 
               {project.sourceNote ? <p className="text-xs text-muted-foreground/80">{project.sourceNote}</p> : null}
             </CardContent>

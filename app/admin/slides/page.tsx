@@ -118,6 +118,7 @@ type BrowserSlideFile = {
 const slideDeckBasePattern = /\/slides\/decks\/[^/"'()\s]+\/?/g
 const legacySlideGuardPattern =
   /<script>\s*\(function\s*\(\)\s*\{[\s\S]*?protected-slide:[\s\S]*?\/slides\/protected\/[\s\S]*?\}\)\(\);\s*<\/script>\s*/g
+const slideCrossoriginAttrPattern = /\s+crossorigin(?:=(?:"[^"]*"|'[^']*'|[^\s>]*))?/g
 
 const contentTypesByExt: Record<string, string> = {
   ".css": "text/css; charset=utf-8",
@@ -169,10 +170,13 @@ const contentTypeForPath = (name: string, fallback?: string) =>
 const shouldRewriteSlideAssetRefs = (name: string) =>
   [".html", ".js", ".mjs", ".css"].includes(extensionOf(name))
 
-const rewriteSlideAssetRefs = (content: string, slug: string) =>
-  content
-    .replace(legacySlideGuardPattern, "")
-    .replace(slideDeckBasePattern, `/api/slides/${slug}/assets/`)
+const sanitizeSlideHTML = (content: string) =>
+  content.replace(legacySlideGuardPattern, "").replace(slideCrossoriginAttrPattern, "")
+
+const rewriteSlideAssetRefs = (content: string, slug: string, path: string) => {
+  const normalizedContent = extensionOf(path) === ".html" ? sanitizeSlideHTML(content) : content
+  return normalizedContent.replace(slideDeckBasePattern, `/api/slides/${slug}/assets/`)
+}
 
 const stripCommonZipRoot = (files: BrowserSlideFile[]) => {
   if (files.length === 0) return files
@@ -352,7 +356,7 @@ export default function AdminSlidesPage() {
           }
           const contentType = upload.contentType || file.contentType
           const body = shouldRewriteSlideAssetRefs(file.path)
-            ? new Blob([rewriteSlideAssetRefs(await file.zipEntry.async("text"), uploadRes.data.id)], { type: contentType })
+            ? new Blob([rewriteSlideAssetRefs(await file.zipEntry.async("text"), uploadRes.data.id, file.path)], { type: contentType })
             : await file.zipEntry.async("blob")
           await putSignedObject(upload, body, contentType)
           uploaded += 1

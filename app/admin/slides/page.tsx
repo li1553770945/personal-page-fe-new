@@ -115,7 +115,7 @@ type BrowserSlideFile = {
   contentType: string
 }
 
-const slideDeckBasePattern = /\/slides\/decks\/[^"'()\s]+\//g
+const slideDeckBasePattern = /\/slides\/decks\/[^/"'()\s]+\/?/g
 
 const contentTypesByExt: Record<string, string> = {
   ".css": "text/css; charset=utf-8",

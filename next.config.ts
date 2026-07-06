@@ -10,26 +10,9 @@ const nextConfig: NextConfig = {
   },
   compress: false,
   async rewrites() {
-    // Slidev 等 SPA：/slides/decks/:id/1 等路径没有对应物理文件时回退到该套的 index.html。
-    // 使用 fallback，在 public 下已有文件（如 assets/*）时仍优先走静态文件，不会误改写到 index.html。
-    const slideDeckSpaFallback = [
-      {
-        source: "/slides/decks/:deck",
-        destination: "/slides/decks/:deck/index.html",
-      },
-      {
-        source: "/slides/decks/:deck/",
-        destination: "/slides/decks/:deck/index.html",
-      },
-      {
-        source: "/slides/decks/:deck/:path*",
-        destination: "/slides/decks/:deck/index.html",
-      },
-    ];
-
     const env = process.env.NODE_ENV;
     if (!env || env !== "development") {
-      return { fallback: slideDeckSpaFallback };
+      return [];
     }
 
     // 从环境变量直接读取代理目标，如果没有设置则默认为本地后端
@@ -42,7 +25,6 @@ const nextConfig: NextConfig = {
     console.log(`Proxying API requests to ${apiTarget}`);
 
     return {
-      fallback: slideDeckSpaFallback,
       afterFiles: [
         {
           source: "/api/:path*",

@@ -30,8 +30,11 @@ function ProtectedSlideUnlock() {
       if (res.code !== 0) {
         throw new Error(res.message)
       }
-      const fallbackEntry = `/slides/decks/${slideId}/`
-      const entry = resolveApiRouteUrl(res.data?.entry || fallbackEntry) ?? fallbackEntry
+      const slideEntry = res.data?.entry?.trim()
+      const entry = slideEntry ? resolveApiRouteUrl(slideEntry) ?? slideEntry : null
+      if (!entry) {
+        throw new Error("幻灯片入口未配置")
+      }
       window.sessionStorage.setItem(`protected-slide:${slideId}`, "ok")
       window.location.assign(entry)
     } catch (err: any) {

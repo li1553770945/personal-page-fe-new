@@ -414,12 +414,13 @@
     "description": "欢迎来访。这里收录了 PeaceSheep 的一些公开幻灯片与分享稿，随意翻阅即可。",
     "searchPlaceholder": "搜索标题、描述、标签…",
     "loading": "加载列表…",
-    "loadError": "无法加载幻灯片清单，请检查 slides-manifest.json 是否存在且格式正确。",
+    "loadError": "无法加载后端幻灯片列表，请稍后重试。",
     "retry": "重试",
     "noResults": "没有匹配的幻灯片",
-    "howToAdd": "在 Slidev 项目构建时指定子路径（与 id 一致，末尾加 /）：slidev build --base /slides/decks/<id>/\n将输出整包复制到 public/slides/decks/<id>/，再在 slides-manifest.json 追加条目。无需每次手改 HTML/JS。",
+    "howToAdd": "暂无幻灯片。请在后台管理中新增幻灯片并上传 Slidev build 输出 zip。",
     "createdAt": "创建日期",
-    "open": "全屏演示"
+    "open": "全屏演示",
+    "noEntry": "入口未配置"
   },
   "chatDialog": {
     "openChat": "打开聊天",

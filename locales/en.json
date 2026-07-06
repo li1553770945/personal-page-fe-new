@@ -410,12 +410,13 @@
     "description": "Welcome. Here are some of PeaceSheep's public slide decks and sharing materials — feel free to browse.",
     "searchPlaceholder": "Search title, description, tags…",
     "loading": "Loading…",
-    "loadError": "Could not load slides-manifest.json. Check that it exists and is valid JSON.",
+    "loadError": "Could not load the backend slide list. Please try again later.",
     "retry": "Retry",
     "noResults": "No matching decks",
-    "howToAdd": "When building Slidev, set base to match <id> (trailing slash): slidev build --base /slides/decks/<id>/\nCopy the output to public/slides/decks/<id>/ and add a manifest entry. No manual HTML/JS patching needed.",
+    "howToAdd": "No slides yet. Add a slide in the admin panel and upload the Slidev build zip there.",
     "createdAt": "Created",
-    "open": "Open deck"
+    "open": "Open deck",
+    "noEntry": "Entry not configured"
   },
   "chatDialog": {
     "openChat": "Open Chat",

@@ -14,16 +14,12 @@ import type { SlideDeckMeta } from "@/types/slides"
 import type { SlideData } from "@/types/api"
 import { cn } from "@/lib/utils"
 
-function defaultEntry(id: string) {
-  return `/slides/decks/${id}/`
-}
-
-/**
- * 使用「目录 + /」作为入口，避免 URL 里带 index.html（Slidev 会把它当成路由片段导致 404）。
- * Next 通过 next.config rewrites fallback 把无文件的子路径回退到各套的 index.html。
- */
-function normalizeEntry(id: string, entry?: string) {
-  const raw = (entry ?? defaultEntry(id)).trim()
+// Backend-managed entries can point to API routes or external URLs.
+function normalizeEntry(entry?: string) {
+  const raw = (entry ?? "").trim()
+  if (!raw) {
+    return null
+  }
   if (/^https?:\/\//i.test(raw)) {
     return raw
   }
@@ -191,7 +187,7 @@ export default function SlidesPage() {
             const title = langIsEn && deck.titleEn ? deck.titleEn : deck.title
             const description =
               langIsEn && deck.descriptionEn ? deck.descriptionEn : deck.description
-            const href = normalizeEntry(deck.id, deck.entry)
+            const href = normalizeEntry(deck.entry)
             const dateLabel = (() => {
               const d = new Date(deck.createdAt)
               if (Number.isNaN(d.getTime())) return deck.createdAt
@@ -206,10 +202,17 @@ export default function SlidesPage() {
               <motion.div key={deck.id} variants={item}>
                 <Card className="h-full overflow-hidden border-border/60 hover:border-primary/30 hover:shadow-md transition-all duration-300 group">
                   <a
-                    href={href}
+                    href={href ?? "#"}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl"
+                    aria-disabled={!href}
+                    onClick={(event) => {
+                      if (!href) event.preventDefault()
+                    }}
+                    className={cn(
+                      "block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl",
+                      !href && "cursor-not-allowed opacity-75"
+                    )}
                   >
                     <div
                       className={cn(
@@ -255,7 +258,7 @@ export default function SlidesPage() {
                         </div>
                       )}
                       <span className="inline-flex text-sm font-medium text-primary group-hover:underline">
-                        {t("slides.open")} →
+                        {href ? t("slides.open") : t("slides.noEntry")} →
                       </span>
                     </CardContent>
                   </a>

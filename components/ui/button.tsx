@@ -50,8 +50,16 @@ function Button({
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
     loading?: boolean
-  }) {
+}) {
   const Comp = asChild ? Slot : "button"
+  const content = asChild ? (
+    children
+  ) : (
+    <>
+      {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+      {children}
+    </>
+  )
 
   return (
     <Comp
@@ -62,8 +70,7 @@ function Button({
       disabled={disabled || loading}
       {...props}
     >
-      {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-      {children}
+      {content}
     </Comp>
   )
 }

@@ -1,9 +1,10 @@
 "use client"
 
 import { FormEvent, useEffect, useMemo, useState } from "react"
+import JSZip from "jszip"
 import { ExternalLink, Loader2, LockKeyhole, Pencil, Plus, Presentation, RefreshCw, ShieldAlert, Trash2, Upload } from "lucide-react"
 
-import { adminSlidesAPI, createSlideAPI, deleteSlideAPI, updateSlideAPI, uploadSlideCoverAPI, uploadSlideDeckAPI } from "@/api"
+import { adminSlidesAPI, createSlideAPI, deleteSlideAPI, signSlideCoverUploadAPI, signSlideDeckUploadAPI, updateSlideAPI } from "@/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -29,7 +30,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { resolveApiRouteUrl } from "@/lib/api-url"
 import { useNotification } from "@/store/notification"
 import { useUser } from "@/store/user"
-import type { SaveSlideRequest, SlideData } from "@/types/api"
+import type { SaveSlideRequest, SlideData, SlideSignedUploadData } from "@/types/api"
 
 type SlideFormState = {
   id: string
@@ -108,6 +109,142 @@ const toPayload = (form: SlideFormState): SaveSlideRequest => ({
   password: form.password.trim(),
 })
 
+type BrowserSlideFile = {
+  path: string
+  zipEntry: JSZip.JSZipObject
+  contentType: string
+}
+
+const slideDeckBasePattern = /\/slides\/decks\/[^"'()\s]+\//g
+
+const contentTypesByExt: Record<string, string> = {
+  ".css": "text/css; charset=utf-8",
+  ".gif": "image/gif",
+  ".html": "text/html; charset=utf-8",
+  ".ico": "image/x-icon",
+  ".jpeg": "image/jpeg",
+  ".jpg": "image/jpeg",
+  ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
+  ".png": "image/png",
+  ".svg": "image/svg+xml",
+  ".ttf": "font/ttf",
+  ".txt": "text/plain; charset=utf-8",
+  ".wasm": "application/wasm",
+  ".webp": "image/webp",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+}
+
+const cleanZipPath = (name: string) => {
+  const parts = name
+    .replace(/\\/g, "/")
+    .trim()
+    .split("/")
+    .filter((part) => part && part !== ".")
+
+  if (parts.length === 0 || parts.some((part) => part === "..")) {
+    return ""
+  }
+  return parts.join("/")
+}
+
+const ignoredSlideZipPath = (name: string) => {
+  const baseName = name.split("/").pop()
+  return name.startsWith("__MACOSX/") || baseName === ".DS_Store"
+}
+
+const extensionOf = (name: string) => {
+  const cleanName = name.split("?")[0].split("#")[0]
+  const dotIndex = cleanName.lastIndexOf(".")
+  return dotIndex >= 0 ? cleanName.slice(dotIndex).toLowerCase() : ""
+}
+
+const contentTypeForPath = (name: string, fallback?: string) =>
+  fallback || contentTypesByExt[extensionOf(name)] || "application/octet-stream"
+
+const shouldRewriteSlideAssetRefs = (name: string) =>
+  [".html", ".js", ".mjs", ".css"].includes(extensionOf(name))
+
+const rewriteSlideAssetRefs = (content: string, slug: string) =>
+  content.replace(slideDeckBasePattern, `/api/slides/${slug}/assets/`)
+
+const stripCommonZipRoot = (files: BrowserSlideFile[]) => {
+  if (files.length === 0) return files
+  const roots = new Set<string>()
+  for (const file of files) {
+    const parts = file.path.split("/")
+    if (parts.length < 2) return files
+    roots.add(parts[0])
+  }
+  if (roots.size !== 1) return files
+  const [root] = Array.from(roots)
+  const prefix = `${root}/`
+  if (!files.some((file) => file.path === `${prefix}index.html`)) {
+    return files
+  }
+  return files.map((file) => ({
+    ...file,
+    path: file.path.slice(prefix.length),
+    contentType: contentTypeForPath(file.path.slice(prefix.length), file.contentType),
+  }))
+}
+
+const readSlideDeckFiles = async (file: File) => {
+  const zip = await JSZip.loadAsync(file)
+  let files: BrowserSlideFile[] = []
+
+  zip.forEach((rawPath, zipEntry) => {
+    const cleaned = cleanZipPath(rawPath)
+    if (!cleaned || zipEntry.dir || ignoredSlideZipPath(cleaned)) {
+      return
+    }
+    files.push({
+      path: cleaned,
+      zipEntry,
+      contentType: contentTypeForPath(cleaned),
+    })
+  })
+
+  files = stripCommonZipRoot(files)
+  if (!files.some((item) => item.path === "index.html")) {
+    throw new Error("zip 根目录下没有 index.html，请上传 Slidev build 输出目录压缩包。")
+  }
+  return files
+}
+
+const putSignedObject = async (upload: SlideSignedUploadData, body: BodyInit, contentType: string) => {
+  const res = await fetch(upload.signedUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": contentType || "application/octet-stream",
+    },
+    body,
+  })
+  if (!res.ok) {
+    let detail = res.statusText
+    try {
+      detail = (await res.text()) || detail
+    } catch {
+      // Keep the browser status text when COS does not expose the error body.
+    }
+    throw new Error(`${upload.path} 上传失败：HTTP ${res.status} ${detail}`)
+  }
+}
+
+const runLimited = async <T,>(items: T[], limit: number, worker: (item: T, index: number) => Promise<void>) => {
+  let cursor = 0
+  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (cursor < items.length) {
+      const index = cursor
+      cursor += 1
+      await worker(items[index], index)
+    }
+  })
+  await Promise.all(runners)
+}
+
 export default function AdminSlidesPage() {
   const { user, refresh } = useUser()
   const { notificationError, notificationSuccess } = useNotification()
@@ -122,6 +259,7 @@ export default function AdminSlidesPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [deckFile, setDeckFile] = useState<File | null>(null)
   const [coverFile, setCoverFile] = useState<File | null>(null)
+  const [uploadStatus, setUploadStatus] = useState("")
 
   const loadSlides = async () => {
     setLoading(true)
@@ -154,6 +292,7 @@ export default function AdminSlidesPage() {
     setForm({ ...emptyForm })
     setDeckFile(null)
     setCoverFile(null)
+    setUploadStatus("")
     setFormOpen(true)
   }
 
@@ -162,6 +301,7 @@ export default function AdminSlidesPage() {
     setForm(toForm(slide))
     setDeckFile(null)
     setCoverFile(null)
+    setUploadStatus("")
     setFormOpen(true)
   }
 
@@ -170,6 +310,7 @@ export default function AdminSlidesPage() {
     setForm(emptyForm)
     setDeckFile(null)
     setCoverFile(null)
+    setUploadStatus("")
     setFormOpen(false)
   }
 
@@ -184,35 +325,65 @@ export default function AdminSlidesPage() {
     try {
       const payload = toPayload(form)
       if (deckFile) {
-        const formData = new FormData()
-        formData.append("id", payload.id)
-        if (editing) {
-          formData.append("databaseId", String(editing.database_id))
-        }
-        formData.append("file", deckFile)
-        const uploadRes = await uploadSlideDeckAPI(formData)
+        setUploadStatus("正在解析幻灯片 zip")
+        const files = await readSlideDeckFiles(deckFile)
+        setUploadStatus(`正在生成 ${files.length} 个上传链接`)
+        const uploadRes = await signSlideDeckUploadAPI({
+          id: payload.id || undefined,
+          databaseId: editing?.database_id,
+          files: files.map((file) => ({
+            path: file.path,
+            contentType: file.contentType,
+          })),
+        })
         if (uploadRes.code !== 0) {
           throw new Error(uploadRes.message)
         }
+        const uploadByPath = new Map(uploadRes.data.uploads.map((item) => [item.path, item]))
+        let uploaded = 0
+        await runLimited(files, 4, async (file) => {
+          const upload = uploadByPath.get(file.path)
+          if (!upload) {
+            throw new Error(`缺少上传链接：${file.path}`)
+          }
+          const contentType = upload.contentType || file.contentType
+          const body = shouldRewriteSlideAssetRefs(file.path)
+            ? new Blob([rewriteSlideAssetRefs(await file.zipEntry.async("text"), uploadRes.data.id)], { type: contentType })
+            : await file.zipEntry.async("blob")
+          await putSignedObject(upload, body, contentType)
+          uploaded += 1
+          setUploadStatus(`正在上传幻灯片资源 ${uploaded}/${files.length}`)
+        })
         payload.id = uploadRes.data.id ?? payload.id
         payload.entry = uploadRes.data.entry ?? payload.entry
         payload.objectPrefix = uploadRes.data.objectPrefix ?? payload.objectPrefix
       }
       if (coverFile) {
-        const formData = new FormData()
-        formData.append("id", payload.id)
-        if (editing) {
-          formData.append("databaseId", String(editing.database_id))
-        }
-        formData.append("file", coverFile)
-        const uploadRes = await uploadSlideCoverAPI(formData)
+        setUploadStatus("正在上传封面图")
+        const uploadRes = await signSlideCoverUploadAPI({
+          id: payload.id || undefined,
+          databaseId: editing?.database_id,
+          fileName: coverFile.name,
+          contentType: contentTypeForPath(coverFile.name, coverFile.type),
+        })
         if (uploadRes.code !== 0) {
           throw new Error(uploadRes.message)
         }
+        await putSignedObject(
+          {
+            path: coverFile.name,
+            objectPath: uploadRes.data.coverObjectPath,
+            signedUrl: uploadRes.data.signedUrl,
+            contentType: uploadRes.data.contentType,
+          },
+          coverFile,
+          uploadRes.data.contentType || coverFile.type || "application/octet-stream"
+        )
         payload.id = uploadRes.data.id ?? payload.id
         payload.cover = uploadRes.data.cover ?? payload.cover
         payload.coverObjectPath = uploadRes.data.coverObjectPath ?? payload.coverObjectPath
       }
+      setUploadStatus("正在保存幻灯片信息")
       const res = editing
         ? await updateSlideAPI(editing.database_id, payload)
         : await createSlideAPI(payload)
@@ -226,6 +397,7 @@ export default function AdminSlidesPage() {
       notificationError("保存失败", err?.message ?? String(err))
     } finally {
       setSaving(false)
+      setUploadStatus("")
     }
   }
 
@@ -466,7 +638,7 @@ export default function AdminSlidesPage() {
                     onChange={(event) => setDeckFile(event.target.files?.[0] ?? null)}
                   />
                   <p className="text-xs text-muted-foreground">
-                    上传 build 输出目录压缩包，后端会解压并自动生成访问入口。
+                    上传 build 输出目录压缩包，浏览器会本地解压并直传对象存储。
                   </p>
                   {deckFile ? <p className="text-xs text-primary">{deckFile.name}</p> : null}
                 </div>
@@ -484,6 +656,12 @@ export default function AdminSlidesPage() {
                   {coverFile ? <p className="text-xs text-primary">{coverFile.name}</p> : null}
                 </div>
               </div>
+              {uploadStatus ? (
+                <div className="mt-4 flex items-center gap-2 text-sm text-primary">
+                  <Loader2 className="size-4 animate-spin" />
+                  {uploadStatus}
+                </div>
+              ) : null}
               {(form.entry || form.cover) ? (
                 <div className="mt-4 space-y-1 rounded-md bg-muted/50 p-3 text-xs text-muted-foreground">
                   {form.entry ? <div className="truncate">当前入口：{form.entry}</div> : null}

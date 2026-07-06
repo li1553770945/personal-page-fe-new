@@ -1,5 +1,5 @@
 import instance from "../lib/requests";
-import type { ApiResponse, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, SaveSlideRequest, SlideData, SlideUploadResponse, UserRole } from "../types/api";
+import type { ApiResponse, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, SaveSlideRequest, SignSlideCoverUploadRequest, SignSlideDeckUploadRequest, SlideCoverUploadSignResponse, SlideData, SlideDeckUploadSignResponse, SlideUploadResponse, UserRole } from "../types/api";
 
 export const logoutAPI = () => instance.get("/users/logout");
 
@@ -75,6 +75,12 @@ export const uploadSlideCoverAPI = (data: FormData): Promise<ApiResponse<SlideUp
   instance.post("/admin/slides/upload-cover", data, {
     timeout: 120000,
   });
+
+export const signSlideDeckUploadAPI = (data: SignSlideDeckUploadRequest): Promise<ApiResponse<SlideDeckUploadSignResponse>> =>
+  instance.post("/admin/slides/sign-deck-upload", data);
+
+export const signSlideCoverUploadAPI = (data: SignSlideCoverUploadRequest): Promise<ApiResponse<SlideCoverUploadSignResponse>> =>
+  instance.post("/admin/slides/sign-cover-upload", data);
 
 export const allFeedbackCategoriesAPI = (): Promise<ApiResponse<FeedbackCategory[]>> =>
   instance.get('/feedback/categories')

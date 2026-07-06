@@ -110,3 +110,44 @@ export interface SlideUploadResponse {
   coverObjectPath?: string;
   fileCount?: number;
 }
+
+export interface SlideUploadFileRequest {
+  path: string;
+  contentType?: string;
+}
+
+export interface SignSlideDeckUploadRequest {
+  id?: string;
+  databaseId?: number;
+  files: SlideUploadFileRequest[];
+}
+
+export interface SlideSignedUploadData {
+  path: string;
+  objectPath: string;
+  signedUrl: string;
+  contentType?: string;
+}
+
+export interface SlideDeckUploadSignResponse {
+  id: string;
+  entry: string;
+  objectPrefix: string;
+  fileCount: number;
+  uploads: SlideSignedUploadData[];
+}
+
+export interface SignSlideCoverUploadRequest {
+  id?: string;
+  databaseId?: number;
+  fileName: string;
+  contentType?: string;
+}
+
+export interface SlideCoverUploadSignResponse {
+  id: string;
+  cover: string;
+  coverObjectPath: string;
+  signedUrl: string;
+  contentType?: string;
+}

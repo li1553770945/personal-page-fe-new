@@ -81,6 +81,7 @@ export interface SlideData {
   objectPrefix?: string;
   tags?: string[];
   protected: boolean;
+  password?: string;
   has_password: boolean;
   created_at: number;
   updated_at: number;

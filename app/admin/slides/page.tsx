@@ -84,7 +84,7 @@ const toForm = (slide: SlideData): SlideFormState => ({
   objectPrefix: slide.objectPrefix ?? "",
   tags: (slide.tags ?? []).join(", "),
   protected: slide.protected,
-  password: "",
+  password: slide.password ?? "",
 })
 
 const splitTags = (value: string) =>
@@ -387,7 +387,7 @@ export default function AdminSlidesPage() {
           <DialogHeader>
             <DialogTitle>{editing ? "编辑幻灯片" : "新增幻灯片"}</DialogTitle>
             <DialogDescription>
-              密码只会在后端以哈希保存。编辑时留空表示保留现有密码。
+              密码会加密保存，后台可见并可直接修改。
             </DialogDescription>
           </DialogHeader>
           <form className="space-y-5" onSubmit={handleSubmit}>
@@ -511,10 +511,10 @@ export default function AdminSlidesPage() {
                   <Label htmlFor="slide-password">访问密码</Label>
                   <Input
                     id="slide-password"
-                    type="password"
+                    type="text"
                     value={form.password}
                     onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
-                    placeholder={editing?.has_password ? "留空则保留现有密码" : "请输入访问密码"}
+                    placeholder={editing?.has_password ? "旧数据未保存原文时可在这里重新设置" : "请输入访问密码"}
                   />
                 </div>
               ) : null}

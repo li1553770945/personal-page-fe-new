@@ -67,3 +67,34 @@ export interface ManagedFileData {
   created_at: number;
   updated_at: number;
 }
+
+export interface SlideData {
+  database_id: number;
+  id: string;
+  title: string;
+  titleEn?: string;
+  description: string;
+  descriptionEn?: string;
+  cover?: string;
+  entry?: string;
+  objectPrefix?: string;
+  tags?: string[];
+  protected: boolean;
+  has_password: boolean;
+  created_at: number;
+  updated_at: number;
+}
+
+export interface SaveSlideRequest {
+  id: string;
+  title: string;
+  titleEn?: string;
+  description?: string;
+  descriptionEn?: string;
+  cover?: string;
+  entry?: string;
+  objectPrefix?: string;
+  tags?: string[];
+  protected: boolean;
+  password?: string;
+}

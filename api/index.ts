@@ -1,5 +1,5 @@
 import instance from "../lib/requests";
-import type { ApiResponse, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, UserRole } from "../types/api";
+import type { ApiResponse, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, SaveSlideRequest, SlideData, UserRole } from "../types/api";
 
 export const logoutAPI = () => instance.get("/users/logout");
 
@@ -47,6 +47,24 @@ export const myFilesAPI = (): Promise<ApiResponse<ManagedFileData[]>> =>
 
 export const adminFilesAPI = (): Promise<ApiResponse<ManagedFileData[]>> =>
   instance.get("/admin/files");
+
+export const slidesAPI = (): Promise<ApiResponse<SlideData[]>> =>
+  instance.get("/slides");
+
+export const adminSlidesAPI = (): Promise<ApiResponse<SlideData[]>> =>
+  instance.get("/admin/slides");
+
+export const createSlideAPI = (data: SaveSlideRequest): Promise<ApiResponse<SlideData>> =>
+  instance.post("/admin/slides", data);
+
+export const updateSlideAPI = (databaseId: number, data: SaveSlideRequest): Promise<ApiResponse<SlideData>> =>
+  instance.put(`/admin/slides/${databaseId}`, data);
+
+export const deleteSlideAPI = (databaseId: number) =>
+  instance.delete(`/admin/slides/${databaseId}`);
+
+export const unlockSlideAPI = (id: string, password: string): Promise<ApiResponse<SlideData>> =>
+  instance.post(`/slides/${id}/unlock`, { password });
 
 export const allFeedbackCategoriesAPI = (): Promise<ApiResponse<FeedbackCategory[]>> =>
   instance.get('/feedback/categories')

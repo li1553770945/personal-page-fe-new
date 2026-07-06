@@ -8,7 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Loader2, Presentation, Search } from "lucide-react"
-import type { SlideDeckMeta, SlidesManifest } from "@/types/slides"
+import { slidesAPI } from "@/api"
+import type { SlideDeckMeta } from "@/types/slides"
+import type { SlideData } from "@/types/api"
 import { cn } from "@/lib/utils"
 
 function defaultEntry(id: string) {
@@ -22,6 +24,9 @@ function defaultEntry(id: string) {
 function normalizeEntry(id: string, entry?: string) {
   const raw = (entry ?? defaultEntry(id)).trim()
   if (/^https?:\/\//i.test(raw)) {
+    return raw
+  }
+  if (raw.includes("?") || raw.includes("#")) {
     return raw
   }
   if (raw.endsWith(".html")) {
@@ -52,6 +57,21 @@ function matchesQuery(deck: SlideDeckMeta, q: string, langIsEn: boolean) {
   return hay.includes(needle)
 }
 
+function apiSlideToMeta(slide: SlideData): SlideDeckMeta {
+  return {
+    id: slide.id,
+    title: slide.title,
+    titleEn: slide.titleEn,
+    description: slide.description,
+    descriptionEn: slide.descriptionEn,
+    createdAt: slide.created_at ? new Date(slide.created_at * 1000).toISOString() : "",
+    cover: slide.cover,
+    entry: slide.entry,
+    protected: slide.protected,
+    tags: slide.tags ?? [],
+  }
+}
+
 const container = {
   hidden: { opacity: 0 },
   show: {
@@ -78,10 +98,11 @@ export default function SlidesPage() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch("/slides/slides-manifest.json", { cache: "no-store" })
-      if (!res.ok) throw new Error(String(res.status))
-      const data = (await res.json()) as SlidesManifest
-      const slides = Array.isArray(data.slides) ? data.slides : []
+      const apiRes = await slidesAPI()
+      if (apiRes.code !== 0) {
+        throw new Error(apiRes.message)
+      }
+      const slides = Array.isArray(apiRes.data) ? apiRes.data.map(apiSlideToMeta) : []
       slides.sort((a, b) => {
         const ta = Date.parse(a.createdAt)
         const tb = Date.parse(b.createdAt)

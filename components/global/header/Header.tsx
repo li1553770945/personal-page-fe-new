@@ -135,6 +135,11 @@ export default function Header() {
                     label: "总文件管理",
                     icon: Files,
                     href: "/admin/files",
+                },
+                {
+                    label: "幻灯片管理",
+                    icon: Presentation,
+                    href: "/admin/slides",
                 }
             ]
         }] : []),

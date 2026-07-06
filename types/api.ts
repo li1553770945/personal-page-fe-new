@@ -102,6 +102,7 @@ export interface SaveSlideRequest {
 }
 
 export interface SlideUploadResponse {
+  id?: string;
   entry?: string;
   objectPrefix?: string;
   cover?: string;

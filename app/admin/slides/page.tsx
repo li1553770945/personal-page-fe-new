@@ -186,22 +186,30 @@ export default function AdminSlidesPage() {
       if (deckFile) {
         const formData = new FormData()
         formData.append("id", payload.id)
+        if (editing) {
+          formData.append("databaseId", String(editing.database_id))
+        }
         formData.append("file", deckFile)
         const uploadRes = await uploadSlideDeckAPI(formData)
         if (uploadRes.code !== 0) {
           throw new Error(uploadRes.message)
         }
+        payload.id = uploadRes.data.id ?? payload.id
         payload.entry = uploadRes.data.entry ?? payload.entry
         payload.objectPrefix = uploadRes.data.objectPrefix ?? payload.objectPrefix
       }
       if (coverFile) {
         const formData = new FormData()
         formData.append("id", payload.id)
+        if (editing) {
+          formData.append("databaseId", String(editing.database_id))
+        }
         formData.append("file", coverFile)
         const uploadRes = await uploadSlideCoverAPI(formData)
         if (uploadRes.code !== 0) {
           throw new Error(uploadRes.message)
         }
+        payload.id = uploadRes.data.id ?? payload.id
         payload.cover = uploadRes.data.cover ?? payload.cover
         payload.coverObjectPath = uploadRes.data.coverObjectPath ?? payload.coverObjectPath
       }
@@ -385,14 +393,16 @@ export default function AdminSlidesPage() {
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="slide-id">幻灯片 ID</Label>
+                <Label htmlFor="slide-id">幻灯片 ID（可选）</Label>
                 <Input
                   id="slide-id"
                   value={form.id}
                   onChange={(event) => setForm((current) => ({ ...current, id: event.target.value }))}
                   placeholder="2026-employment-experience-sharing"
-                  required
                 />
+                <p className="text-xs text-muted-foreground">
+                  留空时后端会自动生成；填写时会检查是否重复。
+                </p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="slide-title">中文标题</Label>

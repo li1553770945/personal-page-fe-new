@@ -1,5 +1,5 @@
 import instance from "../lib/requests";
-import type { ApiResponse, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, SaveSlideRequest, SlideData, UserRole } from "../types/api";
+import type { ApiResponse, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, SaveSlideRequest, SlideData, SlideUploadResponse, UserRole } from "../types/api";
 
 export const logoutAPI = () => instance.get("/users/logout");
 
@@ -65,6 +65,16 @@ export const deleteSlideAPI = (databaseId: number) =>
 
 export const unlockSlideAPI = (id: string, password: string): Promise<ApiResponse<SlideData>> =>
   instance.post(`/slides/${id}/unlock`, { password });
+
+export const uploadSlideDeckAPI = (data: FormData): Promise<ApiResponse<SlideUploadResponse>> =>
+  instance.post("/admin/slides/upload-deck", data, {
+    timeout: 120000,
+  });
+
+export const uploadSlideCoverAPI = (data: FormData): Promise<ApiResponse<SlideUploadResponse>> =>
+  instance.post("/admin/slides/upload-cover", data, {
+    timeout: 120000,
+  });
 
 export const allFeedbackCategoriesAPI = (): Promise<ApiResponse<FeedbackCategory[]>> =>
   instance.get('/feedback/categories')

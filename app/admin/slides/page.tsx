@@ -1,9 +1,9 @@
 "use client"
 
 import { FormEvent, useEffect, useMemo, useState } from "react"
-import { ExternalLink, Loader2, LockKeyhole, Pencil, Plus, Presentation, RefreshCw, ShieldAlert, Trash2 } from "lucide-react"
+import { ExternalLink, Loader2, LockKeyhole, Pencil, Plus, Presentation, RefreshCw, ShieldAlert, Trash2, Upload } from "lucide-react"
 
-import { adminSlidesAPI, createSlideAPI, deleteSlideAPI, updateSlideAPI } from "@/api"
+import { adminSlidesAPI, createSlideAPI, deleteSlideAPI, updateSlideAPI, uploadSlideCoverAPI, uploadSlideDeckAPI } from "@/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -26,6 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
+import { resolveApiRouteUrl } from "@/lib/api-url"
 import { useNotification } from "@/store/notification"
 import { useUser } from "@/store/user"
 import type { SaveSlideRequest, SlideData } from "@/types/api"
@@ -37,6 +38,7 @@ type SlideFormState = {
   description: string
   descriptionEn: string
   cover: string
+  coverObjectPath: string
   entry: string
   objectPrefix: string
   tags: string
@@ -51,6 +53,7 @@ const emptyForm: SlideFormState = {
   description: "",
   descriptionEn: "",
   cover: "",
+  coverObjectPath: "",
   entry: "",
   objectPrefix: "",
   tags: "",
@@ -76,6 +79,7 @@ const toForm = (slide: SlideData): SlideFormState => ({
   description: slide.description ?? "",
   descriptionEn: slide.descriptionEn ?? "",
   cover: slide.cover ?? "",
+  coverObjectPath: slide.coverObjectPath ?? "",
   entry: slide.entry ?? "",
   objectPrefix: slide.objectPrefix ?? "",
   tags: (slide.tags ?? []).join(", "),
@@ -96,6 +100,7 @@ const toPayload = (form: SlideFormState): SaveSlideRequest => ({
   description: form.description.trim(),
   descriptionEn: form.descriptionEn.trim(),
   cover: form.cover.trim(),
+  coverObjectPath: form.coverObjectPath.trim(),
   entry: form.entry.trim(),
   objectPrefix: form.objectPrefix.trim(),
   tags: splitTags(form.tags),
@@ -114,7 +119,9 @@ export default function AdminSlidesPage() {
   const [editing, setEditing] = useState<SlideData | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<SlideData | null>(null)
   const [form, setForm] = useState<SlideFormState>(emptyForm)
-  const formOpen = editing !== null || form !== emptyForm
+  const [formOpen, setFormOpen] = useState(false)
+  const [deckFile, setDeckFile] = useState<File | null>(null)
+  const [coverFile, setCoverFile] = useState<File | null>(null)
 
   const loadSlides = async () => {
     setLoading(true)
@@ -145,16 +152,25 @@ export default function AdminSlidesPage() {
   const openCreate = () => {
     setEditing(null)
     setForm({ ...emptyForm })
+    setDeckFile(null)
+    setCoverFile(null)
+    setFormOpen(true)
   }
 
   const openEdit = (slide: SlideData) => {
     setEditing(slide)
     setForm(toForm(slide))
+    setDeckFile(null)
+    setCoverFile(null)
+    setFormOpen(true)
   }
 
   const closeForm = () => {
     setEditing(null)
     setForm(emptyForm)
+    setDeckFile(null)
+    setCoverFile(null)
+    setFormOpen(false)
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -167,6 +183,28 @@ export default function AdminSlidesPage() {
     setSaving(true)
     try {
       const payload = toPayload(form)
+      if (deckFile) {
+        const formData = new FormData()
+        formData.append("id", payload.id)
+        formData.append("file", deckFile)
+        const uploadRes = await uploadSlideDeckAPI(formData)
+        if (uploadRes.code !== 0) {
+          throw new Error(uploadRes.message)
+        }
+        payload.entry = uploadRes.data.entry ?? payload.entry
+        payload.objectPrefix = uploadRes.data.objectPrefix ?? payload.objectPrefix
+      }
+      if (coverFile) {
+        const formData = new FormData()
+        formData.append("id", payload.id)
+        formData.append("file", coverFile)
+        const uploadRes = await uploadSlideCoverAPI(formData)
+        if (uploadRes.code !== 0) {
+          throw new Error(uploadRes.message)
+        }
+        payload.cover = uploadRes.data.cover ?? payload.cover
+        payload.coverObjectPath = uploadRes.data.coverObjectPath ?? payload.coverObjectPath
+      }
       const res = editing
         ? await updateSlideAPI(editing.database_id, payload)
         : await createSlideAPI(payload)
@@ -257,7 +295,7 @@ export default function AdminSlidesPage() {
                   <TableHead>标题</TableHead>
                   <TableHead>ID</TableHead>
                   <TableHead>访问</TableHead>
-                  <TableHead>对象存储</TableHead>
+                  <TableHead>资源</TableHead>
                   <TableHead>更新时间</TableHead>
                   <TableHead className="w-[150px] text-right">操作</TableHead>
                 </TableRow>
@@ -292,7 +330,7 @@ export default function AdminSlidesPage() {
                           </span>
                           {slide.entry ? (
                             <Button asChild variant="link" size="sm" className="h-auto justify-start px-0 py-0">
-                              <a href={slide.entry} target="_blank" rel="noreferrer">
+                              <a href={resolveApiRouteUrl(slide.entry)} target="_blank" rel="noreferrer">
                                 打开入口
                                 <ExternalLink className="size-3" />
                               </a>
@@ -302,7 +340,8 @@ export default function AdminSlidesPage() {
                       </TableCell>
                       <TableCell>
                         <div className="max-w-[260px] truncate font-mono text-xs text-muted-foreground">
-                          {slide.objectPrefix || slide.cover || "-"}
+                          {slide.entry ? "已配置入口" : "未上传"}
+                          {slide.cover ? " / 有封面" : ""}
                         </div>
                       </TableCell>
                       <TableCell>{formatTime(slide.updated_at)}</TableCell>
@@ -402,35 +441,45 @@ export default function AdminSlidesPage() {
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="slide-cover">封面 URL</Label>
-                <Input
-                  id="slide-cover"
-                  value={form.cover}
-                  onChange={(event) => setForm((current) => ({ ...current, cover: event.target.value }))}
-                  placeholder="/slides/decks/example/cover.webp"
-                />
+            <div className="rounded-md border p-4">
+              <div className="mb-4 flex items-center gap-2">
+                <Upload className="size-4 text-primary" />
+                <div className="font-medium">资源上传</div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="slide-entry">访问入口</Label>
-                <Input
-                  id="slide-entry"
-                  value={form.entry}
-                  onChange={(event) => setForm((current) => ({ ...current, entry: event.target.value }))}
-                  placeholder="/slides/protected?id=example"
-                />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="slide-deck-file">Slidev 导出 zip</Label>
+                  <Input
+                    id="slide-deck-file"
+                    type="file"
+                    accept=".zip,application/zip,application/x-zip-compressed"
+                    onChange={(event) => setDeckFile(event.target.files?.[0] ?? null)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    上传 build 输出目录压缩包，后端会解压并自动生成访问入口。
+                  </p>
+                  {deckFile ? <p className="text-xs text-primary">{deckFile.name}</p> : null}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="slide-cover-file">封面图</Label>
+                  <Input
+                    id="slide-cover-file"
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => setCoverFile(event.target.files?.[0] ?? null)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    上传后会作为前台卡片封面展示。
+                  </p>
+                  {coverFile ? <p className="text-xs text-primary">{coverFile.name}</p> : null}
+                </div>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="slide-object-prefix">对象存储前缀</Label>
-              <Input
-                id="slide-object-prefix"
-                value={form.objectPrefix}
-                onChange={(event) => setForm((current) => ({ ...current, objectPrefix: event.target.value }))}
-                placeholder="protected-slides/example/"
-              />
+              {(form.entry || form.cover) ? (
+                <div className="mt-4 space-y-1 rounded-md bg-muted/50 p-3 text-xs text-muted-foreground">
+                  {form.entry ? <div className="truncate">当前入口：{form.entry}</div> : null}
+                  {form.cover ? <div className="truncate">当前封面：{form.cover}</div> : null}
+                </div>
+              ) : null}
             </div>
 
             <div className="rounded-md border p-4">

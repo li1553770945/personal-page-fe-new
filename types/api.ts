@@ -76,6 +76,7 @@ export interface SlideData {
   description: string;
   descriptionEn?: string;
   cover?: string;
+  coverObjectPath?: string;
   entry?: string;
   objectPrefix?: string;
   tags?: string[];
@@ -92,9 +93,18 @@ export interface SaveSlideRequest {
   description?: string;
   descriptionEn?: string;
   cover?: string;
+  coverObjectPath?: string;
   entry?: string;
   objectPrefix?: string;
   tags?: string[];
   protected: boolean;
   password?: string;
+}
+
+export interface SlideUploadResponse {
+  entry?: string;
+  objectPrefix?: string;
+  cover?: string;
+  coverObjectPath?: string;
+  fileCount?: number;
 }

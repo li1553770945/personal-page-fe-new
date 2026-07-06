@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Loader2, Presentation, Search } from "lucide-react"
 import { slidesAPI } from "@/api"
+import { resolveApiRouteUrl } from "@/lib/api-url"
 import type { SlideDeckMeta } from "@/types/slides"
 import type { SlideData } from "@/types/api"
 import { cn } from "@/lib/utils"
@@ -25,6 +26,9 @@ function normalizeEntry(id: string, entry?: string) {
   const raw = (entry ?? defaultEntry(id)).trim()
   if (/^https?:\/\//i.test(raw)) {
     return raw
+  }
+  if (raw.startsWith("/api/")) {
+    return resolveApiRouteUrl(raw) ?? raw
   }
   if (raw.includes("?") || raw.includes("#")) {
     return raw
@@ -65,7 +69,7 @@ function apiSlideToMeta(slide: SlideData): SlideDeckMeta {
     description: slide.description,
     descriptionEn: slide.descriptionEn,
     createdAt: slide.created_at ? new Date(slide.created_at * 1000).toISOString() : "",
-    cover: slide.cover,
+    cover: resolveApiRouteUrl(slide.cover),
     entry: slide.entry,
     protected: slide.protected,
     tags: slide.tags ?? [],

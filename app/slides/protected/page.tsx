@@ -8,6 +8,7 @@ import { unlockSlideAPI } from "@/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { resolveApiRouteUrl } from "@/lib/api-url"
 import { useNotification } from "@/store/notification"
 
 function ProtectedSlideUnlock() {
@@ -29,7 +30,8 @@ function ProtectedSlideUnlock() {
       if (res.code !== 0) {
         throw new Error(res.message)
       }
-      const entry = res.data?.entry || `/slides/decks/${slideId}/`
+      const fallbackEntry = `/slides/decks/${slideId}/`
+      const entry = resolveApiRouteUrl(res.data?.entry || fallbackEntry) ?? fallbackEntry
       window.sessionStorage.setItem(`protected-slide:${slideId}`, "ok")
       window.location.assign(entry)
     } catch (err: any) {

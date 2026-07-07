@@ -23,7 +23,7 @@ import { FileOutlinedIcon } from "@/components/ui/icons/ant-design-file-outlined
 import { CoffeeOutlinedIcon } from "@/components/ui/icons/ant-design-coffee-outlined"
 import { UserGroupIcon } from "@/components/ui/icons/heroicons-user-group"
 import { FriendsIcon } from "@/components/ui/icons/friends"
-import { ChevronDown, Files, FolderKanban, Presentation, Settings, Users } from "lucide-react"
+import { AlertTriangle, BarChart3, Bot, ChevronDown, Files, FolderKanban, Presentation, Settings, Users } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -119,6 +119,11 @@ export default function Header() {
                     label: t('nav.temporaryChat'),
                     icon: UserGroupIcon,
                     href: "/chat",
+                },
+                {
+                    label: "AI 用量",
+                    icon: Bot,
+                    href: "/usage/ai",
                 }
             ]
         },
@@ -132,6 +137,11 @@ export default function Header() {
                     href: "/admin/users",
                 },
                 {
+                    label: "用户危险区",
+                    icon: AlertTriangle,
+                    href: "/admin/users/danger",
+                },
+                {
                     label: "总文件管理",
                     icon: Files,
                     href: "/admin/files",
@@ -140,6 +150,11 @@ export default function Header() {
                     label: "幻灯片管理",
                     icon: Presentation,
                     href: "/admin/slides",
+                },
+                {
+                    label: "AI 用量管理",
+                    icon: BarChart3,
+                    href: "/admin/usage/ai",
                 }
             ]
         }] : []),

@@ -53,6 +53,59 @@ export interface AdminUserData extends CurrentUserData {
   updated_at: number;
 }
 
+export interface ActivateCodeData {
+  activate_code?: string;
+  activeCode?: string;
+}
+
+export interface UserDangerActionRequest {
+  username: string;
+  reason?: string;
+}
+
+export interface UserDangerActionData {
+  user?: AdminUserData;
+  activate_code?: string;
+  activeCode?: string;
+  related_files: number;
+}
+
+export interface AIUsageStatsTotals {
+  request_count: number;
+  success_count: number;
+  failed_count: number;
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+  total_price: number;
+  currency: string;
+}
+
+export interface AIUsageStatsBreakdown extends AIUsageStatsTotals {
+  date?: string;
+  channel?: string;
+  model?: string;
+}
+
+export interface AIUsageStatsDay extends AIUsageStatsTotals {
+  date: string;
+  models: AIUsageStatsBreakdown[];
+  channels?: AIUsageStatsBreakdown[];
+}
+
+export interface AIUsageStatsData {
+  scope: "user" | "admin";
+  from: string;
+  to: string;
+  models: string[];
+  channels?: string[];
+  totals: AIUsageStatsTotals;
+  days: AIUsageStatsDay[];
+  model_breakdown: AIUsageStatsBreakdown[];
+  channel_breakdown?: AIUsageStatsBreakdown[];
+  channel_model_breakdown?: AIUsageStatsBreakdown[];
+}
+
 export interface ManagedFileData {
   id: number;
   user_id: number;

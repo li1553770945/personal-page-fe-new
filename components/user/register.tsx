@@ -25,16 +25,18 @@ type RegisterParams = {
   username: string
   password: string
   nickname: string
+  activeCode: string
 }
 export function Register({ onLoginClick, onRegisterSuccess }: RegisterProps) {
   const { t } = useTranslation()
-  const { notificationSuccess, notificationError } = useNotification()
+  const { notificationError } = useNotification()
   const { register } = useUser()
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState<RegisterParams>({
     username: '',
     password: '',
     nickname: '',
+    activeCode: '',
   })
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,8 +48,8 @@ export function Register({ onLoginClick, onRegisterSuccess }: RegisterProps) {
         return
       }
       onRegisterSuccess()
-    } catch (err: any) {
-      notificationError(t('auth.registerFailed'), err?.message ?? String(err))
+    } catch (err: unknown) {
+      notificationError(t('auth.registerFailed'), err instanceof Error ? err.message : String(err))
     } finally {
       setLoading(false)
     }
@@ -80,6 +82,10 @@ export function Register({ onLoginClick, onRegisterSuccess }: RegisterProps) {
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="nickname">{t('auth.nickname')}</Label>
               <Input id="nickname" type="nickname" placeholder={t('auth.nicknamePlaceholder')} value={form.nickname} onChange={(e) => setForm({ ...form, nickname: e.target.value })} />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="activeCode">{t('auth.activeCode')}</Label>
+              <Input id="activeCode" placeholder={t('auth.activeCodePlaceholder')} value={form.activeCode} onChange={(e) => setForm({ ...form, activeCode: e.target.value })} />
             </div>
           </div>
         </form>

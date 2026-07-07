@@ -1,5 +1,5 @@
 import instance from "../lib/requests";
-import type { ApiResponse, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, SaveSlideRequest, SignSlideCoverUploadRequest, SignSlideDeckUploadRequest, SlideCoverUploadSignResponse, SlideData, SlideDeckUploadSignResponse, SlideUploadResponse, UserRole } from "../types/api";
+import type { ActivateCodeData, AIUsageStatsData, ApiResponse, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, SaveSlideRequest, SignSlideCoverUploadRequest, SignSlideDeckUploadRequest, SlideCoverUploadSignResponse, SlideData, SlideDeckUploadSignResponse, SlideUploadResponse, UserDangerActionData, UserDangerActionRequest, UserRole } from "../types/api";
 
 export const logoutAPI = () => instance.get("/users/logout");
 
@@ -10,7 +10,7 @@ export const loginAPI = (data: any) =>
 export const registerAPI = (data: any) =>
   instance.post("/users/register", data);
 
-export const generateCodeAPI = (data: any) =>
+export const generateCodeAPI = (data: { username: string }): Promise<ApiResponse<ActivateCodeData>> =>
   instance.post("/users/activate-code", data);
 
 export const userInfoAPI = () =>
@@ -24,6 +24,37 @@ export const updateUserRoleAPI = (id: number, role: UserRole) =>
 
 export const updateUserStatusAPI = (id: number, canUse: boolean) =>
   instance.post(`/admin/users/${id}/status`, { can_use: canUse });
+
+export const regenerateUserActivateCodeAPI = (id: number, data: UserDangerActionRequest): Promise<ApiResponse<UserDangerActionData>> =>
+  instance.post(`/admin/users/${id}/activation-code`, data);
+
+export const resetTestUserAPI = (id: number, data: UserDangerActionRequest): Promise<ApiResponse<UserDangerActionData>> =>
+  instance.post(`/admin/users/${id}/reset-test`, data);
+
+export const deleteTestUserAPI = (id: number, data: UserDangerActionRequest): Promise<ApiResponse<{ id: number; username: string }>> =>
+  instance.delete(`/admin/users/${id}`, { data });
+
+export type AIUsageStatsParams = {
+  from?: string;
+  to?: string;
+  model?: string;
+  channel?: string;
+};
+
+const statsParams = (params: AIUsageStatsParams = {}) => {
+  const search = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) search.set(key, value);
+  });
+  const query = search.toString();
+  return query ? `?${query}` : "";
+};
+
+export const myAIUsageStatsAPI = (params?: AIUsageStatsParams): Promise<ApiResponse<AIUsageStatsData>> =>
+  instance.get(`/aichat/stats${statsParams(params)}`);
+
+export const adminAIUsageStatsAPI = (params?: AIUsageStatsParams): Promise<ApiResponse<AIUsageStatsData>> =>
+  instance.get(`/admin/aichat/stats${statsParams(params)}`);
 
 
 export const downloadFileAPI = (key: string) =>

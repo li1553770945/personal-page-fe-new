@@ -39,22 +39,6 @@ html:focus-within {
   }
 }
 
-html[data-ai-dialog-open="true"] #oml2d-stage,
-html[data-ai-dialog-open="true"] #oml2d-statusBar,
-html[data-ai-dialog-open="true"] #oml2d-menus,
-html[data-ai-dialog-open="true"] #oml2d-tips {
-  display: none !important;
-}
-
-@media (max-width: 768px), (prefers-reduced-motion: reduce) {
-  #oml2d-stage,
-  #oml2d-statusBar,
-  #oml2d-menus,
-  #oml2d-tips {
-    display: none !important;
-  }
-}
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

@@ -45,7 +45,7 @@ export default function ChatDialog() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messageParserRef = useRef<MessageParser>(new MessageParser())
   const abortControllerRef = useRef<AbortController | null>(null)
-  const { openChatDialog, setOpenChatDialog, slideIn, playMotion, setExpression } = useLive2D()
+  const { openChatDialog, setOpenChatDialog, playMotion, setExpression } = useLive2D()
   const shouldReduceMotion = usePrefersReducedMotion()
 
   useEffect(() => {
@@ -53,16 +53,12 @@ export default function ChatDialog() {
   }, [messages, shouldReduceMotion])
 
   useEffect(() => {
-    if (openChatDialog) {
-      document.documentElement.dataset.aiDialogOpen = 'true'
-    } else {
-      delete document.documentElement.dataset.aiDialogOpen
+    if (!openChatDialog) {
       abortControllerRef.current?.abort()
       abortControllerRef.current = null
     }
 
     return () => {
-      delete document.documentElement.dataset.aiDialogOpen
       abortControllerRef.current?.abort()
     }
   }, [openChatDialog])
@@ -264,10 +260,6 @@ export default function ChatDialog() {
       abortControllerRef.current = null;
     }
   };
-  const handleSparklesClick = () => {
-    setOpenChatDialog(true)
-    if (!shouldReduceMotion) slideIn()
-  }
   const handleMotion = (motion: string) => {
     // The preference can change while a Dify response is still streaming, so
     // read the live media query instead of relying on the render-time value.
@@ -279,20 +271,7 @@ export default function ChatDialog() {
   }
   return (
     <>
-      {/* 全站唯一的 AI 聊天入口；Live2D 菜单不再重复提供聊天按钮。 */}
-      {!openChatDialog && (
-        <button
-          type="button"
-          onClick={handleSparklesClick}
-          className="fixed bottom-4 right-4 z-[10000] rounded-full bg-primary p-3 text-primary-foreground shadow-lg transition-[box-shadow,transform] duration-300 hover:scale-105 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transform-none md:bottom-auto md:top-1/2 md:-translate-y-1/2"
-          title={t('chatDialog.title')}
-          aria-label={t('chatDialog.openChat')}
-        >
-          <Sparkles className="size-6 motion-safe:animate-spin-slow" aria-hidden="true" />
-        </button>
-      )}
-
-      <Dialog open={openChatDialog} onOpenChange={setOpenChatDialog}>
+      <Dialog open={openChatDialog} onOpenChange={setOpenChatDialog} modal={false}>
         <DialogContent
           className="fixed inset-0 z-[10001] h-[100dvh] max-h-none w-screen max-w-none translate-x-0 translate-y-0 gap-0 rounded-none border-none p-0 shadow-2xl outline-none
                      md:inset-auto md:bottom-24 md:right-[300px] md:h-[min(600px,calc(100dvh-7rem))] md:w-[400px] md:max-w-[calc(100vw-2rem)] md:rounded-2xl

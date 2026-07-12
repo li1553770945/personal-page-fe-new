@@ -19,8 +19,6 @@ function DeferredLive2D() {
   const hasLoadedRef = useRef(false)
 
   useEffect(() => {
-    const desktopQuery = window.matchMedia("(min-width: 769px)")
-    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
     let delayId: number | undefined
     let idleId: number | undefined
 
@@ -38,7 +36,7 @@ function DeferredLive2D() {
     const scheduleLoad = () => {
       cancelScheduledLoad()
 
-      if (hasLoadedRef.current || !desktopQuery.matches || reducedMotionQuery.matches) {
+      if (hasLoadedRef.current) {
         return
       }
 
@@ -58,13 +56,9 @@ function DeferredLive2D() {
     }
 
     scheduleLoad()
-    desktopQuery.addEventListener("change", scheduleLoad)
-    reducedMotionQuery.addEventListener("change", scheduleLoad)
 
     return () => {
       cancelScheduledLoad()
-      desktopQuery.removeEventListener("change", scheduleLoad)
-      reducedMotionQuery.removeEventListener("change", scheduleLoad)
     }
   }, [])
 

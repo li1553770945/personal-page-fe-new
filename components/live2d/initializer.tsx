@@ -20,9 +20,6 @@ export default function Live2d() {
   const openChatDialogRef = useRef(openChatDialog);
   const tRef = useRef(t);
   const initializedRef = useRef(false);
-  const reducedMotionSuspensionRef = useRef<{
-    wasVisible: boolean;
-  } | null>(null);
 
   useEffect(() => {
     openChatDialogRef.current = openChatDialog;
@@ -35,33 +32,19 @@ export default function Live2d() {
   useEffect(() => {
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    const stopLive2DMotion = (instance = window.oml2d) => {
+    const reduceLive2DMotion = (instance = window.oml2d) => {
       if (!instance) return;
-
-      if (!reducedMotionSuspensionRef.current) {
-        const storedStatus = localStorage.getItem('OML2D_STATUS');
-        reducedMotionSuspensionRef.current = {
-          wasVisible: storedStatus === null || storedStatus === 'active',
-        };
-      }
-
       instance.stopTipsIdle();
-      useLive2D.setState({ isStageVisible: false });
     };
 
     const resumeLive2DMotion = (instance = window.oml2d) => {
-      const suspension = reducedMotionSuspensionRef.current;
-      reducedMotionSuspensionRef.current = null;
-
-      if (!instance || !suspension?.wasVisible) return;
-
+      if (!instance) return;
       instance.startTipsIdle();
-      useLive2D.setState({ isStageVisible: true });
     };
 
     const initLive2D = async () => {
-      if (reducedMotionQuery.matches || window.oml2d || initializedRef.current) {
-        if (reducedMotionQuery.matches) stopLive2DMotion();
+      if (window.oml2d || initializedRef.current) {
+        if (reducedMotionQuery.matches) reduceLive2DMotion();
         return;
       }
 
@@ -69,12 +52,6 @@ export default function Live2d() {
 
       try {
         const { loadOml2d } = await import('oh-my-live2d');
-
-        // The preference can change while the Live2D chunk is being fetched.
-        if (reducedMotionQuery.matches) {
-          initializedRef.current = false;
-          return;
-        }
 
         let showWordTheDay = true;
         const status = localStorage.getItem('OML2D_STATUS') ;
@@ -86,7 +63,6 @@ export default function Live2d() {
         useLive2D.setState({ isStageVisible: isActuallyVisible });
         const instance = await loadOml2d({
           dockedPosition: 'right',
-          mobileDisplay: false,
           menus: {
             disable: false,
             items: [
@@ -101,6 +77,14 @@ export default function Live2d() {
                     // 使用 Zustand 的 getState() 获取最新的 action
                     useLive2D.getState().slideOut();
                   }, 3000);
+                }
+              },
+              {
+                id: 'chat',
+                icon: 'icon-chat',
+                title: tRef.current('live2d.menu.chat'),
+                onClick: () => {
+                  useLive2D.getState().setOpenChatDialog(true);
                 }
               }
             ],
@@ -152,7 +136,7 @@ export default function Live2d() {
         window.oml2d = instance as Live2DInstance;
 
         // Loading the model is asynchronous, so check once more before exposing motion.
-        if (reducedMotionQuery.matches) stopLive2DMotion(instance as Live2DInstance);
+        if (reducedMotionQuery.matches) reduceLive2DMotion(instance as Live2DInstance);
 
         console.log(`✅ Live2D 初始化完成，当前状态: ${isActuallyVisible ? '显示' : '隐藏'}`);
       } catch (error) {
@@ -163,7 +147,7 @@ export default function Live2d() {
 
     const handleReducedMotionChange = () => {
       if (reducedMotionQuery.matches) {
-        stopLive2DMotion();
+        reduceLive2DMotion();
       } else if (window.oml2d) {
         resumeLive2DMotion();
       } else if (!window.oml2d) {

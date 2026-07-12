@@ -81,29 +81,16 @@ export interface AIUsageStatsTotals {
   currency: string;
 }
 
-export interface AIUsageStatsBreakdown extends AIUsageStatsTotals {
-  date?: string;
-  channel?: string;
-  model?: string;
-}
-
 export interface AIUsageStatsDay extends AIUsageStatsTotals {
   date: string;
-  models: AIUsageStatsBreakdown[];
-  channels?: AIUsageStatsBreakdown[];
 }
 
 export interface AIUsageStatsData {
   scope: "user" | "admin";
   from: string;
   to: string;
-  models: string[];
-  channels?: string[];
   totals: AIUsageStatsTotals;
   days: AIUsageStatsDay[];
-  model_breakdown: AIUsageStatsBreakdown[];
-  channel_breakdown?: AIUsageStatsBreakdown[];
-  channel_model_breakdown?: AIUsageStatsBreakdown[];
 }
 
 export interface ManagedFileData {

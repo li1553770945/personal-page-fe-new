@@ -37,8 +37,6 @@ export const deleteTestUserAPI = (id: number, data: UserDangerActionRequest): Pr
 export type AIUsageStatsParams = {
   from?: string;
   to?: string;
-  model?: string;
-  channel?: string;
 };
 
 const statsParams = (params: AIUsageStatsParams = {}) => {
@@ -49,9 +47,6 @@ const statsParams = (params: AIUsageStatsParams = {}) => {
   const query = search.toString();
   return query ? `?${query}` : "";
 };
-
-export const myAIUsageStatsAPI = (params?: AIUsageStatsParams): Promise<ApiResponse<AIUsageStatsData>> =>
-  instance.get(`/aichat/stats${statsParams(params)}`);
 
 export const adminAIUsageStatsAPI = (params?: AIUsageStatsParams): Promise<ApiResponse<AIUsageStatsData>> =>
   instance.get(`/admin/aichat/stats${statsParams(params)}`);

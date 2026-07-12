@@ -23,7 +23,7 @@ import { FileOutlinedIcon } from "@/components/ui/icons/ant-design-file-outlined
 import { CoffeeOutlinedIcon } from "@/components/ui/icons/ant-design-coffee-outlined"
 import { UserGroupIcon } from "@/components/ui/icons/heroicons-user-group"
 import { FriendsIcon } from "@/components/ui/icons/friends"
-import { AlertTriangle, BarChart3, Bot, ChevronDown, Files, FolderKanban, Menu, Presentation, Settings, Users, X } from "lucide-react"
+import { AlertTriangle, BarChart3, ChevronDown, Files, FolderKanban, Menu, Presentation, Settings, Users, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -138,11 +138,6 @@ export default function Header() {
                     icon: UserGroupIcon,
                     href: "/chat",
                 },
-                {
-                    label: "AI 用量",
-                    icon: Bot,
-                    href: "/usage/ai",
-                }
             ]
         },
         ...(isSuperAdmin ? [{

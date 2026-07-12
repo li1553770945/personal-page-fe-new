@@ -17,6 +17,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 
 interface Message {
   id: string
@@ -43,24 +44,37 @@ export default function ChatDialog() {
   })
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messageParserRef = useRef<MessageParser>(new MessageParser())
+  const abortControllerRef = useRef<AbortController | null>(null)
   const { openChatDialog, setOpenChatDialog, slideIn, playMotion, setExpression } = useLive2D()
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  const shouldReduceMotion = usePrefersReducedMotion()
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    messagesEndRef.current?.scrollIntoView({ behavior: shouldReduceMotion ? 'auto' : 'smooth' })
+  }, [messages, shouldReduceMotion])
 
   useEffect(() => {
-  if (!openChatDialog) {
-    // 关闭时切回普通表情
-    setExpression("normal") // 或者 "joy"
-  }
-}, [openChatDialog, setExpression])
+    if (openChatDialog) {
+      document.documentElement.dataset.aiDialogOpen = 'true'
+    } else {
+      delete document.documentElement.dataset.aiDialogOpen
+      abortControllerRef.current?.abort()
+      abortControllerRef.current = null
+    }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+    return () => {
+      delete document.documentElement.dataset.aiDialogOpen
+      abortControllerRef.current?.abort()
+    }
+  }, [openChatDialog])
+
+  useEffect(() => {
+    if (!openChatDialog && !shouldReduceMotion) {
+      // 关闭时切回普通表情
+      setExpression("normal") // 或者 "joy"
+    }
+  }, [openChatDialog, setExpression, shouldReduceMotion])
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
@@ -92,6 +106,10 @@ export default function ChatDialog() {
     setMessages(prev => [...prev, userMessage, aiPlaceholder]);
     setInput('');
     setIsLoading(true);
+
+    abortControllerRef.current?.abort();
+    const requestController = new AbortController();
+    abortControllerRef.current = requestController;
 
     // 为新消息重置解析器
     messageParserRef.current.clear();
@@ -227,6 +245,11 @@ export default function ChatDialog() {
         });
       },
       onError: (error) => {
+        if (error.name === 'AbortError') {
+          setMessages(prev => prev.filter(message => message.id !== aiMessageId));
+          setIsLoading(false);
+          return;
+        }
         console.error('Chat error:', error);
         const fallback = t('chatDialog.errorMessage') || "Error";
         const finalText = error?.message ? `${fallback}: ${error.message}` : fallback;
@@ -235,42 +258,51 @@ export default function ChatDialog() {
         ));
         setIsLoading(false);
       }
-    });
+    }, requestController.signal);
+
+    if (abortControllerRef.current === requestController) {
+      abortControllerRef.current = null;
+    }
   };
   const handleSparklesClick = () => {
     setOpenChatDialog(true)
-    slideIn()
+    if (!shouldReduceMotion) slideIn()
   }
   const handleMotion = (motion: string) => {
+    // The preference can change while a Dify response is still streaming, so
+    // read the live media query instead of relying on the render-time value.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const strategy = getMotionStrategy(motion)
     playMotion(strategy.group, strategy.index)
     setExpression(strategy.expression)
   }
   return (
     <>
-      {/* 固定的浮动聊天按钮 */}
-      <button
-        onClick={() => handleSparklesClick()}
-        className="fixed right-4 top-1/2 transform -translate-y-1/2 z-[4000] p-3 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse"
-        title={t('chatDialog.title')}
-      >
-        <Sparkles className="w-6 h-6 animate-spin-slow" />
-      </button>
+      {/* 全站唯一的 AI 聊天入口；Live2D 菜单不再重复提供聊天按钮。 */}
+      {!openChatDialog && (
+        <button
+          type="button"
+          onClick={handleSparklesClick}
+          className="fixed bottom-4 right-4 z-[10000] rounded-full bg-primary p-3 text-primary-foreground shadow-lg transition-[box-shadow,transform] duration-300 hover:scale-105 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transform-none md:bottom-auto md:top-1/2 md:-translate-y-1/2"
+          title={t('chatDialog.title')}
+          aria-label={t('chatDialog.openChat')}
+        >
+          <Sparkles className="size-6 motion-safe:animate-spin-slow" aria-hidden="true" />
+        </button>
+      )}
 
-      <Dialog open={openChatDialog} onOpenChange={setOpenChatDialog} modal={false}>
+      <Dialog open={openChatDialog} onOpenChange={setOpenChatDialog}>
         <DialogContent
-          className="fixed z-50 gap-0 p-0 outline-none
-                     right-4 bottom-20 sm:right-[300px] sm:bottom-40 
-                     w-[90vw] sm:w-[400px] h-[600px] max-h-[70vh]
-                     top-auto left-auto translate-x-0 translate-y-0
-                     border-none shadow-2xl 
+          className="fixed inset-0 z-[10001] h-[100dvh] max-h-none w-screen max-w-none translate-x-0 translate-y-0 gap-0 rounded-none border-none p-0 shadow-2xl outline-none
+                     md:inset-auto md:bottom-24 md:right-[300px] md:h-[min(600px,calc(100dvh-7rem))] md:w-[400px] md:max-w-[calc(100vw-2rem)] md:rounded-2xl
                      [&>button]:hidden" // 隐藏 Shadcn 默认的关闭按钮
         >
-          <DialogDescription className="hidden">
+          <DialogDescription className="sr-only">
             {t('chatDialog.title')}
           </DialogDescription>
           <ShineBorder
-            className="flex flex-col h-full w-full border bg-background/95 backdrop-blur-md overflow-hidden relative"
+            className="relative flex h-full w-full flex-col overflow-hidden border bg-background/95 backdrop-blur-md"
             // borderRadius={16}
             shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
           >
@@ -282,7 +314,7 @@ export default function ChatDialog() {
             <div className="flex flex-col h-full w-full relative z-[100]">
 
               {/* Header */}
-              <div className="px-4 py-3 border-b border-border/50 flex flex-row items-center justify-between bg-muted/20 shrink-0">
+              <div className="flex shrink-0 flex-row items-center justify-between border-b border-border/50 bg-muted/20 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 bg-primary/10 rounded-full">
                     <Sparkles className="w-4 h-4 text-primary" />
@@ -293,17 +325,17 @@ export default function ChatDialog() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <button onClick={handleClear} className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground" title={t('chatDialog.clearChat')}>
-                    <Eraser className="w-4 h-4" />
+                  <button type="button" onClick={handleClear} className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted" title={t('chatDialog.clearChat')} aria-label={t('chatDialog.clearChat')}>
+                    <Eraser className="size-4" aria-hidden="true" />
                   </button>
-                  <DialogClose className="p-2 hover:bg-red-50 hover:text-red-500 rounded-full transition-colors text-muted-foreground">
-                    <X className="w-4 h-4" />
+                  <DialogClose className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-red-50 hover:text-red-500" aria-label={t('chatDialog.closeDialog')}>
+                    <X className="size-4" aria-hidden="true" />
                   </DialogClose>
                 </div>
               </div>
 
               {/* Messages Area */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+              <div className="flex-1 space-y-6 overflow-y-auto p-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted" role="log" aria-live="polite" aria-relevant="additions text">
                 {messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-4">
                     <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-2">
@@ -389,21 +421,24 @@ export default function ChatDialog() {
               </div>
 
               {/* Input Area */}
-              <div className="p-3 bg-background/50 backdrop-blur-sm border-t border-border/50 shrink-0">
+              <div className="shrink-0 border-t border-border/50 bg-background/50 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-sm">
                 <div className="relative flex items-center bg-muted/50 rounded-full border border-border/50 focus-within:border-primary/50 focus-within:bg-background transition-all shadow-sm">
                   <textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyDown}
                     placeholder={t('chatDialog.inputPlaceholder')}
+                    aria-label={t('chatDialog.inputPlaceholder')}
                     disabled={isLoading}
                     className="flex-1 min-h-[44px] max-h-[120px] py-3 pl-4 pr-10 bg-transparent resize-none text-sm focus:outline-none scrollbar-hide"
                     rows={1}
                     style={{ height: '44px' }}
                   />
                   <button
+                    type="button"
                     onClick={handleSend}
                     disabled={isLoading || !input.trim()}
+                    aria-label={isLoading ? t('chatDialog.aiThinking') : t('chatDialog.sendMessage')}
                     className={cn(
                       "absolute right-1.5 p-2 rounded-full transition-all duration-200",
                       (input.trim() && !isLoading)
@@ -412,9 +447,9 @@ export default function ChatDialog() {
                     )}
                   >
                     {isLoading ? (
-                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none" aria-hidden="true" />
                     ) : (
-                      <Send className="w-4 h-4" />
+                      <Send className="size-4" aria-hidden="true" />
                     )}
                   </button>
                 </div>

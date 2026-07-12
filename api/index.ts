@@ -167,22 +167,48 @@ export interface AIChatRequest {
   message: string;
   conversation_id?: string;
 }
-export const aiChatAPI = async (request: AIChatRequest, callbacks: SSECallback) => {
+
+const AI_VISITOR_ID_STORAGE_KEY = 'ai_visitor_id';
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+let volatileAIVisitorId: string | null = null;
+
+const getAIVisitorId = () => {
+  const createId = () => crypto.randomUUID();
+
+  try {
+    const storedId = localStorage.getItem(AI_VISITOR_ID_STORAGE_KEY);
+    if (storedId && UUID_PATTERN.test(storedId)) {
+      return storedId;
+    }
+
+    const visitorId = createId();
+    localStorage.setItem(AI_VISITOR_ID_STORAGE_KEY, visitorId);
+    return visitorId;
+  } catch {
+    // Keep one stable identity for this tab when storage is unavailable.
+    volatileAIVisitorId ??= createId();
+    return volatileAIVisitorId;
+  }
+};
+
+export const aiChatAPI = async (request: AIChatRequest, callbacks: SSECallback, signal?: AbortSignal) => {
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || ''; // 确保有默认值
   const endpoint = `${baseURL}/aichat`;
 
   // 获取 Token (token外部传递)
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'X-AI-Visitor-ID': getAIVisitorId(),
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
 
   try {
     const response = await fetch(endpoint, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // 1. 在这里带上 Bearer Token
-        'Authorization': `Bearer ${token}`,
-      },
+      headers,
       body: JSON.stringify({ ...request }),
+      signal,
     });
 
     const contentType = (response.headers.get('content-type') || '').toLowerCase();
@@ -198,7 +224,7 @@ export const aiChatAPI = async (request: AIChatRequest, callbacks: SSECallback) 
           const errText = await response.text();
           throw new Error(`HTTP ${response.status}: ${errText || response.statusText}`);
         }
-      } catch (e) {
+      } catch {
         // 如果解析失败，回退到通用错误
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -212,7 +238,7 @@ export const aiChatAPI = async (request: AIChatRequest, callbacks: SSECallback) 
         // 直接走错误回调，让上层展示错误信息
         callbacks.onError(new Error(msg));
         return;
-      } catch (e) {
+      } catch {
         // 不是 JSON，就读取文本并抛错
         const text = await response.text();
         callbacks.onError(new Error(text || '非SSE响应且内容不可解析'));

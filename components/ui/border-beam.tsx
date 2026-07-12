@@ -2,6 +2,7 @@
 
 import { motion, MotionStyle, Transition } from "motion/react"
 
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 import { cn } from "@/lib/utils"
 
 interface BorderBeamProps {
@@ -64,6 +65,12 @@ export const BorderBeam = ({
   initialOffset = 0,
   borderWidth = 1,
 }: BorderBeamProps) => {
+  const shouldReduceMotion = usePrefersReducedMotion()
+
+  if (shouldReduceMotion) {
+    return null
+  }
+
   return (
     <div
       className="pointer-events-none absolute inset-0 rounded-[inherit] border-(length:--border-beam-width) border-transparent [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)] [mask-composite:intersect] [mask-clip:padding-box,border-box]"

@@ -22,6 +22,7 @@ import {
   Alert,
   AlertDescription,
 } from "@/components/ui/alert"
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 
 // 2. 创建一个 Loading 组件用于 Suspense fallback (复用原本的 loading 样式)
 function PageLoader() {
@@ -35,6 +36,7 @@ function PageLoader() {
 // 3. 将原本的主逻辑改名为 FeedbackContent (不作为默认导出)
 function FeedbackContent() {
   const { t } = useTranslation()
+  const shouldReduceMotion = usePrefersReducedMotion()
   const searchParams = useSearchParams()
   const router = useRouter()
   const uuid = searchParams.get("uuid")
@@ -147,9 +149,9 @@ function FeedbackContent() {
   return (
     <div className="container max-w-4xl mx-auto py-10 px-4 min-h-screen">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
       >
         <Card className="border-none shadow-lg bg-background/60 backdrop-blur-sm">
           <CardHeader className="text-center pb-2">

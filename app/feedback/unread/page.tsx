@@ -14,9 +14,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { notReadFeedbackAPI } from "@/api"
 import { useNotification } from "@/store/notification"
 import { useUser } from "@/store/user"
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 
 export default function UnreadFeedbackPage() {
   const { t } = useTranslation()
+  const shouldReduceMotion = usePrefersReducedMotion()
   const router = useRouter()
   const { notificationError } = useNotification()
   const { user } = useUser()
@@ -72,9 +74,9 @@ export default function UnreadFeedbackPage() {
   return (
     <div className="container max-w-4xl mx-auto py-10 px-4 min-h-screen">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
       >
         <div className="flex items-center gap-4 mb-6">
           <Link href="/feedback">

@@ -41,12 +41,14 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { allFeedbackCategoriesAPI, saveFeedbackAPI, getFeedbackAPI } from "@/api"
 import { cn } from "@/lib/utils"
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 import { ApiResponse, FeedbackCategory } from "@/types/api"
 import { useNotification } from "@/store/notification"
 import { useUser } from "@/store/user"
 
 export default function FeedbackPage() {
   const { t } = useTranslation()
+  const shouldReduceMotion = usePrefersReducedMotion()
   const router = useRouter()
   const [categories, setCategories] = useState<FeedbackCategory[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -142,9 +144,9 @@ export default function FeedbackPage() {
   return (
     <div className="container max-w-4xl mx-auto py-10 px-4 min-h-screen">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
       >
         <Card className="border-none shadow-lg bg-background/60 backdrop-blur-sm">
             <CardHeader className="text-center pb-2">
@@ -175,9 +177,9 @@ export default function FeedbackPage() {
 
               <TabsContent value="message">
                 <motion.div
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
                 >
                     <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -316,9 +318,9 @@ export default function FeedbackPage() {
 
               <TabsContent value="reply">
                 <motion.div
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={shouldReduceMotion ? false : { opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
                     className="py-8"
                 >
                     <div className="max-w-md mx-auto space-y-8">

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useEffect, useRef } from "react"
 import { useLive2D } from "@/store/live2d"
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 interface Friend {
   name: string
   description: string
@@ -98,8 +99,19 @@ const item = {
   show: { opacity: 1, y: 0 }
 }
 
+const reducedContainer = {
+  hidden: { opacity: 1 },
+  show: { opacity: 1, transition: { duration: 0, delay: 0, staggerChildren: 0 } },
+}
+
+const reducedItem = {
+  hidden: { opacity: 1, y: 0 },
+  show: { opacity: 1, y: 0, transition: { duration: 0, delay: 0 } },
+}
+
 export default function FriendsPage() {
   const { t } = useTranslation()
+  const shouldReduceMotion = usePrefersReducedMotion()
   const { say, isReady } = useLive2D()
   const saidRef = useRef(false)
   
@@ -112,9 +124,9 @@ export default function FriendsPage() {
   return (
     <div className="container mx-auto py-12 px-4 min-h-[calc(100vh-4rem)]">
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
+        initial={shouldReduceMotion ? false : { opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
         className="mb-12 text-center"
       >
         <h1 className="text-4xl font-bold tracking-tight mb-4">{t('friends.title')}</h1>
@@ -122,13 +134,16 @@ export default function FriendsPage() {
       </motion.div>
 
       <motion.div
-        variants={container}
-        initial="hidden"
+        variants={shouldReduceMotion ? reducedContainer : container}
+        initial={shouldReduceMotion ? false : "hidden"}
         animate="show"
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         {friends.map((friend) => (
-          <motion.div key={friend.name} variants={item}>
+          <motion.div
+            key={friend.name}
+            variants={shouldReduceMotion ? reducedItem : item}
+          >
             <Link href={friend.href} target="_blank" rel="noopener noreferrer">
               <Card 
                 className="h-full hover:shadow-lg transition-all duration-300 cursor-pointer group overflow-hidden hover:-translate-y-1 border-0"

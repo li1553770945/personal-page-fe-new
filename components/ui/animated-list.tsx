@@ -8,18 +8,27 @@ import React, {
 } from "react"
 import { AnimatePresence, motion, MotionProps } from "motion/react"
 
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 import { cn } from "@/lib/utils"
 
 export function AnimatedListItem({ children }: { children: React.ReactNode }) {
-  const animations: MotionProps = {
-    initial: { scale: 0, opacity: 0 },
-    animate: { scale: 1, opacity: 1, originY: 0 },
-    exit: { scale: 0, opacity: 0 },
-    transition: { type: "spring", stiffness: 350, damping: 40 },
-  }
+  const shouldReduceMotion = usePrefersReducedMotion()
+  const animations: MotionProps = shouldReduceMotion
+    ? {
+        initial: false,
+        animate: { opacity: 1 },
+        exit: { opacity: 1 },
+        transition: { duration: 0 },
+      }
+    : {
+        initial: { scale: 0, opacity: 0 },
+        animate: { scale: 1, opacity: 1, originY: 0 },
+        exit: { scale: 0, opacity: 0 },
+        transition: { type: "spring", stiffness: 350, damping: 40 },
+      }
 
   return (
-    <motion.div {...animations} layout className="mx-auto w-full">
+    <motion.div {...animations} layout={!shouldReduceMotion} className="mx-auto w-full">
       {children}
     </motion.div>
   )
@@ -33,12 +42,17 @@ export interface AnimatedListProps extends ComponentPropsWithoutRef<"div"> {
 export const AnimatedList = React.memo(
   ({ children, className, delay = 1000, ...props }: AnimatedListProps) => {
     const [index, setIndex] = useState(0)
+    const shouldReduceMotion = usePrefersReducedMotion()
     const childrenArray = useMemo(
       () => React.Children.toArray(children),
       [children]
     )
 
     useEffect(() => {
+      if (shouldReduceMotion) {
+        return
+      }
+
       if (index < childrenArray.length - 1) {
         const timeout = setTimeout(() => {
           setIndex((prevIndex) => (prevIndex + 1) % childrenArray.length)
@@ -46,12 +60,15 @@ export const AnimatedList = React.memo(
 
         return () => clearTimeout(timeout)
       }
-    }, [index, delay, childrenArray.length])
+    }, [index, delay, childrenArray.length, shouldReduceMotion])
 
     const itemsToShow = useMemo(() => {
-      const result = childrenArray.slice(0, index + 1).reverse()
+      const result = (shouldReduceMotion
+        ? childrenArray.slice()
+        : childrenArray.slice(0, index + 1)
+      ).reverse()
       return result
-    }, [index, childrenArray])
+    }, [index, childrenArray, shouldReduceMotion])
 
     return (
       <div

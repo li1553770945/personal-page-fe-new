@@ -6,7 +6,7 @@ import { useLive2D, Live2DInstance } from '@/store/live2d'; // 引入刚才创�
 import "@/public/live2d/chat.js"
 declare global {
   interface Window {
-    oml2d: any;
+    oml2d?: Live2DInstance;
   }
 }
 
@@ -14,12 +14,15 @@ declare global {
 export default function Live2d() {
 
   // 这里只需要 setInstance，其他操作通过 getState 或 store 内部处理
-  const { setInstance, setOpenChatDialog, openChatDialog } = useLive2D();
+  const { setInstance, openChatDialog } = useLive2D();
   const { t } = useTranslation();
 
   const openChatDialogRef = useRef(openChatDialog);
   const tRef = useRef(t);
   const initializedRef = useRef(false);
+  const reducedMotionSuspensionRef = useRef<{
+    wasVisible: boolean;
+  } | null>(null);
 
   useEffect(() => {
     openChatDialogRef.current = openChatDialog;
@@ -30,103 +33,151 @@ export default function Live2d() {
   }, [t]);
 
   useEffect(() => {
-    if (window.oml2d || initializedRef.current) {
-      console.log("Live2D 实例已存在，跳过初始化");
-      return;
-    }
-    initializedRef.current = true;
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const stopLive2DMotion = (instance = window.oml2d) => {
+      if (!instance) return;
+
+      if (!reducedMotionSuspensionRef.current) {
+        const storedStatus = localStorage.getItem('OML2D_STATUS');
+        reducedMotionSuspensionRef.current = {
+          wasVisible: storedStatus === null || storedStatus === 'active',
+        };
+      }
+
+      instance.stopTipsIdle();
+      useLive2D.setState({ isStageVisible: false });
+    };
+
+    const resumeLive2DMotion = (instance = window.oml2d) => {
+      const suspension = reducedMotionSuspensionRef.current;
+      reducedMotionSuspensionRef.current = null;
+
+      if (!instance || !suspension?.wasVisible) return;
+
+      instance.startTipsIdle();
+      useLive2D.setState({ isStageVisible: true });
+    };
 
     const initLive2D = async () => {
-      const { loadOml2d } = await import('oh-my-live2d');
-      let showWordTheDay = true;
-      const status = localStorage.getItem('OML2D_STATUS') ;
-      console.log('👀 检测到本地 OML2D_STATUS:', status);
+      if (reducedMotionQuery.matches || window.oml2d || initializedRef.current) {
+        if (reducedMotionQuery.matches) stopLive2DMotion();
+        return;
+      }
 
-      // 这里的逻辑是：库会自动根据 OML2D_STATUS 决定显不显示
-      // 我们只需要把这个状态同步给 React 即可
-      const isActuallyVisible = status == null || status === 'active';
-      useLive2D.setState({ isStageVisible: isActuallyVisible });
-      const instance = await loadOml2d({
-        dockedPosition: 'right',
-        menus: {
-          disable: false,
-          items: [
-            {
-              id: 'sleep',
-              icon: 'icon-rest',
-              title: t('live2d.menu.sleep'),
-              onClick: () => {
-                //  先显示提示气泡
-                instance.tipsMessage(tRef.current('live2d.messages.sleep'), 3000, 5);
-                setTimeout(() => {
-                  // 使用 Zustand 的 getState() 获取最新的 action
-                  useLive2D.getState().slideOut();
-                }, 3000);
+      initializedRef.current = true;
+
+      try {
+        const { loadOml2d } = await import('oh-my-live2d');
+
+        // The preference can change while the Live2D chunk is being fetched.
+        if (reducedMotionQuery.matches) {
+          initializedRef.current = false;
+          return;
+        }
+
+        let showWordTheDay = true;
+        const status = localStorage.getItem('OML2D_STATUS') ;
+        console.log('👀 检测到本地 OML2D_STATUS:', status);
+
+        // 这里的逻辑是：库会自动根据 OML2D_STATUS 决定显不显示
+        // 我们只需要把这个状态同步给 React 即可
+        const isActuallyVisible = status == null || status === 'active';
+        useLive2D.setState({ isStageVisible: isActuallyVisible });
+        const instance = await loadOml2d({
+          dockedPosition: 'right',
+          mobileDisplay: false,
+          menus: {
+            disable: false,
+            items: [
+              {
+                id: 'sleep',
+                icon: 'icon-rest',
+                title: tRef.current('live2d.menu.sleep'),
+                onClick: () => {
+                  //  先显示提示气泡
+                  instance.tipsMessage(tRef.current('live2d.messages.sleep'), 3000, 5);
+                  setTimeout(() => {
+                    // 使用 Zustand 的 getState() 获取最新的 action
+                    useLive2D.getState().slideOut();
+                  }, 3000);
+                }
               }
-            },
+            ],
+          },
+          models: [
             {
-              id: 'chat',
-              icon: 'icon-chat',
-              title: t('live2d.menu.chat'),
-              onClick: () => {
-                setOpenChatDialog(true);
+              path: '/models/hiyori/hiyori_pro_t11.model3.json',
+              scale: 0.20,
+              position: [-150, 100],
+              stageStyle: {
+                width: 300,
+                height: 450
               }
             }
           ],
-        },
-        models: [
-          {
-            path: '/models/hiyori/hiyori_pro_t11.model3.json',
-            scale: 0.20,
-            position: [-150, 100],
-            stageStyle: {
-              width: 300,
-              height: 450
+          tips: {
+            welcomeTips: {
+              duration: 1,
+              priority: -1,
+            },
+            style: {
+              position: 'absolute',
+              top: '100px',
+              left: '0%',
+              transform: 'translateX(-50%)',
+              width: '200px',
+              textAlign: 'center',
+              zIndex: 9999,
+            },
+            idleTips: {
+              message: [
+                tRef.current('live2d.messages.idle.tip'),
+              ],
+              wordTheDay(wordTheDayData) {
+                if (openChatDialogRef.current) return ``;
+                const currentShowWordTheDay = showWordTheDay;
+                showWordTheDay = !showWordTheDay;
+                return currentShowWordTheDay ? `${wordTheDayData.hitokoto}` : tRef.current('live2d.messages.idle.tip');
+              },
+              interval: 10000,
             }
           }
-        ],
-        tips: {
-          welcomeTips: {
-            duration: 1,
-            priority: -1,
-          },
-          style: {
-            position: 'absolute',
-            top: '100px',
-            left: '0%',
-            transform: 'translateX(-50%)',
-            width: '200px',
-            textAlign: 'center',
-            zIndex: 9999,
-          },
-          idleTips: {
-            message: [
-              t('live2d.messages.idle.tip'),
-            ],
-            wordTheDay(wordTheDayData) {
-              if (openChatDialogRef.current) return ``;
-              const currentShowWordTheDay = showWordTheDay;
-              showWordTheDay = !showWordTheDay;
-              return currentShowWordTheDay ? `${wordTheDayData.hitokoto}` : tRef.current('live2d.messages.idle.tip');
-            },
-            interval: 10000,
-          }
-        }
-      });
-      instance.onStageSlideIn(() => {
-        instance.tipsMessage(getWelcomeMessage(tRef.current, !openChatDialogRef.current), 3000, 3);
-      })
-      setInstance(instance as Live2DInstance);
-      window.oml2d = instance;
-      console.log(`✅ Live2D 初始化完成，当前状态: ${isActuallyVisible ? '显示' : '隐藏'}`);
+        });
+        instance.onStageSlideIn(() => {
+          if (reducedMotionQuery.matches) return;
+          instance.tipsMessage(getWelcomeMessage(tRef.current, !openChatDialogRef.current), 3000, 3);
+        })
+        setInstance(instance as Live2DInstance);
+        window.oml2d = instance as Live2DInstance;
+
+        // Loading the model is asynchronous, so check once more before exposing motion.
+        if (reducedMotionQuery.matches) stopLive2DMotion(instance as Live2DInstance);
+
+        console.log(`✅ Live2D 初始化完成，当前状态: ${isActuallyVisible ? '显示' : '隐藏'}`);
+      } catch (error) {
+        initializedRef.current = false;
+        console.error('Live2D 初始化失败:', error);
+      }
     };
 
+    const handleReducedMotionChange = () => {
+      if (reducedMotionQuery.matches) {
+        stopLive2DMotion();
+      } else if (window.oml2d) {
+        resumeLive2DMotion();
+      } else if (!window.oml2d) {
+        void initLive2D();
+      }
+    };
 
-    initLive2D();
+    reducedMotionQuery.addEventListener('change', handleReducedMotionChange);
+    void initLive2D();
 
-
-
-  }, []); // 依赖项为空
+    return () => {
+      reducedMotionQuery.removeEventListener('change', handleReducedMotionChange);
+    };
+  }, [setInstance]);
 
   return null;
 }
@@ -158,6 +209,6 @@ export const getWelcomeMessage = (t: (key: string) => string, showAIChatTip: boo
   if (hour >= 13 && hour < 17) return showAIChatTip ? messagesWithChatTip.afternoon : messages.afternoon;
   if (hour >= 17 && hour < 19) return showAIChatTip ? messagesWithChatTip.dusk : messages.dusk;
   if (hour >= 19 && hour < 22) return showAIChatTip ? messagesWithChatTip.night : messages.night;
-  if (hour >= 22 || hour < 24) return showAIChatTip ? messagesWithChatTip.lateNight : messages.lateNight;
+  if (hour >= 22) return showAIChatTip ? messagesWithChatTip.lateNight : messages.lateNight;
   return showAIChatTip ? messagesWithChatTip.weeHours : messages.weeHours;
 };

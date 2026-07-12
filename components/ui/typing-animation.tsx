@@ -1,8 +1,11 @@
 "use client"
 
+/* eslint-disable react-hooks/static-components -- The polymorphic motion component is cached by element type. */
+
 import { useEffect, useMemo, useRef, useState } from "react"
 import { motion, MotionProps, useInView } from "motion/react"
 
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 import { cn } from "@/lib/utils"
 
 interface TypingAnimationProps extends MotionProps {
@@ -22,6 +25,17 @@ interface TypingAnimationProps extends MotionProps {
   cursorStyle?: "line" | "block" | "underscore"
 }
 
+const motionComponentCache = new Map<React.ElementType, React.ElementType>()
+
+function getMotionComponent(Component: React.ElementType) {
+  const cachedComponent = motionComponentCache.get(Component)
+  if (cachedComponent) return cachedComponent
+
+  const MotionComponent = motion.create(Component, { forwardMotionProps: true })
+  motionComponentCache.set(Component, MotionComponent)
+  return MotionComponent
+}
+
 export function TypingAnimation({
   children,
   words,
@@ -39,9 +53,7 @@ export function TypingAnimation({
   cursorStyle = "line",
   ...props
 }: TypingAnimationProps) {
-  const MotionComponent = motion.create(Component, {
-    forwardMotionProps: true,
-  })
+  const MotionComponent = getMotionComponent(Component)
 
   const [displayedText, setDisplayedText] = useState<string>("")
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
@@ -52,6 +64,7 @@ export function TypingAnimation({
     amount: 0.3,
     once: true,
   })
+  const shouldReduceMotion = usePrefersReducedMotion()
 
   const wordsToAnimate = useMemo(
     () => words || (children ? [children] : []),
@@ -65,7 +78,7 @@ export function TypingAnimation({
   const shouldStart = startOnView ? isInView : true
 
   useEffect(() => {
-    if (!shouldStart || wordsToAnimate.length === 0) return
+    if (shouldReduceMotion || !shouldStart || wordsToAnimate.length === 0) return
 
     const timeoutDelay =
       delay > 0 && displayedText === ""
@@ -126,6 +139,7 @@ export function TypingAnimation({
     deletingSpeed,
     pauseDelay,
     delay,
+    shouldReduceMotion,
   ])
 
   const currentWordGraphemes = Array.from(
@@ -138,6 +152,7 @@ export function TypingAnimation({
     phase !== "deleting"
 
   const shouldShowCursor =
+    !shouldReduceMotion &&
     showCursor &&
     !isComplete &&
     (hasMultipleWords || loop || currentCharIndex < currentWordGraphemes.length)
@@ -160,7 +175,7 @@ export function TypingAnimation({
       className={cn("leading-[5rem] tracking-[-0.02em]", className)}
       {...props}
     >
-      {displayedText}
+      {shouldReduceMotion ? wordsToAnimate[0] || "" : displayedText}
       {shouldShowCursor && (
         <span
           className={cn("inline-block", blinkCursor && "animate-blink-cursor")}

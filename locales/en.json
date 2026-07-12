@@ -25,7 +25,9 @@
     "notice": "Notice",
     "justNow": "Just Now",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "expand": "Expand",
+    "collapse": "Collapse"
   },
   "nav": {
     "home": "Home",
@@ -40,7 +42,10 @@
     "email": "Email",
     "github": "Github",
     "consultation": "Consultation & Feedback",
-    "appreciate": "Appreciate"
+    "appreciate": "Appreciate",
+    "openMenu": "Open navigation menu",
+    "closeMenu": "Close navigation menu",
+    "mobileNavigation": "Mobile primary navigation"
   },
   "projects": {
     "title": "Projects",

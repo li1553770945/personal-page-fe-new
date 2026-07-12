@@ -6,6 +6,7 @@ import { motion } from "motion/react"
 import { useTranslation } from "react-i18next"
 
 import { buttonVariants } from "@/components/ui/button"
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 import { cn } from "@/lib/utils"
 
 type HeroAction = {
@@ -18,6 +19,7 @@ type HeroAction = {
 
 export function Hero() {
   const { t } = useTranslation()
+  const shouldReduceMotion = usePrefersReducedMotion()
   const tags = t("hero.tags", { returnObjects: true }) as string[]
 
   const actions: HeroAction[] = [
@@ -46,9 +48,9 @@ export function Hero() {
     <section className="relative overflow-hidden py-10 md:py-14">
       <div className="max-w-4xl">
         <motion.div
-          initial={{ opacity: 0, y: 18 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45 }}
+          transition={{ duration: shouldReduceMotion ? 0 : 0.45 }}
           className="space-y-7"
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-sm text-muted-foreground shadow-sm">

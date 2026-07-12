@@ -2,13 +2,16 @@
 
 import { useTranslation } from 'react-i18next'
 import { motion, useInView, AnimatePresence } from 'motion/react'
-import { useRef, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { GraduationCap, ChevronDown, ChevronUp } from 'lucide-react'
 import Image from 'next/image'
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion'
 
 export default function Education() {
     const { t } = useTranslation()
+    const shouldReduceMotion = usePrefersReducedMotion()
     const containerRef = useRef<HTMLDivElement>(null)
+    const sectionId = useId()
     const isInView = useInView(containerRef, { once: false, amount: 0.2 })
     const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set())
 
@@ -48,9 +51,9 @@ export default function Education() {
     return (
         <div ref={containerRef} className="w-full py-8">
             <motion.h2
-                initial={{ opacity: 0, y: 20 }}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
                 className="text-3xl font-bold mb-6 text-foreground"
             >
                 {t('education.title')}
@@ -64,13 +67,19 @@ export default function Education() {
                     {educationItems.map((item, index) => {
                         const isExpanded = expandedItems.has(index)
                         const hasDetails = (item.courses && item.courses.length > 0) || (item.honors && item.honors.length > 0)
+                        const detailsId = `${sectionId}-education-details-${index}`
+                        const toggleId = `${sectionId}-education-toggle-${index}`
+                        const headingId = `${sectionId}-education-heading-${index}`
 
                         return (
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0, x: -20 }}
+                                initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
                                 animate={isInView ? { opacity: 1, x: 0 } : {}}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                transition={{
+                                    duration: shouldReduceMotion ? 0 : 0.5,
+                                    delay: shouldReduceMotion ? 0 : index * 0.1,
+                                }}
                                 className="relative"
                             >
                                 {/* 时间线节点 */}
@@ -79,11 +88,7 @@ export default function Education() {
                                 {/* 卡片内容 */}
                                 <div className="ml-0 md:ml-12">
                                     <div
-                                        className="relative overflow-hidden rounded-xl border border-sky-500/15 bg-white/90 dark:bg-neutral-900/70 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg backdrop-blur cursor-pointer"
-                                        role={hasDetails ? 'button' : undefined}
-                                        tabIndex={hasDetails ? 0 : -1}
-                                        onClick={hasDetails ? () => toggleExpand(index) : undefined}
-                                        onKeyDown={hasDetails ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleExpand(index) } } : undefined}
+                                        className="relative overflow-hidden rounded-xl border border-sky-500/15 bg-white/90 dark:bg-neutral-900/70 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg backdrop-blur"
                                     >
                                         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-sky-400/8 via-transparent to-sky-400/8" />
                                         <div className="pointer-events-none absolute -left-10 -top-12 h-24 w-24 rounded-full bg-sky-400/10 blur-3xl" />
@@ -108,7 +113,7 @@ export default function Education() {
                                                     )}
                                                     <div className="flex-1 min-w-0 space-y-1">
                                                         <div className="flex items-center gap-2 flex-wrap">
-                                                            <h3 className="text-lg font-semibold text-foreground">
+                                                            <h3 id={headingId} className="text-lg font-semibold text-foreground">
                                                                 {item.school}
                                                             </h3>
                                                             <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-200 border border-sky-500/20">
@@ -122,12 +127,13 @@ export default function Education() {
                                                 </div>
                                                 {hasDetails && (
                                                     <button
-                                                       onClick={(e) => {
-                                                            e.stopPropagation()
-                                                            toggleExpand(index)
-                                                        }}
-                                                        className="shrink-0 p-2.5 rounded-full border border-border/70 hover:border-sky-500/60 hover:bg-sky-500/10 transition-colors text-muted-foreground hover:text-foreground"
-                                                        aria-label={isExpanded ? '收起' : '展开'}
+                                                        id={toggleId}
+                                                        type="button"
+                                                        onClick={() => toggleExpand(index)}
+                                                        className="order-first shrink-0 p-2.5 rounded-full border border-border/70 hover:border-sky-500/60 hover:bg-sky-500/10 transition-colors text-muted-foreground hover:text-foreground"
+                                                        aria-label={`${t(isExpanded ? 'common.collapse' : 'common.expand')} ${item.school}`}
+                                                        aria-expanded={isExpanded}
+                                                        aria-controls={detailsId}
                                                     >
                                                         {isExpanded ? (
                                                             <ChevronUp className="w-5 h-5" />
@@ -138,16 +144,23 @@ export default function Education() {
                                                 )}
                                             </div>
 
-                                            <AnimatePresence>
-                                                {isExpanded && hasDetails && (
-                                                    <motion.div
-                                                        initial={{ height: 0, opacity: 0 }}
-                                                        animate={{ height: 'auto', opacity: 1 }}
-                                                        exit={{ height: 0, opacity: 0 }}
-                                                        transition={{ duration: 0.2 }}
-                                                        className="overflow-hidden"
-                                                    >
-                                                        <div className="mt-4 pt-4 border-t border-border/60 space-y-4">
+                                            {hasDetails && (
+                                                <div
+                                                    id={detailsId}
+                                                    role="region"
+                                                    aria-labelledby={headingId}
+                                                    aria-hidden={!isExpanded}
+                                                >
+                                                    <AnimatePresence>
+                                                        {isExpanded && (
+                                                            <motion.div
+                                                                initial={shouldReduceMotion ? false : { height: 0, opacity: 0 }}
+                                                                animate={{ height: 'auto', opacity: 1 }}
+                                                                exit={shouldReduceMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                                                                transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+                                                                className="overflow-hidden"
+                                                            >
+                                                                <div className="mt-4 pt-4 border-t border-border/60 space-y-4">
                                                             {/* 主修课程 */}
                                                             {item.courses && item.courses.length > 0 && (
                                                                 <div>
@@ -190,10 +203,12 @@ export default function Education() {
                                                                     </div>
                                                                 </div>
                                                             )}
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
+                                                                </div>
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

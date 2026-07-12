@@ -15,12 +15,14 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 import { cn } from "@/lib/utils"
 import { useNotification } from "@/store/notification"
 import { useUser } from "@/store/user"
 import type { ManagedFileData } from "@/types/api"
 
 function FileManagementContent() {
+  const shouldReduceMotion = usePrefersReducedMotion()
   const { user } = useUser()
   const { notificationSuccess, notificationError, notificationInfo } = useNotification()
   const searchParams = useSearchParams()
@@ -75,7 +77,12 @@ function FileManagementContent() {
 
       const downloadSection = document.getElementById("download-section")
       if (downloadSection) {
-        downloadSection.scrollIntoView({ behavior: "smooth", block: "center" })
+        downloadSection.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "auto"
+            : "smooth",
+          block: "center",
+        })
       }
     }
   }, [searchParams, notificationInfo, t])
@@ -322,9 +329,10 @@ function FileManagementContent() {
                 <AnimatePresence>
                   {shareLink && (
                     <motion.div
-                      initial={{ opacity: 0, height: 0 }}
+                      initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
                       className="space-y-2 rounded-lg border border-primary/20 bg-muted/50 p-4"
                     >
                       <Label className="flex items-center gap-2 font-semibold text-primary">

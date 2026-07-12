@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { motion, useInView } from 'motion/react'
 import { useRef } from 'react'
 import { Trophy, Medal, Crown, Star } from 'lucide-react'
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion'
 
 // 简化后的配色：不再改变背景色，只改变 Icon 和 Badge 的颜色
 const awardStyleMap: Record<string, { icon: React.ReactNode; colorClass: string; gradient: string }> = {
@@ -43,6 +44,7 @@ type AwardItem = {
 
 export function Awards() {
   const { t } = useTranslation()
+  const shouldReduceMotion = usePrefersReducedMotion()
   const containerRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(containerRef, { once: false, amount: 0.2 })
 
@@ -52,9 +54,9 @@ export function Awards() {
     <div ref={containerRef} className="w-full py-12">
       {/* 标题区域 */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.45 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.45 }}
         className="mb-8"
       >
         <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
@@ -70,9 +72,12 @@ export function Awards() {
           return (
             <motion.div
               key={`${item.name}-${index}`}
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
+              transition={{
+                duration: shouldReduceMotion ? 0 : 0.3,
+                delay: shouldReduceMotion ? 0 : index * 0.05,
+              }}
               className="group relative"
             >
               <div 

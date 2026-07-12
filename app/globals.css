@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+html,
+body {
+  overflow-x: clip;
+}
+
 html:focus-within {
   scroll-behavior: smooth;
 }
@@ -20,6 +25,33 @@ html:focus-within {
 @media (prefers-reduced-motion: reduce) {
   html:focus-within {
     scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-delay: 0ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+html[data-ai-dialog-open="true"] #oml2d-stage,
+html[data-ai-dialog-open="true"] #oml2d-statusBar,
+html[data-ai-dialog-open="true"] #oml2d-menus,
+html[data-ai-dialog-open="true"] #oml2d-tips {
+  display: none !important;
+}
+
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  #oml2d-stage,
+  #oml2d-statusBar,
+  #oml2d-menus,
+  #oml2d-tips {
+    display: none !important;
   }
 }
 

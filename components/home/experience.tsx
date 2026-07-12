@@ -2,12 +2,15 @@
 
 import { useTranslation } from 'react-i18next'
 import { motion, useInView, AnimatePresence } from 'motion/react'
-import { useRef, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { Briefcase, ChevronDown, ChevronUp } from 'lucide-react'
 import Image from 'next/image'
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion'
 export default function Experience() {
     const { t } = useTranslation()
+    const shouldReduceMotion = usePrefersReducedMotion()
     const containerRef = useRef<HTMLDivElement>(null)
+    const sectionId = useId()
     const isInView = useInView(containerRef, { once: false, amount: 0.2 })
     const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set())
 
@@ -64,9 +67,9 @@ export default function Experience() {
     return (
         <div ref={containerRef} className="w-full py-8">
             <motion.h2
-                initial={{ opacity: 0, y: 20 }}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
                 className="text-3xl font-bold mb-6 text-foreground"
             >
                 {t('experience.title')}
@@ -80,13 +83,19 @@ export default function Experience() {
                     {experienceItems.map((item, index) => {
                         const isExpanded = expandedItems.has(index)
                         const hasDescription = item.description && item.description.length > 0
+                        const detailsId = `${sectionId}-experience-details-${index}`
+                        const toggleId = `${sectionId}-experience-toggle-${index}`
+                        const headingId = `${sectionId}-experience-heading-${index}`
 
                         return (
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0, x: 20 }}
+                                initial={shouldReduceMotion ? false : { opacity: 0, x: 20 }}
                                 animate={isInView ? { opacity: 1, x: 0 } : {}}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                transition={{
+                                    duration: shouldReduceMotion ? 0 : 0.5,
+                                    delay: shouldReduceMotion ? 0 : index * 0.1,
+                                }}
                                 className="relative"
                             >
                                 {/* 时间线节点 - 右侧 */}
@@ -95,11 +104,7 @@ export default function Experience() {
                                 {/* 卡片内容 - 右侧对齐 */}
                                 <div className="mr-0 md:mr-12">
                                     <div
-                                        className="relative overflow-hidden rounded-xl border border-indigo-500/20 bg-white/95 dark:bg-neutral-900/80 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg backdrop-blur cursor-pointer"
-                                        role={hasDescription ? 'button' : undefined}
-                                        tabIndex={hasDescription ? 0 : -1}
-                                        onClick={hasDescription ? () => toggleExpand(index) : undefined}
-                                        onKeyDown={hasDescription ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleExpand(index) } } : undefined}
+                                        className="relative overflow-hidden rounded-xl border border-indigo-500/20 bg-white/95 dark:bg-neutral-900/80 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg backdrop-blur"
                                     >
                                         <div className="absolute left-0 top-0 h-full w-1 bg-indigo-500/50" />
 
@@ -123,7 +128,7 @@ export default function Experience() {
                                                     )}
                                                     <div className="flex-1 min-w-0 space-y-1">
                                                         <div className="flex items-center gap-2 flex-wrap">
-                                                            <h3 className="text-lg font-semibold text-foreground">
+                                                            <h3 id={headingId} className="text-lg font-semibold text-foreground">
                                                                 {item.company}
                                                             </h3>
                                                             <span className="text-xs px-2.5 py-1 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 rounded-full font-medium border border-indigo-500/20">
@@ -142,12 +147,13 @@ export default function Experience() {
                                                 </div>
                                                 {hasDescription && (
                                                     <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation()
-                                                            toggleExpand(index)
-                                                        }}
-                                                        className="shrink-0 p-2.5 rounded-full border border-border/70 hover:border-indigo-500/60 hover:bg-indigo-500/10 transition-colors text-muted-foreground hover:text-foreground"
-                                                        aria-label={isExpanded ? '收起' : '展开'}
+                                                        id={toggleId}
+                                                        type="button"
+                                                        onClick={() => toggleExpand(index)}
+                                                        className="order-first shrink-0 p-2.5 rounded-full border border-border/70 hover:border-indigo-500/60 hover:bg-indigo-500/10 transition-colors text-muted-foreground hover:text-foreground"
+                                                        aria-label={`${t(isExpanded ? 'common.collapse' : 'common.expand')} ${item.company}`}
+                                                        aria-expanded={isExpanded}
+                                                        aria-controls={detailsId}
                                                     >
                                                         {isExpanded ? (
                                                             <ChevronUp className="w-5 h-5" />
@@ -158,25 +164,34 @@ export default function Experience() {
                                                 )}
                                             </div>
 
-                                            <AnimatePresence>
-                                                {isExpanded && hasDescription && (
-                                                    <motion.div
-                                                        initial={{ height: 0, opacity: 0 }}
-                                                        animate={{ height: 'auto', opacity: 1 }}
-                                                        exit={{ height: 0, opacity: 0 }}
-                                                        transition={{ duration: 0.2 }}
-                                                        className="overflow-hidden"
-                                                    >
-                                                        <div className="mt-4 pt-4 border-t border-indigo-500/15">
-                                                            <ul className="list-disc pl-4 space-y-2 text-sm text-muted-foreground leading-relaxed">
-                                                                {item.description.map((desc, i) => (
-                                                                    <li key={i}>{renderDescription(desc)}</li>
-                                                                ))}
-                                                            </ul>
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
+                                            {hasDescription && (
+                                                <div
+                                                    id={detailsId}
+                                                    role="region"
+                                                    aria-labelledby={headingId}
+                                                    aria-hidden={!isExpanded}
+                                                >
+                                                    <AnimatePresence>
+                                                        {isExpanded && (
+                                                            <motion.div
+                                                                initial={shouldReduceMotion ? false : { height: 0, opacity: 0 }}
+                                                                animate={{ height: 'auto', opacity: 1 }}
+                                                                exit={shouldReduceMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                                                                transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+                                                                className="overflow-hidden"
+                                                            >
+                                                                <div className="mt-4 pt-4 border-t border-indigo-500/15">
+                                                                    <ul className="list-disc pl-4 space-y-2 text-sm text-muted-foreground leading-relaxed">
+                                                                        {item.description.map((desc, i) => (
+                                                                            <li key={i}>{renderDescription(desc)}</li>
+                                                                        ))}
+                                                                    </ul>
+                                                                </div>
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

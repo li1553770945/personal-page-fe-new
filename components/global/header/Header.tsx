@@ -23,7 +23,7 @@ import { FileOutlinedIcon } from "@/components/ui/icons/ant-design-file-outlined
 import { CoffeeOutlinedIcon } from "@/components/ui/icons/ant-design-coffee-outlined"
 import { UserGroupIcon } from "@/components/ui/icons/heroicons-user-group"
 import { FriendsIcon } from "@/components/ui/icons/friends"
-import { AlertTriangle, BarChart3, Bot, ChevronDown, Files, FolderKanban, Presentation, Settings, Users } from "lucide-react"
+import { AlertTriangle, BarChart3, Bot, ChevronDown, Files, FolderKanban, Menu, Presentation, Settings, Users, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -51,6 +51,7 @@ export default function Header() {
     const { user } = useUser()
     const [isHydrated, setIsHydrated] = useState(false)
     const [pendingHref, setPendingHref] = useState<string | null>(null)
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
     useEffect(() => {
         const frame = window.requestAnimationFrame(() => {
@@ -72,11 +73,28 @@ export default function Header() {
         return () => window.clearTimeout(timeout)
     }, [pendingHref])
 
+    useEffect(() => {
+        if (!isMobileMenuOpen) {
+            return
+        }
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setIsMobileMenuOpen(false)
+            }
+        }
+
+        window.addEventListener("keydown", handleKeyDown)
+        return () => window.removeEventListener("keydown", handleKeyDown)
+    }, [isMobileMenuOpen])
+
     const isRoutePending = Boolean(pendingHref && pendingHref !== pathname)
     const shouldShowPendingState = !isHydrated || isRoutePending
     const isSuperAdmin = user?.role === "super_admin"
 
     const handleInternalNavigation = (href?: string, target?: string) => {
+        setIsMobileMenuOpen(false)
+
         if (!href || target === "_blank" || href.startsWith("http") || href.startsWith("mailto:") || href === pathname) {
             return
         }
@@ -205,8 +223,18 @@ export default function Header() {
             >
                 <div className="h-full w-1/3 animate-[nav-progress_1.15s_ease-in-out_infinite] rounded-full bg-primary/70 shadow-[0_0_16px_var(--primary)] motion-reduce:animate-none" />
             </div>
-            <div className="flex h-16 items-center justify-between px-4 md:px-6">
-                <NavigationMenu viewport={false}>
+            <div className="flex h-16 min-w-0 items-center justify-between gap-2 px-3 sm:px-4 md:px-6">
+                <Link
+                    href="/"
+                    className="flex min-w-0 items-center gap-2 rounded-md px-2 py-2 text-sm font-semibold hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring xl:hidden"
+                    aria-label={t('nav.home')}
+                    onClick={() => handleInternalNavigation('/')}
+                >
+                    <HomeIcon className="size-5 shrink-0" aria-hidden="true" />
+                    <span className="hidden truncate min-[360px]:inline">PeaceSheep</span>
+                </Link>
+
+                <NavigationMenu viewport={false} className="hidden xl:flex">
                     <NavigationMenuList>
                         {navItems.map((item) => {
                             const isActive = item.href && pathname === item.href;
@@ -226,7 +254,7 @@ export default function Header() {
                                                 navigationMenuTriggerStyle(),
                                                 "group flex-row items-center transition-all duration-200 ease-out active:scale-[0.98] group-hover/nav-item:bg-accent group-hover/nav-item:text-accent-foreground group-focus-within/nav-item:bg-accent group-focus-within/nav-item:text-accent-foreground"
                                             )}
-                                            aria-haspopup="true"
+                                            aria-haspopup="menu"
                                         >
                                             {IconComp ? <IconComp className="mr-2 size-4 text-foreground" /> : null}
                                             {item.label}
@@ -256,7 +284,7 @@ export default function Header() {
                                                                     {SubIcon ? <SubIcon className="mr-2 size-4 text-foreground" /> : null}
                                                                     <div>{sub.label}</div>
                                                                     {isPending && <span className="ml-2 size-1.5 animate-pulse rounded-full bg-primary" aria-hidden="true" />}
-                                                                    {sub.target === '_blank' && <LinkOutlinedIcon className="ml-1 size-3 text-muted-foreground" />}
+                                                                    {sub.target === '_blank' && <LinkOutlinedIcon className="ml-1 size-3 text-muted-foreground" aria-hidden="true" />}
                                                                 </Link>
                                                             </li>
                                                         )
@@ -286,7 +314,7 @@ export default function Header() {
                                             {IconComp ? <IconComp className="mr-2 size-4 text-foreground" /> : null}
                                             {item.label}
                                             {pendingHref === item.href && item.href !== pathname && <span className="ml-2 size-1.5 animate-pulse rounded-full bg-primary" aria-hidden="true" />}
-                                            {item.target === '_blank' && <LinkOutlinedIcon className="ml-1 size-3 text-muted-foreground" />}
+                                            {item.target === '_blank' && <LinkOutlinedIcon className="ml-1 size-3 text-muted-foreground" aria-hidden="true" />}
                                         </Link>
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
@@ -294,15 +322,95 @@ export default function Header() {
                         })}
                     </NavigationMenuList>
                 </NavigationMenu>
-                <div className="flex items-center gap-2">
+                <div className="flex shrink-0 items-center gap-1 sm:gap-2">
                     {/* 语言切换 */}
                     <LanguageToggle className="right-10" />
                     {/* 主题切换 */}
                     <ModeToggle />
                     {/* 用户 */}
                     <UserLogo />
+                    <button
+                        type="button"
+                        className="inline-flex size-9 items-center justify-center rounded-md hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring xl:hidden"
+                        aria-label={isMobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
+                        aria-expanded={isMobileMenuOpen}
+                        aria-controls="mobile-primary-navigation"
+                        onClick={() => setIsMobileMenuOpen((open) => !open)}
+                    >
+                        {isMobileMenuOpen ? <X className="size-5" aria-hidden="true" /> : <Menu className="size-5" aria-hidden="true" />}
+                    </button>
                 </div>
             </div>
+            {isMobileMenuOpen && (
+                <nav
+                    id="mobile-primary-navigation"
+                    aria-label={t('nav.mobileNavigation')}
+                    className="absolute inset-x-0 top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto border-y bg-background/95 px-3 py-3 shadow-xl backdrop-blur-xl xl:hidden"
+                >
+                    <ul className="mx-auto grid w-full max-w-2xl gap-1">
+                        {navItems.map((item) => {
+                            const IconComp = item.icon
+                            const hasSubItems = Boolean(item.subItem?.length)
+
+                            if (hasSubItems) {
+                                return (
+                                    <li key={item.label} className="rounded-xl border bg-card/70 p-2">
+                                        <div className="flex items-center gap-2 px-2 py-1.5 text-sm font-semibold text-foreground">
+                                            {IconComp ? <IconComp className="size-4 shrink-0" aria-hidden="true" /> : null}
+                                            <span>{item.label}</span>
+                                        </div>
+                                        <ul className="grid gap-1 sm:grid-cols-2">
+                                            {item.subItem?.map((sub) => {
+                                                const SubIcon = sub.icon
+                                                const isActive = pathname === sub.href
+
+                                                return (
+                                                    <li key={sub.label}>
+                                                        <Link
+                                                            href={sub.href}
+                                                            target={sub.target || '_self'}
+                                                            rel={sub.target === '_blank' ? 'noreferrer' : undefined}
+                                                            onClick={() => handleInternalNavigation(sub.href, sub.target)}
+                                                            className={cn(
+                                                                "flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                                                                isActive && "bg-accent text-accent-foreground"
+                                                            )}
+                                                        >
+                                                            {SubIcon ? <SubIcon className="size-4 shrink-0" aria-hidden="true" /> : null}
+                                                            <span className="min-w-0 flex-1 truncate">{sub.label}</span>
+                                                            {sub.target === '_blank' ? <LinkOutlinedIcon className="size-3 shrink-0" aria-hidden="true" /> : null}
+                                                        </Link>
+                                                    </li>
+                                                )
+                                            })}
+                                        </ul>
+                                    </li>
+                                )
+                            }
+
+                            const isActive = item.href === pathname
+                            return (
+                                <li key={item.label}>
+                                    <Link
+                                        href={item.href || '#'}
+                                        target={item.target}
+                                        rel={item.target === '_blank' ? 'noreferrer' : undefined}
+                                        onClick={() => handleInternalNavigation(item.href, item.target)}
+                                        className={cn(
+                                            "flex min-h-11 items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                                            isActive && "bg-accent text-accent-foreground"
+                                        )}
+                                    >
+                                        {IconComp ? <IconComp className="size-4 shrink-0" aria-hidden="true" /> : null}
+                                        <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                                        {item.target === '_blank' ? <LinkOutlinedIcon className="size-3 shrink-0" aria-hidden="true" /> : null}
+                                    </Link>
+                                </li>
+                            )
+                        })}
+                    </ul>
+                </nav>
+            )}
             {/* 分割线 */}
             {/* <div className="mx-[30px] h-0 border-b-2 border-(--seprator-background)" /> */}
             <ScrollProgress className="absolute top-auto bottom-0" />

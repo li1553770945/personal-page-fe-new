@@ -25,7 +25,9 @@
     "notice": "提示",
     "justNow": "刚刚",
     "confirm": "确认",
-    "cancel": "取消"
+    "cancel": "取消",
+    "expand": "展开",
+    "collapse": "收起"
   },
   "nav": {
     "home": "主页",
@@ -40,7 +42,10 @@
     "email": "邮箱",
     "github": "Github",
     "consultation": "咨询&留言",
-    "appreciate": "赞赏"
+    "appreciate": "赞赏",
+    "openMenu": "打开导航菜单",
+    "closeMenu": "关闭导航菜单",
+    "mobileNavigation": "移动端主导航"
   },
   "projects": {
     "title": "项目",

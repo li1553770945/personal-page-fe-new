@@ -3,6 +3,7 @@
 import { useTranslation } from 'react-i18next'
 import { motion, useInView } from 'motion/react'
 import { useRef } from 'react'
+import { usePrefersReducedMotion } from '@/lib/use-prefers-reduced-motion'
 
 type PublicationItem = {
   title: string
@@ -18,6 +19,7 @@ type PublicationItem = {
 
 export function Publications() {
   const { t } = useTranslation()
+  const shouldReduceMotion = usePrefersReducedMotion()
   const containerRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(containerRef, { once: false, amount: 0.2 })
   
@@ -40,9 +42,9 @@ export function Publications() {
   return (
     <div ref={containerRef} className="w-full py-12">
         <motion.div
-           initial={{ opacity: 0, y: 12 }}
+           initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
            animate={isInView ? { opacity: 1, y: 0 } : {}}
-           transition={{ duration: 0.45 }}
+           transition={{ duration: shouldReduceMotion ? 0 : 0.45 }}
            className="mb-8"
         >
           <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
@@ -54,9 +56,12 @@ export function Publications() {
            {publicationItems.map((item, index) => (
              <motion.div
                key={index}
-               initial={{ opacity: 0, x: -20 }}
+               initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
                    animate={isInView ? { opacity: 1, x: 0 } : {}}
-               transition={{ duration: 0.3, delay: index * 0.1 }}
+               transition={{
+                 duration: shouldReduceMotion ? 0 : 0.3,
+                 delay: shouldReduceMotion ? 0 : index * 0.1,
+               }}
                className="group relative pl-4 border-l-2 border-muted hover:border-primary transition-colors duration-300"
              >
                 <div className="flex flex-col gap-1">

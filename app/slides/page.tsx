@@ -13,6 +13,7 @@ import { resolveApiRouteUrl } from "@/lib/api-url"
 import type { SlideDeckMeta } from "@/types/slides"
 import type { SlideData } from "@/types/api"
 import { cn } from "@/lib/utils"
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 
 // Backend-managed entries can point to API routes or external URLs.
 function normalizeEntry(entry?: string) {
@@ -85,8 +86,19 @@ const item = {
   show: { opacity: 1, y: 0 },
 }
 
+const reducedContainer = {
+  hidden: { opacity: 1 },
+  show: { opacity: 1, transition: { duration: 0, delay: 0, staggerChildren: 0 } },
+}
+
+const reducedItem = {
+  hidden: { opacity: 1, y: 0 },
+  show: { opacity: 1, y: 0, transition: { duration: 0, delay: 0 } },
+}
+
 export default function SlidesPage() {
   const { t, i18n } = useTranslation()
+  const shouldReduceMotion = usePrefersReducedMotion()
   const langIsEn = i18n.language?.toLowerCase().startsWith("en")
 
   const [list, setList] = useState<SlideDeckMeta[]>([])
@@ -130,9 +142,9 @@ export default function SlidesPage() {
   return (
     <div className="container mx-auto py-10 px-4 min-h-[calc(100vh-4rem)] max-w-6xl">
       <motion.div
-        initial={{ opacity: 0, y: -12 }}
+        initial={shouldReduceMotion ? false : { opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.45 }}
         className="mb-10 text-center space-y-3"
       >
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{t("slides.title")}</h1>
@@ -178,8 +190,8 @@ export default function SlidesPage() {
 
       {!loading && !error && filtered.length > 0 && (
         <motion.div
-          variants={container}
-          initial="hidden"
+          variants={shouldReduceMotion ? reducedContainer : container}
+          initial={shouldReduceMotion ? false : "hidden"}
           animate="show"
           className="grid grid-cols-1 sm:grid-cols-2 gap-6"
         >
@@ -199,7 +211,10 @@ export default function SlidesPage() {
             })()
 
             return (
-              <motion.div key={deck.id} variants={item}>
+              <motion.div
+                key={deck.id}
+                variants={shouldReduceMotion ? reducedItem : item}
+              >
                 <Card className="h-full overflow-hidden border-border/60 hover:border-primary/30 hover:shadow-md transition-all duration-300 group">
                   <a
                     href={href ?? "#"}

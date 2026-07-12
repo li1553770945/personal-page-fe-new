@@ -1,7 +1,9 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { renderToString } from "react-dom/server"
+
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion"
 
 interface Icon {
   x: number
@@ -23,8 +25,9 @@ function easeOutCubic(t: number): number {
 
 export function IconCloud({ icons, images }: IconCloudProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [iconPositions, setIconPositions] = useState<Icon[]>([])
+  const shouldReduceMotion = usePrefersReducedMotion()
   const [rotation, setRotation] = useState({ x: 0, y: 0 })
+  const [assetsVersion, setAssetsVersion] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 })
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
@@ -74,6 +77,7 @@ export function IconCloud({ icons, images }: IconCloudProps) {
             offCtx.drawImage(img, 0, 0, 40, 40)
 
             imagesLoadedRef.current[index] = true
+            setAssetsVersion((version) => version + 1)
           }
         } else {
           // Handle SVG icons
@@ -85,6 +89,7 @@ export function IconCloud({ icons, images }: IconCloudProps) {
             offCtx.clearRect(0, 0, offscreen.width, offscreen.height)
             offCtx.drawImage(img, 0, 0)
             imagesLoadedRef.current[index] = true
+            setAssetsVersion((version) => version + 1)
           }
         }
       }
@@ -94,8 +99,8 @@ export function IconCloud({ icons, images }: IconCloudProps) {
     iconCanvasesRef.current = newIconCanvases
   }, [icons, images])
 
-  // Generate initial icon positions on a sphere
-  useEffect(() => {
+  // Generate deterministic icon positions on a sphere.
+  const iconPositions = useMemo(() => {
     const items = icons || images || []
     const newIcons: Icon[] = []
     const numIcons = items.length || 20
@@ -121,7 +126,7 @@ export function IconCloud({ icons, images }: IconCloudProps) {
         id: i,
       })
     }
-    setIconPositions(newIcons)
+    return newIcons
   }, [icons, images])
 
   // Handle mouse events
@@ -129,11 +134,15 @@ export function IconCloud({ icons, images }: IconCloudProps) {
     const rect = canvasRef.current?.getBoundingClientRect()
     if (!rect || !canvasRef.current) return
 
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
+    const scaleX = canvasRef.current.width / rect.width
+    const scaleY = canvasRef.current.height / rect.height
+    const x = (e.clientX - rect.left) * scaleX
+    const y = (e.clientY - rect.top) * scaleY
 
     const ctx = canvasRef.current.getContext("2d")
     if (!ctx) return
+
+    let selectedIcon = false
 
     iconPositions.forEach((icon) => {
       const cosX = Math.cos(rotationRef.current.x)
@@ -154,6 +163,7 @@ export function IconCloud({ icons, images }: IconCloudProps) {
       const dy = y - screenY
 
       if (dx * dx + dy * dy < radius * radius) {
+        selectedIcon = true
         const targetX = -Math.atan2(
           icon.y,
           Math.sqrt(icon.x * icon.x + icon.z * icon.z)
@@ -168,18 +178,27 @@ export function IconCloud({ icons, images }: IconCloudProps) {
 
         const duration = Math.min(2000, Math.max(800, distance * 1000))
 
-        setTargetRotation({
-          x: targetX,
-          y: targetY,
-          startX: currentX,
-          startY: currentY,
-          distance,
-          startTime: performance.now(),
-          duration,
-        })
+        if (shouldReduceMotion) {
+          const nextRotation = { x: targetX, y: targetY }
+          rotationRef.current = nextRotation
+          setRotation(nextRotation)
+          setTargetRotation(null)
+        } else {
+          setTargetRotation({
+            x: targetX,
+            y: targetY,
+            startX: currentX,
+            startY: currentY,
+            distance,
+            startTime: performance.now(),
+            duration,
+          })
+        }
         return
       }
     })
+
+    if (selectedIcon) return
 
     setIsDragging(true)
     setLastMousePos({ x: e.clientX, y: e.clientY })
@@ -187,22 +206,24 @@ export function IconCloud({ icons, images }: IconCloudProps) {
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = canvasRef.current?.getBoundingClientRect()
-    if (rect) {
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
+    if (rect && canvasRef.current) {
+      const scaleX = canvasRef.current.width / rect.width
+      const scaleY = canvasRef.current.height / rect.height
+      const x = (e.clientX - rect.left) * scaleX
+      const y = (e.clientY - rect.top) * scaleY
       setMousePos({ x, y })
-    }
 
-    if (isDragging) {
-      const deltaX = e.clientX - lastMousePos.x
-      const deltaY = e.clientY - lastMousePos.y
+      if (isDragging) {
+        const deltaX = (e.clientX - lastMousePos.x) * scaleX
+        const deltaY = (e.clientY - lastMousePos.y) * scaleY
 
-      rotationRef.current = {
-        x: rotationRef.current.x + deltaY * 0.002,
-        y: rotationRef.current.y + deltaX * 0.002,
+        rotationRef.current = {
+          x: rotationRef.current.x + deltaY * 0.002,
+          y: rotationRef.current.y + deltaX * 0.002,
+        }
+
+        setLastMousePos({ x: e.clientX, y: e.clientY })
       }
-
-      setLastMousePos({ x: e.clientX, y: e.clientY })
     }
   }
 
@@ -216,7 +237,7 @@ export function IconCloud({ icons, images }: IconCloudProps) {
     const ctx = canvas?.getContext("2d")
     if (!canvas || !ctx) return
 
-    const animate = () => {
+    const drawFrame = (advanceMotion: boolean) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       const centerX = canvas.width / 2
@@ -227,7 +248,7 @@ export function IconCloud({ icons, images }: IconCloudProps) {
       const distance = Math.sqrt(dx * dx + dy * dy)
       const speed = 0.003 + (distance / maxDistance) * 0.01
 
-      if (targetRotation) {
+      if (advanceMotion && targetRotation) {
         const elapsed = performance.now() - targetRotation.startTime
         const progress = Math.min(1, elapsed / targetRotation.duration)
         const easedProgress = easeOutCubic(progress)
@@ -244,7 +265,7 @@ export function IconCloud({ icons, images }: IconCloudProps) {
         if (progress >= 1) {
           setTargetRotation(null)
         }
-      } else if (!isDragging) {
+      } else if (advanceMotion && !isDragging) {
         rotationRef.current = {
           x: rotationRef.current.x + (dy / canvas.height) * speed,
           y: rotationRef.current.y + (dx / canvas.width) * speed,
@@ -292,6 +313,15 @@ export function IconCloud({ icons, images }: IconCloudProps) {
 
         ctx.restore()
       })
+    }
+
+    if (shouldReduceMotion) {
+      drawFrame(false)
+      return
+    }
+
+    const animate = () => {
+      drawFrame(true)
       animationFrameRef.current = requestAnimationFrame(animate)
     }
 
@@ -302,7 +332,7 @@ export function IconCloud({ icons, images }: IconCloudProps) {
         cancelAnimationFrame(animationFrameRef.current)
       }
     }
-  }, [icons, images, iconPositions, isDragging, mousePos, targetRotation])
+  }, [assetsVersion, icons, images, iconPositions, isDragging, mousePos, rotation, shouldReduceMotion, targetRotation])
 
   return (
     <canvas
@@ -313,7 +343,7 @@ export function IconCloud({ icons, images }: IconCloudProps) {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      className="rounded-lg"
+      className="h-auto max-w-full rounded-lg"
       aria-label="Interactive 3D Icon Cloud"
       role="img"
     />

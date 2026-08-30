@@ -1,7 +1,8 @@
 // src/lib/request.ts
 import axios from 'axios';
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL
+  || (process.env.NODE_ENV === "production" ? "https://api.peacesheep.xyz/api" : "/api");
 
 const instance = axios.create({
   baseURL,

@@ -1,7 +1,6 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import Link from "next/link"
 import { BookOpen, CalendarDays, Search } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
@@ -67,7 +66,7 @@ export function BlogIndexView({ posts }: { posts: BlogPostData[] }) {
                   ))}
                 </div>
                 <CardTitle className="text-xl group-hover:text-primary">
-                  <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                  <a href={`/blog/${encodeURIComponent(post.slug)}`}>{post.title}</a>
                 </CardTitle>
                 <CardDescription className="line-clamp-3 text-sm leading-6">{post.description}</CardDescription>
               </CardHeader>

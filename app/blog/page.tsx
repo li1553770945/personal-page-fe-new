@@ -1,9 +1,6 @@
 import type { Metadata } from "next"
 
-import { BlogIndexView } from "@/components/blog/blog-index-view"
-import { getPublicBlogPosts } from "@/lib/blog"
-
-export const dynamic = "force-dynamic"
+import { BlogRouteView } from "@/components/blog/blog-route-view"
 
 export const metadata: Metadata = {
   title: "博客",
@@ -11,7 +8,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/blog" },
 }
 
-export default async function BlogPage() {
-  const data = await getPublicBlogPosts()
-  return <BlogIndexView posts={data?.items ?? []} />
+export default function BlogPage() {
+  return <BlogRouteView />
 }

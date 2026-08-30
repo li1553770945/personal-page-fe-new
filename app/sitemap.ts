@@ -4,7 +4,7 @@ import { getPublicBlogPosts } from "@/lib/blog"
 
 const siteUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://peacesheep.xyz")
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-static"
 
 const publicRoutes = [
   "/",

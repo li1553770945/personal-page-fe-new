@@ -1,8 +1,6 @@
 import type { Metadata } from "next"
 
-import { BlogIndexView } from "@/components/blog/blog-index-view"
 import { BlogRouteView } from "@/components/blog/blog-route-view"
-import { getPublicBlogPosts } from "@/lib/blog"
 
 export const metadata: Metadata = {
   title: "博客",
@@ -10,10 +8,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/blog" },
 }
 
-export default async function BlogPage() {
-  if (process.env.OPENNEXT_BUILD === "1") {
-    const data = await getPublicBlogPosts()
-    return <BlogIndexView posts={data?.items ?? []} />
-  }
+export default function BlogPage() {
   return <BlogRouteView />
 }

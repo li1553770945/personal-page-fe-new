@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 
 import { AppProviders } from "@/components/app-providers"
+import "katex/dist/katex.min.css"
 import "./globals.css"
 
 const siteUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://peacesheep.xyz")
@@ -30,7 +31,7 @@ const structuredData = {
         "AI agents",
         "Model Context Protocol",
       ],
-      sameAs: ["https://github.com/li1553770945", "https://blog.peacesheep.xyz"],
+      sameAs: ["https://github.com/li1553770945"],
     },
     {
       "@type": "SoftwareApplication",

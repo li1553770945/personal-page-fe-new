@@ -116,8 +116,7 @@ export default function Header() {
         {
             label: t('nav.blog'),
             icon: BookOpenIcon,
-            href: "https://blog.peacesheep.xyz",
-            target: "_blank",
+            href: "/blog",
         },
         {
             label: t('nav.lectures'),
@@ -141,31 +140,36 @@ export default function Header() {
             ]
         },
         ...(isSuperAdmin ? [{
-            label: "网站管理",
+            label: t('nav.siteManagement'),
             icon: Settings,
             subItem: [
                 {
-                    label: "用户管理",
+                    label: t('nav.userManagement'),
                     icon: Users,
                     href: "/admin/users",
                 },
                 {
-                    label: "用户危险区",
+                    label: t('nav.userDangerZone'),
                     icon: AlertTriangle,
                     href: "/admin/users/danger",
                 },
                 {
-                    label: "总文件管理",
+                    label: t('nav.allFiles'),
                     icon: Files,
                     href: "/admin/files",
                 },
                 {
-                    label: "幻灯片管理",
+                    label: t('nav.slideManagement'),
                     icon: Presentation,
                     href: "/admin/slides",
                 },
                 {
-                    label: "AI 用量管理",
+                    label: t('nav.blogManagement'),
+                    icon: BookOpenIcon,
+                    href: "/admin/blog",
+                },
+                {
+                    label: t('nav.aiUsageManagement'),
                     icon: BarChart3,
                     href: "/admin/usage/ai",
                 }

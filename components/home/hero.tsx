@@ -25,8 +25,7 @@ export function Hero() {
   const actions: HeroAction[] = [
     {
       label: t("hero.actions.blog"),
-      href: "https://blog.peacesheep.xyz",
-      external: true,
+      href: "/blog",
       icon: BookOpen,
     },
     {

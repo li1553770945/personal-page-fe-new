@@ -1,5 +1,5 @@
 import instance from "../lib/requests";
-import type { ActivateCodeData, AIUsageStatsData, ApiResponse, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, SaveSlideRequest, SignSlideCoverUploadRequest, SignSlideDeckUploadRequest, SlideCoverUploadSignResponse, SlideData, SlideDeckUploadSignResponse, SlideUploadResponse, UserDangerActionData, UserDangerActionRequest, UserRole } from "../types/api";
+import type { ActivateCodeData, AIUsageStatsData, ApiResponse, BlogAssetData, BlogPostData, BlogPostListData, BlogRevisionData, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, SaveBlogPostRequest, SaveSlideRequest, SignBlogAssetRequest, SignSlideCoverUploadRequest, SignSlideDeckUploadRequest, SlideCoverUploadSignResponse, SlideData, SlideDeckUploadSignResponse, SlideUploadResponse, UserDangerActionData, UserDangerActionRequest, UserRole } from "../types/api";
 
 export const logoutAPI = () => instance.get("/users/logout");
 
@@ -50,6 +50,47 @@ const statsParams = (params: AIUsageStatsParams = {}) => {
 
 export const adminAIUsageStatsAPI = (params?: AIUsageStatsParams): Promise<ApiResponse<AIUsageStatsData>> =>
   instance.get(`/admin/aichat/stats${statsParams(params)}`);
+
+export const blogPostsAPI = (query = ""): Promise<ApiResponse<BlogPostListData>> =>
+  instance.get(`/blog/posts${query ? `?${query}` : ""}`);
+
+export const blogPostAPI = (slug: string): Promise<ApiResponse<BlogPostData>> =>
+  instance.get(`/blog/posts/${encodeURIComponent(slug)}`);
+
+export const adminBlogPostsAPI = (): Promise<ApiResponse<BlogPostListData>> =>
+  instance.get("/admin/blog/posts?pageSize=100");
+
+export const createBlogPostAPI = (data: SaveBlogPostRequest): Promise<ApiResponse<BlogPostData>> =>
+  instance.post("/admin/blog/posts", data);
+
+export const saveBlogDraftAPI = (id: number, data: SaveBlogPostRequest): Promise<ApiResponse<BlogPostData>> =>
+  instance.put(`/admin/blog/posts/${id}/draft`, data);
+
+export const publishBlogPostAPI = (id: number): Promise<ApiResponse<BlogPostData>> =>
+  instance.post(`/admin/blog/posts/${id}/publish`);
+
+export const unpublishBlogPostAPI = (id: number): Promise<ApiResponse<null>> =>
+  instance.post(`/admin/blog/posts/${id}/unpublish`);
+
+export const archiveBlogPostAPI = (id: number): Promise<ApiResponse<null>> =>
+  instance.post(`/admin/blog/posts/${id}/archive`);
+
+export const deleteBlogPostAPI = (id: number): Promise<ApiResponse<null>> =>
+  instance.delete(`/admin/blog/posts/${id}`);
+
+export const adminBlogRevisionsAPI = (id: number): Promise<ApiResponse<BlogRevisionData[]>> =>
+  instance.get(`/admin/blog/posts/${id}/revisions`);
+
+export const restoreBlogRevisionAPI = (id: number, revisionId: number): Promise<ApiResponse<BlogPostData>> =>
+  instance.post(`/admin/blog/posts/${id}/revisions/${revisionId}/restore`);
+
+export const signBlogAssetAPI = (data: SignBlogAssetRequest): Promise<ApiResponse<BlogAssetData>> =>
+  instance.post("/admin/blog/assets/sign", data);
+
+export const confirmBlogAssetAPI = (
+  assetId: number,
+  data: { width: number; height: number; alt: string }
+): Promise<ApiResponse<BlogAssetData>> => instance.post(`/admin/blog/assets/${assetId}/confirm`, data);
 
 
 export const downloadFileAPI = (key: string) =>

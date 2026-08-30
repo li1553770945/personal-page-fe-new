@@ -191,3 +191,88 @@ export interface SlideCoverUploadSignResponse {
   signedUrl: string;
   contentType?: string;
 }
+
+export type BlogPostStatus = "draft" | "published" | "archived";
+
+export interface BlogPostData {
+  databaseId: number;
+  slug: string;
+  legacyPermalink?: string;
+  status: BlogPostStatus;
+  title: string;
+  description: string;
+  contentMarkdown?: string;
+  cover?: string;
+  coverObjectPath?: string;
+  categories: string[];
+  tags: string[];
+  draftRevisionId?: number;
+  publishedRevisionId?: number;
+  revisionId?: number;
+  version?: number;
+  changeSummary?: string;
+  authorUsername?: string;
+  createdAt: number;
+  updatedAt: number;
+  publishedAt?: number;
+}
+
+export interface BlogPostListData {
+  items: BlogPostData[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface BlogRevisionData {
+  revisionId: number;
+  postId: number;
+  version: number;
+  title: string;
+  description: string;
+  contentMarkdown: string;
+  cover: string;
+  coverObjectPath?: string;
+  categories: string[];
+  tags: string[];
+  changeSummary: string;
+  authorUsername: string;
+  createdAt: number;
+}
+
+export interface SaveBlogPostRequest {
+  slug: string;
+  title: string;
+  description: string;
+  contentMarkdown: string;
+  cover?: string;
+  coverObjectPath?: string;
+  categories: string[];
+  tags: string[];
+  changeSummary?: string;
+  baseRevisionId?: number;
+  legacyPermalink?: string;
+  publishAfterSave?: boolean;
+}
+
+export interface SignBlogAssetRequest {
+  postId: number;
+  fileName: string;
+  mimeType: string;
+  size: number;
+}
+
+export interface BlogAssetData {
+  id: number;
+  postId: number;
+  objectPath: string;
+  fileName: string;
+  mimeType: string;
+  size: number;
+  width: number;
+  height: number;
+  alt: string;
+  url: string;
+  signedUrl?: string;
+  ready: boolean;
+}

@@ -9,6 +9,7 @@ import {
   FileClock,
   ImagePlus,
   Loader2,
+  MessageSquare,
   Plus,
   RefreshCw,
   Save,
@@ -172,7 +173,10 @@ export default function AdminBlogPage() {
   useEffect(() => {
     refresh().then((result) => {
       setReady(true)
-      if (result.data?.role === "super_admin") void loadPosts()
+      if (result.data?.role === "super_admin") {
+        const requestedPost = Number(new URLSearchParams(window.location.search).get("post") || 0)
+        void loadPosts(requestedPost || undefined)
+      }
     })
     // The initial authorization check intentionally runs once.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -366,6 +370,7 @@ export default function AdminBlogPage() {
           <p className="mt-1 text-sm text-muted-foreground">{t("blogAdmin.description")}</p>
         </div>
         <div className="flex gap-2">
+          <Button asChild variant="outline"><Link href="/admin/blog/comments"><MessageSquare className="size-4" />{t("blogAdmin.commentModeration")}</Link></Button>
           <Button variant="outline" onClick={() => void loadPosts()} disabled={loading}><RefreshCw className={cn("size-4", loading && "animate-spin")} />{t("blogAdmin.refresh")}</Button>
           <Button onClick={newPost}><Plus className="size-4" />{t("blogAdmin.newPost")}</Button>
         </div>
@@ -384,7 +389,8 @@ export default function AdminBlogPage() {
               >
                 <span className="line-clamp-2 text-sm font-medium">{post.title}</span>
                 <span className="mt-2 flex items-center justify-between gap-2 text-xs text-muted-foreground">
-                  <span>{t(`blogAdmin.status.${post.status}`)}</span><span>v{post.version}</span>
+                  <span>{t(`blogAdmin.status.${post.status}`)}</span>
+                  <span className="inline-flex items-center gap-2"><span className="inline-flex items-center gap-1"><Eye className="size-3" />{post.viewCount ?? 0}</span><span>v{post.version}</span></span>
                 </span>
               </button>
             ))}

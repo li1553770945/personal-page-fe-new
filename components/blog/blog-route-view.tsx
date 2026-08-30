@@ -5,6 +5,7 @@ import { AlertCircle, LoaderCircle } from "lucide-react"
 
 import { blogPostAPI, blogPostsAPI } from "@/api"
 import { BlogArticleHeader } from "@/components/blog/blog-article-header"
+import { BlogEngagement } from "@/components/blog/blog-engagement"
 import { BlogIndexView } from "@/components/blog/blog-index-view"
 import { MarkdownContent } from "@/components/blog/markdown-content"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -97,6 +98,7 @@ export function BlogRouteView() {
     <div className="mx-auto w-full max-w-4xl py-10 md:py-14">
       <BlogArticleHeader post={state.post} />
       <MarkdownContent content={state.post.contentMarkdown ?? ""} />
+      <BlogEngagement post={state.post} />
     </div>
   )
 }

@@ -215,6 +215,9 @@ export interface BlogPostData {
   createdAt: number;
   updatedAt: number;
   publishedAt?: number;
+  likeCount: number;
+  commentCount: number;
+  viewCount?: number;
 }
 
 export interface BlogPostListData {
@@ -275,4 +278,33 @@ export interface BlogAssetData {
   url: string;
   signedUrl?: string;
   ready: boolean;
+}
+
+export type BlogCommentStatus = "pending" | "approved" | "rejected";
+
+export interface BlogLikeStateData {
+  liked: boolean;
+  likeCount: number;
+}
+
+export interface BlogCommentData {
+  id: number;
+  postId: number;
+  postSlug: string;
+  postTitle: string;
+  content: string;
+  status?: BlogCommentStatus;
+  authorUsername: string;
+  authorNickname: string;
+  authorAvatar?: string;
+  reviewerUsername?: string;
+  createdAt: number;
+  reviewedAt?: number;
+}
+
+export interface BlogCommentListData {
+  items: BlogCommentData[];
+  total: number;
+  page: number;
+  pageSize: number;
 }

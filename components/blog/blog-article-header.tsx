@@ -1,13 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft, CalendarDays } from "lucide-react"
+import { ArrowLeft, CalendarDays, Heart, MessageCircle, PencilLine } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
+import { Button } from "@/components/ui/button"
+import { useUser } from "@/store/user"
 import type { BlogPostData } from "@/types/api"
 
 export function BlogArticleHeader({ post }: { post: BlogPostData }) {
   const { t, i18n } = useTranslation()
+  const { user } = useUser()
   const timestamp = post.publishedAt ?? post.createdAt
   const date = new Intl.DateTimeFormat(i18n.language === "en" ? "en-US" : "zh-CN", {
     year: "numeric", month: "long", day: "numeric",
@@ -15,9 +18,16 @@ export function BlogArticleHeader({ post }: { post: BlogPostData }) {
 
   return (
     <header className="mb-9 border-b pb-8">
-      <Link href="/blog" className="mb-7 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
-        <ArrowLeft className="size-4" />{t("blog.back")}
-      </Link>
+      <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
+        <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
+          <ArrowLeft className="size-4" />{t("blog.back")}
+        </Link>
+        {user?.role === "super_admin" && (
+          <Button asChild size="sm" variant="outline">
+            <Link href={`/admin/blog?post=${post.databaseId}`}><PencilLine className="size-4" />{t("blog.editPost")}</Link>
+          </Button>
+        )}
+      </div>
       <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <CalendarDays className="size-4" />
         <time dateTime={new Date(timestamp * 1000).toISOString()}>{date}</time>
@@ -32,6 +42,10 @@ export function BlogArticleHeader({ post }: { post: BlogPostData }) {
           {post.tags.map((tag) => <span key={tag} className="text-sm text-muted-foreground">#{tag}</span>)}
         </div>
       )}
+      <div className="mt-5 flex items-center gap-4 text-sm text-muted-foreground">
+        <span className="inline-flex items-center gap-1.5"><Heart className="size-4" aria-hidden="true" />{t("blog.likes", { count: post.likeCount ?? 0 })}</span>
+        <a href="#blog-comments" className="inline-flex items-center gap-1.5 hover:text-primary"><MessageCircle className="size-4" aria-hidden="true" />{t("blog.comments", { count: post.commentCount ?? 0 })}</a>
+      </div>
     </header>
   )
 }

@@ -23,7 +23,7 @@ import { FileOutlinedIcon } from "@/components/ui/icons/ant-design-file-outlined
 import { CoffeeOutlinedIcon } from "@/components/ui/icons/ant-design-coffee-outlined"
 import { UserGroupIcon } from "@/components/ui/icons/heroicons-user-group"
 import { FriendsIcon } from "@/components/ui/icons/friends"
-import { AlertTriangle, BarChart3, ChevronDown, Files, FolderKanban, Menu, Presentation, Settings, Users, X } from "lucide-react"
+import { AlertTriangle, BarChart3, ChevronDown, Files, FolderKanban, Menu, MessageSquare, Presentation, Settings, Users, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -167,6 +167,11 @@ export default function Header() {
                     label: t('nav.blogManagement'),
                     icon: BookOpenIcon,
                     href: "/admin/blog",
+                },
+                {
+                    label: t('nav.blogCommentModeration'),
+                    icon: MessageSquare,
+                    href: "/admin/blog/comments",
                 },
                 {
                     label: t('nav.aiUsageManagement'),

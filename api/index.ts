@@ -1,5 +1,5 @@
 import instance from "../lib/requests";
-import type { ActivateCodeData, AIUsageStatsData, ApiResponse, BlogAssetData, BlogPostData, BlogPostListData, BlogRevisionData, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, SaveBlogPostRequest, SaveSlideRequest, SignBlogAssetRequest, SignSlideCoverUploadRequest, SignSlideDeckUploadRequest, SlideCoverUploadSignResponse, SlideData, SlideDeckUploadSignResponse, SlideUploadResponse, UserDangerActionData, UserDangerActionRequest, UserRole } from "../types/api";
+import type { ActivateCodeData, AIUsageStatsData, ApiResponse, BlogAssetData, BlogCommentData, BlogCommentListData, BlogCommentStatus, BlogLikeStateData, BlogPostData, BlogPostListData, BlogRevisionData, FeedbackCategory, FeedbackResponse, RoomData, FileDownloadData, FileUploadData, UploadUrlResponse, AdminUserData, ManagedFileData, SaveBlogPostRequest, SaveSlideRequest, SignBlogAssetRequest, SignSlideCoverUploadRequest, SignSlideDeckUploadRequest, SlideCoverUploadSignResponse, SlideData, SlideDeckUploadSignResponse, SlideUploadResponse, UserDangerActionData, UserDangerActionRequest, UserRole } from "../types/api";
 
 export const logoutAPI = () => instance.get("/users/logout");
 
@@ -57,6 +57,21 @@ export const blogPostsAPI = (query = ""): Promise<ApiResponse<BlogPostListData>>
 export const blogPostAPI = (slug: string): Promise<ApiResponse<BlogPostData>> =>
   instance.get(`/blog/posts/${encodeURIComponent(slug)}`);
 
+export const trackBlogViewAPI = (slug: string): Promise<ApiResponse<null>> =>
+  instance.post(`/blog/posts/${encodeURIComponent(slug)}/view`);
+
+export const blogLikeStateAPI = (slug: string): Promise<ApiResponse<BlogLikeStateData>> =>
+  instance.get(`/blog/posts/${encodeURIComponent(slug)}/like`);
+
+export const toggleBlogLikeAPI = (slug: string): Promise<ApiResponse<BlogLikeStateData>> =>
+  instance.post(`/blog/posts/${encodeURIComponent(slug)}/like`);
+
+export const blogCommentsAPI = (slug: string): Promise<ApiResponse<BlogCommentListData>> =>
+  instance.get(`/blog/posts/${encodeURIComponent(slug)}/comments?pageSize=100`);
+
+export const createBlogCommentAPI = (slug: string, content: string): Promise<ApiResponse<BlogCommentData>> =>
+  instance.post(`/blog/posts/${encodeURIComponent(slug)}/comments`, { content });
+
 export const adminBlogPostsAPI = (): Promise<ApiResponse<BlogPostListData>> =>
   instance.get("/admin/blog/posts?pageSize=100");
 
@@ -91,6 +106,12 @@ export const confirmBlogAssetAPI = (
   assetId: number,
   data: { width: number; height: number; alt: string }
 ): Promise<ApiResponse<BlogAssetData>> => instance.post(`/admin/blog/assets/${assetId}/confirm`, data);
+
+export const adminBlogCommentsAPI = (status: BlogCommentStatus | "all"): Promise<ApiResponse<BlogCommentListData>> =>
+  instance.get(`/admin/blog/comments?status=${encodeURIComponent(status)}&pageSize=100`);
+
+export const reviewBlogCommentAPI = (id: number, status: "approved" | "rejected"): Promise<ApiResponse<BlogCommentData>> =>
+  instance.post(`/admin/blog/comments/${id}/review`, { status });
 
 
 export const downloadFileAPI = (key: string) =>

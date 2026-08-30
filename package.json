@@ -8,7 +8,8 @@
     "build": "next build --webpack",
     "start": "next start --webpack",
     "lint": "eslint",
-    "preview": "cross-env OPENNEXT_BUILD=1 opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "build:worker": "cross-env OPENNEXT_BUILD=1 opennextjs-cloudflare build",
+    "preview": "corepack yarn build:worker && opennextjs-cloudflare preview",
     "deploy": "cross-env OPENNEXT_BUILD=1 opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {

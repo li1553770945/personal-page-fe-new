@@ -1,2 +1,4 @@
 /usage/ai /admin/usage/ai 301
 /pages/* /blog/:splat 301
+/blog-shell /blog 301
+/blog/* /blog-shell 200

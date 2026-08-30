@@ -1,10 +1,8 @@
 import type { NextConfig } from "next";
 
-const isOpenNextBuild = process.env.OPENNEXT_BUILD === "1";
-
 const nextConfig: NextConfig = {
   /* config options here */
-  ...(isOpenNextBuild ? {} : { output: "export" as const }),
+  output: "export",
   images: {
     unoptimized: true,
     remotePatterns: [

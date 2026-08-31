@@ -206,6 +206,7 @@ export interface BlogPostData {
   coverObjectPath?: string;
   categories: string[];
   tags: string[];
+  pinned: boolean;
   draftRevisionId?: number;
   publishedRevisionId?: number;
   revisionId?: number;

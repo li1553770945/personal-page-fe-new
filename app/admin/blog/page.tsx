@@ -10,6 +10,7 @@ import {
   ImagePlus,
   Loader2,
   MessageSquare,
+  Pin,
   Plus,
   RefreshCw,
   Save,
@@ -30,6 +31,7 @@ import {
   deleteBlogPostAPI,
   restoreBlogRevisionAPI,
   saveBlogDraftAPI,
+  setBlogPostPinnedAPI,
   signBlogAssetAPI,
   unpublishBlogPostAPI,
 } from "@/api"
@@ -239,6 +241,22 @@ export default function AdminBlogPage() {
     }
   }
 
+  const togglePinned = async () => {
+    if (!selected) return
+    const nextPinned = !selected.pinned
+    setSaving(true)
+    try {
+      const response = await setBlogPostPinnedAPI(selected.databaseId, nextPinned)
+      if (response.code !== 0) throw new Error(response.message)
+      notificationSuccess(t(nextPinned ? "blogAdmin.pinned" : "blogAdmin.unpinned"), form.title)
+      await loadPosts(selected.databaseId)
+    } catch (error) {
+      notifyFailure(error)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   const remove = async () => {
     if (!selected || !window.confirm(t("blogAdmin.deleteConfirm", { title: form.title }))) return
     setSaving(true)
@@ -390,7 +408,7 @@ export default function AdminBlogPage() {
                 <span className="line-clamp-2 text-sm font-medium">{post.title}</span>
                 <span className="mt-2 flex items-center justify-between gap-2 text-xs text-muted-foreground">
                   <span>{t(`blogAdmin.status.${post.status}`)}</span>
-                  <span className="inline-flex items-center gap-2"><span className="inline-flex items-center gap-1"><Eye className="size-3" />{post.viewCount ?? 0}</span><span>v{post.version}</span></span>
+                  <span className="inline-flex items-center gap-2">{post.pinned && <span className="inline-flex items-center gap-1 text-primary"><Pin className="size-3" />{t("blogAdmin.pinBadge")}</span>}<span className="inline-flex items-center gap-1"><Eye className="size-3" />{post.viewCount ?? 0}</span><span>v{post.version}</span></span>
                 </span>
               </button>
             ))}
@@ -440,6 +458,7 @@ export default function AdminBlogPage() {
                 <Button loading={saving} onClick={() => void save(false)}><Save className="size-4" />{t("blogAdmin.saveDraft")}</Button>
                 <Button variant="secondary" loading={saving} onClick={() => void save(true)}><Send className="size-4" />{t("blogAdmin.saveAndPublish")}</Button>
                 {selected?.status === "published" && <Button variant="outline" disabled={saving} onClick={() => void mutateStatus("unpublish")}><Eye className="size-4" />{t("blogAdmin.unpublish")}</Button>}
+                {selected && <Button variant={selected.pinned ? "secondary" : "outline"} disabled={saving} onClick={() => void togglePinned()}><Pin className="size-4" />{t(selected.pinned ? "blogAdmin.unpin" : "blogAdmin.pin")}</Button>}
                 {selected && <Button variant="outline" disabled={saving} onClick={() => void mutateStatus("archive")}><Archive className="size-4" />{t("blogAdmin.archive")}</Button>}
                 {selected?.status === "published" && <Button asChild variant="outline"><Link href={`/blog/${selected.slug}`} target="_blank"><Eye className="size-4" />{t("blogAdmin.view")}</Link></Button>}
                 {selected && <Button variant="destructive" disabled={saving} onClick={() => void remove()}><Trash2 className="size-4" />{t("blogAdmin.delete")}</Button>}

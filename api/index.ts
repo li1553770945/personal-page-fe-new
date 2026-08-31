@@ -90,6 +90,9 @@ export const unpublishBlogPostAPI = (id: number): Promise<ApiResponse<null>> =>
 export const archiveBlogPostAPI = (id: number): Promise<ApiResponse<null>> =>
   instance.post(`/admin/blog/posts/${id}/archive`);
 
+export const setBlogPostPinnedAPI = (id: number, pinned: boolean): Promise<ApiResponse<null>> =>
+  instance.post(`/admin/blog/posts/${id}/pin`, { pinned });
+
 export const deleteBlogPostAPI = (id: number): Promise<ApiResponse<null>> =>
   instance.delete(`/admin/blog/posts/${id}`);
 

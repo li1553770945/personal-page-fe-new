@@ -19,6 +19,14 @@ type BlogRouteState =
 
 const currentSlug = () => {
   const path = window.location.pathname.replace(/\/+$/, "")
+  const querySlug = new URLSearchParams(window.location.search).get("slug")
+  if (path === "/blog-shell" && querySlug) {
+    try {
+      return decodeURIComponent(querySlug)
+    } catch {
+      return querySlug
+    }
+  }
   if (!path.startsWith("/blog/")) return ""
   try {
     return decodeURIComponent(path.slice("/blog/".length))
@@ -95,10 +103,12 @@ export function BlogRouteView() {
   if (state.status === "index") return <BlogIndexView posts={state.posts} />
 
   return (
-    <div className="mx-auto w-full max-w-4xl py-10 md:py-14">
-      <BlogArticleHeader post={state.post} />
-      <MarkdownContent content={state.post.contentMarkdown ?? ""} />
-      <BlogEngagement post={state.post} />
+    <div className="mx-auto w-full max-w-5xl py-10 md:py-14">
+      <div className="rounded-2xl border border-border/80 bg-card px-5 py-7 shadow-sm sm:px-8 md:px-12 md:py-10">
+        <BlogArticleHeader post={state.post} />
+        <MarkdownContent content={state.post.contentMarkdown ?? ""} />
+        <BlogEngagement post={state.post} />
+      </div>
     </div>
   )
 }

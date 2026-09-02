@@ -52,6 +52,7 @@ export default function Live2d() {
 
       try {
         const { loadOml2d } = await import('oh-my-live2d');
+        const isCompactViewport = window.matchMedia('(max-width: 640px)').matches;
 
         let showWordTheDay = true;
         const status = localStorage.getItem('OML2D_STATUS') ;
@@ -92,11 +93,11 @@ export default function Live2d() {
           models: [
             {
               path: '/models/hiyori/hiyori_pro_t11.model3.json',
-              scale: 0.20,
-              position: [-150, 100],
+              scale: isCompactViewport ? 0.12 : 0.17,
+              position: isCompactViewport ? [-76, 48] : [-112, 74],
               stageStyle: {
-                width: 300,
-                height: 450
+                width: isCompactViewport ? 152 : 224,
+                height: isCompactViewport ? 228 : 336
               }
             }
           ],
@@ -107,10 +108,10 @@ export default function Live2d() {
             },
             style: {
               position: 'absolute',
-              top: '100px',
+              top: isCompactViewport ? '68px' : '100px',
               left: '0%',
               transform: 'translateX(-50%)',
-              width: '200px',
+              width: isCompactViewport ? '150px' : '200px',
               textAlign: 'center',
               zIndex: 9999,
             },

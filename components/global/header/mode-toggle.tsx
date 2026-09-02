@@ -16,25 +16,26 @@ export function ModeToggle() {
 
   // mounted之前禁止切换
   if (!mounted) {
-    return <Switch disabled className="opacity-50" />
+    return <div className="flex h-10 items-center rounded-lg border border-border/80 bg-card px-2"><Switch disabled className="opacity-50" /></div>
   }
 
   // 是否使用深色模式
   const isDark = !!(resolvedTheme === "dark")
 
   return (
-    <Switch
-      checked={isDark}
-      onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
-      // 指定按钮图标
-      thumbContent={
-        isDark ? (
-          <Moon className="size-3 text-foreground" />
-        ) : (
-          <Sun className="size-3 text-foreground" />
-        )
-      }
-      aria-label="Toggle theme"
-    />
+    <div className="flex h-10 items-center rounded-lg border border-border/80 bg-card px-2 transition-colors hover:bg-accent">
+      <Switch
+        checked={isDark}
+        onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+        thumbContent={
+          isDark ? (
+            <Moon className="size-3 text-foreground" />
+          ) : (
+            <Sun className="size-3 text-foreground" />
+          )
+        }
+        aria-label="Toggle theme"
+      />
+    </div>
   )
 }

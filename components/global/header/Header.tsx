@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import {
     NavigationMenu,
@@ -217,7 +218,7 @@ export default function Header() {
 
     return (
         // 顶部固定：80%透明背景 + 中度背景模糊（毛玻璃效果），并针对支持模糊特性的浏览器优化透明度
-        <header className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-md supports-[backdrop-filter]:bg-background/50">
+        <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-background/90 backdrop-blur-xl supports-[backdrop-filter]:bg-background/82">
             <div
                 className={cn(
                     "pointer-events-none absolute inset-x-0 top-0 h-0.5 overflow-hidden opacity-0 transition-opacity duration-200",
@@ -227,21 +228,24 @@ export default function Header() {
             >
                 <div className="h-full w-1/3 animate-[nav-progress_1.15s_ease-in-out_infinite] rounded-full bg-primary/70 shadow-[0_0_16px_var(--primary)] motion-reduce:animate-none" />
             </div>
-            <div className="flex h-16 min-w-0 items-center justify-between gap-2 px-3 sm:px-4 md:px-6">
+            <div className="mx-auto flex h-[68px] w-full max-w-[1440px] min-w-0 items-center gap-3 px-4 sm:px-6 lg:px-8">
                 <Link
                     href="/"
-                    className="flex min-w-0 items-center gap-2 rounded-md px-2 py-2 text-sm font-semibold hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring xl:hidden"
+                    className="group flex min-w-0 shrink-0 items-center gap-3 rounded-lg py-2 pr-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     aria-label={t('nav.home')}
                     onClick={() => handleInternalNavigation('/')}
                 >
-                    <HomeIcon className="size-5 shrink-0" aria-hidden="true" />
-                    <span className="hidden truncate min-[360px]:inline">PeaceSheep</span>
+                    <Image src="/favicon.ico" alt="" width={38} height={38} className="size-9 shrink-0 rounded-xl ring-1 ring-border/70 transition-transform group-hover:-rotate-3" />
+                    <span className="hidden min-w-0 sm:block">
+                        <span className="block truncate text-sm font-semibold tracking-tight">PeaceSheep</span>
+                        <span className="block truncate text-[11px] text-muted-foreground">个人开发者</span>
+                    </span>
                 </Link>
 
-                <NavigationMenu viewport={false} className="hidden xl:flex">
-                    <NavigationMenuList>
+                <NavigationMenu viewport={false} className="hidden min-w-0 flex-1 justify-start xl:flex">
+                    <NavigationMenuList className="justify-start gap-0.5">
                         {navItems.map((item) => {
-                            const isActive = item.href && pathname === item.href;
+                            const isActive = item.href && (pathname === item.href || (item.href !== "/" && pathname.startsWith(`${item.href}/`)));
 
                             const hasSub = item.subItem && item.subItem.length > 0
                             const IconComp = item.icon
@@ -250,17 +254,17 @@ export default function Header() {
                                 return (
                                     <NavigationMenuItem
                                         key={item.label}
-                                        className="group/nav-item relative hover:border-b-3 hover:border-(--underline-background)"
+                                        className="group/nav-item relative"
                                     >
                                         <button
                                             type="button"
                                             className={cn(
                                                 navigationMenuTriggerStyle(),
-                                                "group flex-row items-center transition-all duration-200 ease-out active:scale-[0.98] group-hover/nav-item:bg-accent group-hover/nav-item:text-accent-foreground group-focus-within/nav-item:bg-accent group-focus-within/nav-item:text-accent-foreground"
+                                                "group h-10 flex-row items-center rounded-lg px-3 text-muted-foreground transition-colors duration-200 group-hover/nav-item:bg-accent group-hover/nav-item:text-accent-foreground group-focus-within/nav-item:bg-accent group-focus-within/nav-item:text-accent-foreground"
                                             )}
                                             aria-haspopup="menu"
                                         >
-                                            {IconComp ? <IconComp className="mr-2 size-4 text-foreground" /> : null}
+                                            {IconComp ? <IconComp className="mr-2 size-4" /> : null}
                                             {item.label}
                                             <ChevronDown
                                                 className="relative top-[1px] ml-1 size-3 transition-transform duration-200 group-hover/nav-item:rotate-180 group-focus-within/nav-item:rotate-180"
@@ -268,7 +272,7 @@ export default function Header() {
                                             />
                                         </button>
                                         <div className="invisible absolute left-0 top-full min-w-[170px] translate-y-1 pt-2 opacity-0 transition-all duration-200 ease-out group-hover/nav-item:visible group-hover/nav-item:translate-y-0 group-hover/nav-item:opacity-100 group-focus-within/nav-item:visible group-focus-within/nav-item:translate-y-0 group-focus-within/nav-item:opacity-100">
-                                            <div className="rounded-md border bg-popover p-2 text-popover-foreground shadow-lg">
+                                            <div className="rounded-xl border bg-popover p-2 text-popover-foreground shadow-lg">
                                                 <ul className="grid gap-1">
                                                     {item.subItem?.map((sub) => {
                                                         const SubIcon = sub.icon
@@ -301,12 +305,13 @@ export default function Header() {
                             }
 
                             return (
-                                <NavigationMenuItem key={item.label} className={cn('hover:border-b-3 hover:border-(--underline-background)', isActive && 'border-b-3 hover:border-(--underline-background)')}>
+                                <NavigationMenuItem key={item.label} className="relative">
                                     <NavigationMenuLink
                                         asChild
                                         className={cn(
                                             navigationMenuTriggerStyle(),
-                                            "relative flex-row items-center transition-all duration-200 ease-out active:scale-[0.98]",
+                                            "relative h-10 flex-row items-center rounded-lg px-3 text-muted-foreground transition-colors duration-200 after:absolute after:inset-x-3 after:-bottom-[14px] after:h-0.5 after:scale-x-0 after:rounded-full after:bg-primary after:transition-transform hover:bg-accent hover:text-accent-foreground",
+                                            isActive && "text-primary after:scale-x-100",
                                             pendingHref === item.href && item.href !== pathname && "bg-accent text-accent-foreground"
                                         )}
                                     >
@@ -315,7 +320,7 @@ export default function Header() {
                                             target={item.target}
                                             onClick={() => handleInternalNavigation(item.href, item.target)}
                                         >
-                                            {IconComp ? <IconComp className="mr-2 size-4 text-foreground" /> : null}
+                                            {IconComp ? <IconComp className="mr-2 size-4" /> : null}
                                             {item.label}
                                             {pendingHref === item.href && item.href !== pathname && <span className="ml-2 size-1.5 animate-pulse rounded-full bg-primary" aria-hidden="true" />}
                                             {item.target === '_blank' && <LinkOutlinedIcon className="ml-1 size-3 text-muted-foreground" aria-hidden="true" />}
@@ -326,16 +331,16 @@ export default function Header() {
                         })}
                     </NavigationMenuList>
                 </NavigationMenu>
-                <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+                <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
                     {/* 语言切换 */}
-                    <LanguageToggle className="right-10" />
+                    <LanguageToggle />
                     {/* 主题切换 */}
                     <ModeToggle />
                     {/* 用户 */}
                     <UserLogo />
                     <button
                         type="button"
-                        className="inline-flex size-9 items-center justify-center rounded-md hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring xl:hidden"
+                        className="inline-flex size-10 items-center justify-center rounded-lg border border-border/80 bg-card hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring xl:hidden"
                         aria-label={isMobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
                         aria-expanded={isMobileMenuOpen}
                         aria-controls="mobile-primary-navigation"
@@ -349,7 +354,7 @@ export default function Header() {
                 <nav
                     id="mobile-primary-navigation"
                     aria-label={t('nav.mobileNavigation')}
-                    className="absolute inset-x-0 top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto border-y bg-background/95 px-3 py-3 shadow-xl backdrop-blur-xl xl:hidden"
+                    className="absolute inset-x-0 top-[68px] max-h-[calc(100dvh-68px)] overflow-y-auto border-b bg-background/98 px-3 py-3 shadow-xl backdrop-blur-xl xl:hidden"
                 >
                     <ul className="mx-auto grid w-full max-w-2xl gap-1">
                         {navItems.map((item) => {

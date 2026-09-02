@@ -27,13 +27,14 @@ export function LanguageToggle({ className }: LanguageToggleProps) {
   if (!mounted) {
     return (
       <Button
-        variant="ghost"
-        size="icon"
+        variant="outline"
+        size="sm"
         disabled
-        className={cn("opacity-50 size-9", className)}
+        className={cn("h-10 min-w-16 gap-1.5 rounded-lg bg-card px-3 opacity-50", className)}
         aria-label="Toggle language"
       >
         <Languages className="size-4" />
+        <span className="text-xs font-semibold">ZH</span>
       </Button>
     )
   }
@@ -49,10 +50,10 @@ export function LanguageToggle({ className }: LanguageToggleProps) {
   return (
     <Button
       variant="ghost"
-      size="icon"
+      size="sm"
       onClick={toggleLanguage}
       className={cn(
-        "size-9 relative overflow-visible",
+        "h-10 min-w-16 gap-1.5 rounded-lg border border-border/80 bg-card px-3",
         "hover:bg-accent hover:text-accent-foreground",
         "transition-colors",
         "group",
@@ -62,7 +63,7 @@ export function LanguageToggle({ className }: LanguageToggleProps) {
       title={isChinese ? "Switch to English" : "切换到中文"}
     >
       <Languages className="size-4 transition-transform group-hover:scale-110" />
-      <span className="absolute -bottom-0.5 -right-0.5 h-3.5 min-w-[18px] px-1 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[9px] font-semibold leading-none border border-background">
+      <span className="text-xs font-semibold">
         {isChinese ? 'ZH' : 'EN'}
       </span>
     </Button>

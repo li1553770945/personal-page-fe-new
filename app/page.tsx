@@ -9,7 +9,7 @@ import { Publications } from "@/components/home/publications"
 
 export default function Home() {
   return (
-    <div>
+    <div className="mx-auto max-w-6xl divide-y divide-border/70">
       <Hero />
       <Experience />
       <Education />

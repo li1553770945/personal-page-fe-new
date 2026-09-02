@@ -17,7 +17,7 @@ export function BlogArticleHeader({ post }: { post: BlogPostData }) {
   }).format(new Date(timestamp * 1000))
 
   return (
-    <header className="mb-9 border-b pb-8">
+    <header className="mb-10 border-b border-border/80 pb-9">
       <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
         <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
           <ArrowLeft className="size-4" />{t("blog.back")}
@@ -32,10 +32,10 @@ export function BlogArticleHeader({ post }: { post: BlogPostData }) {
         <CalendarDays className="size-4" />
         <time dateTime={new Date(timestamp * 1000).toISOString()}>{date}</time>
         {post.categories.map((category) => (
-          <span key={category} className="rounded-full bg-secondary px-2.5 py-1 text-secondary-foreground">{category}</span>
+          <span key={category} className="rounded-md bg-primary/10 px-2.5 py-1 text-primary">{category}</span>
         ))}
       </div>
-      <h1 className="text-3xl font-bold leading-tight tracking-tight md:text-4xl">{post.title}</h1>
+      <h1 className="text-3xl font-bold leading-tight tracking-[-0.03em] md:text-5xl">{post.title}</h1>
       {post.description && <p className="mt-4 text-base leading-7 text-muted-foreground md:text-lg">{post.description}</p>}
       {post.tags.length > 0 && (
         <div className="mt-5 flex flex-wrap gap-2">

@@ -44,24 +44,24 @@ export function Hero() {
   ]
 
   return (
-    <section className="relative overflow-hidden py-10 md:py-14">
-      <div className="max-w-4xl">
+    <section className="relative overflow-hidden py-14 md:py-20">
+      <div className="max-w-5xl">
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: shouldReduceMotion ? 0 : 0.45 }}
-          className="space-y-7"
+          className="space-y-8"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-sm text-muted-foreground shadow-sm">
+          <div className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-sm text-muted-foreground">
             <Sparkles className="size-4 text-primary" />
             <span>{t("hero.eyebrow")}</span>
           </div>
 
           <div className="space-y-4">
-            <h1 className="max-w-3xl text-2xl font-bold leading-snug tracking-normal text-foreground md:text-3xl">
+            <h1 className="max-w-4xl text-3xl font-bold leading-[1.2] tracking-[-0.025em] text-foreground md:text-5xl">
               {t("hero.title")}
             </h1>
-            <p className="max-w-3xl text-base leading-7 text-muted-foreground md:text-lg">
+            <p className="max-w-3xl text-base leading-8 text-muted-foreground md:text-lg">
               {t("hero.subtitle")}
             </p>
           </div>
@@ -99,7 +99,7 @@ export function Hero() {
             {tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full border border-border/70 bg-secondary/60 px-3 py-1 text-sm font-medium text-secondary-foreground"
+                className="rounded-lg border border-border/80 bg-card px-3 py-1.5 text-sm font-medium text-muted-foreground"
               >
                 {tag}
               </span>

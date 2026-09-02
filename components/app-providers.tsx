@@ -78,8 +78,8 @@ export function AppProviders({ children }: Readonly<{ children: React.ReactNode 
     >
       <MotionConfig reducedMotion="user">
         <Header />
-        <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col bg-background">
-          <main className="w-full flex-1 px-4 md:px-6">{children}</main>
+        <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col bg-background">
+          <main className="w-full flex-1 px-4 sm:px-6 lg:px-8">{children}</main>
           <Footer />
         </div>
         <NotificationList />

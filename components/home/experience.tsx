@@ -108,7 +108,7 @@ export default function Experience() {
                                     >
                                         <div className="absolute left-0 top-0 h-full w-1 bg-indigo-500/50" />
 
-                                        <div className="relative p-4">
+                                        <div className="p-4">
                                             <div className="flex items-start justify-between gap-4">
                                                 <div className="flex items-start gap-3 flex-1 min-w-0">
                                                     {getCompanyLogo(item.company) ? (
@@ -150,7 +150,7 @@ export default function Experience() {
                                                         id={toggleId}
                                                         type="button"
                                                         onClick={() => toggleExpand(index)}
-                                                        className="order-first shrink-0 p-2.5 rounded-full border border-border/70 hover:border-indigo-500/60 hover:bg-indigo-500/10 transition-colors text-muted-foreground hover:text-foreground"
+                                                        className="order-first shrink-0 p-2.5 cursor-pointer after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-primary focus-visible:after:rounded-xl rounded-full border border-border/70 hover:border-indigo-500/60 hover:bg-indigo-500/10 transition-colors text-muted-foreground hover:text-foreground"
                                                         aria-label={`${t(isExpanded ? 'common.collapse' : 'common.expand')} ${item.company}`}
                                                         aria-expanded={isExpanded}
                                                         aria-controls={detailsId}

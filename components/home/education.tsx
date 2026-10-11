@@ -92,7 +92,7 @@ export default function Education() {
                                     >
                                         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-sky-400/8 via-transparent to-sky-400/8" />
 
-                                        <div className="relative p-4">
+                                        <div className="p-4">
                                             <div className="flex items-start justify-between gap-4">
                                                 <div className="flex items-start gap-3 flex-1 min-w-0">
                                                     {getSchoolLogo(item.school) ? (
@@ -129,7 +129,7 @@ export default function Education() {
                                                         id={toggleId}
                                                         type="button"
                                                         onClick={() => toggleExpand(index)}
-                                                        className="order-first shrink-0 p-2.5 rounded-full border border-border/70 hover:border-sky-500/60 hover:bg-sky-500/10 transition-colors text-muted-foreground hover:text-foreground"
+                                                        className="order-first shrink-0 p-2.5 cursor-pointer after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-primary focus-visible:after:rounded-xl rounded-full border border-border/70 hover:border-sky-500/60 hover:bg-sky-500/10 transition-colors text-muted-foreground hover:text-foreground"
                                                         aria-label={`${t(isExpanded ? 'common.collapse' : 'common.expand')} ${item.school}`}
                                                         aria-expanded={isExpanded}
                                                         aria-controls={detailsId}

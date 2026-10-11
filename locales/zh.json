@@ -80,6 +80,14 @@
     "title": "工作/实习经历",
     "items": [
       {
+        "period": "2026年8月3日-至今",
+        "company": "阿里巴巴",
+        "department": "平台技术",
+        "type": "正式工作",
+        "position": "微服务基础技术",
+        "description": []
+      },
+      {
         "period": "2025年4月-2025年8月",
         "company": "阿里巴巴",
         "department": "爱橙科技",

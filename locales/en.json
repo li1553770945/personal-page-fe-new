@@ -80,6 +80,14 @@
     "title": "Work Experience",
     "items": [
       {
+        "period": "Aug 3, 2026 - Present",
+        "company": "Alibaba",
+        "department": "Platform Technology",
+        "type": "Full-time",
+        "position": "Microservices Infrastructure",
+        "description": []
+      },
+      {
         "period": "Apr 2025 - Aug 2025",
         "company": "Alibaba",
         "department": "Aicheng Technology",

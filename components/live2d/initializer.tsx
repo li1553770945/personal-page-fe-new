@@ -93,12 +93,20 @@ export default function Live2d() {
           models: [
             {
               path: '/models/hiyori/hiyori_pro_t11.model3.json',
-              scale: isCompactViewport ? 0.12 : 0.17,
-              position: isCompactViewport ? [-76, 48] : [-112, 74],
+              scale: isCompactViewport ? 0.16 : 0.34 * 2 / 3,
+              position: isCompactViewport ? [-101, 64] : [-149, 99],
               stageStyle: {
-                width: isCompactViewport ? 152 : 224,
-                height: isCompactViewport ? 228 : 336
-              }
+                width: isCompactViewport ? 203 : 299,
+                height: isCompactViewport ? 304 : 448,
+                right: isCompactViewport ? '16px' : '32px'
+              },
+              mobileScale: 0.16,
+              mobilePosition: [-101, 64],
+              mobileStageStyle: {
+                width: 203,
+                height: 304,
+                right: '16px'
+              },
             }
           ],
           tips: {
@@ -108,7 +116,7 @@ export default function Live2d() {
             },
             style: {
               position: 'absolute',
-              top: isCompactViewport ? '68px' : '100px',
+              top: isCompactViewport ? '91px' : '133px',
               left: '0%',
               transform: 'translateX(-50%)',
               width: isCompactViewport ? '150px' : '200px',

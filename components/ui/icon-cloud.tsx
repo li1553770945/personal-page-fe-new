@@ -320,17 +320,29 @@ export function IconCloud({ icons, images }: IconCloudProps) {
       return
     }
 
+    let isVisible = false
     const animate = () => {
       drawFrame(true)
       animationFrameRef.current = requestAnimationFrame(animate)
     }
-
-    animate()
+    const syncAnimation = () => {
+      cancelAnimationFrame(animationFrameRef.current)
+      if (isVisible && !document.hidden) {
+        animationFrameRef.current = requestAnimationFrame(animate)
+      }
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting
+      syncAnimation()
+    })
+    observer.observe(canvas)
+    document.addEventListener("visibilitychange", syncAnimation)
+    drawFrame(false)
 
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
+      observer.disconnect()
+      document.removeEventListener("visibilitychange", syncAnimation)
+      cancelAnimationFrame(animationFrameRef.current)
     }
   }, [assetsVersion, icons, images, iconPositions, isDragging, mousePos, rotation, shouldReduceMotion, targetRotation])
 

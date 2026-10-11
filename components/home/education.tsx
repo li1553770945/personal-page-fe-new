@@ -1,7 +1,7 @@
 "use client"
 
 import { useTranslation } from 'react-i18next'
-import { motion, useInView, AnimatePresence } from 'motion/react'
+import { motion, useInView } from 'motion/react'
 import { useId, useRef, useState } from 'react'
 import { GraduationCap, ChevronDown, ChevronUp } from 'lucide-react'
 import Image from 'next/image'
@@ -12,7 +12,7 @@ export default function Education() {
     const shouldReduceMotion = usePrefersReducedMotion()
     const containerRef = useRef<HTMLDivElement>(null)
     const sectionId = useId()
-    const isInView = useInView(containerRef, { once: false, amount: 0.2 })
+    const isInView = useInView(containerRef, { once: true, amount: 0.2 })
     const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set())
 
     const educationItems = t('education.items', { returnObjects: true }) as Array<{
@@ -88,10 +88,9 @@ export default function Education() {
                                 {/* 卡片内容 */}
                                 <div className="ml-0 md:ml-12">
                                     <div
-                                        className="relative overflow-hidden rounded-xl border border-sky-500/15 bg-white/90 dark:bg-neutral-900/70 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg backdrop-blur"
+                                        className="relative overflow-hidden rounded-xl border border-sky-500/15 bg-white/90 dark:bg-neutral-900/70 shadow-sm transition-shadow duration-200 hover:shadow-md"
                                     >
                                         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-sky-400/8 via-transparent to-sky-400/8" />
-                                        <div className="pointer-events-none absolute -left-10 -top-12 h-24 w-24 rounded-full bg-sky-400/10 blur-3xl" />
 
                                         <div className="relative p-4">
                                             <div className="flex items-start justify-between gap-4">
@@ -151,13 +150,11 @@ export default function Education() {
                                                     aria-labelledby={headingId}
                                                     aria-hidden={!isExpanded}
                                                 >
-                                                    <AnimatePresence>
                                                         {isExpanded && (
                                                             <motion.div
-                                                                initial={shouldReduceMotion ? false : { height: 0, opacity: 0 }}
-                                                                animate={{ height: 'auto', opacity: 1 }}
-                                                                exit={shouldReduceMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
-                                                                transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+                                                                initial={shouldReduceMotion ? false : { opacity: 0 }}
+                                                                animate={{ opacity: 1 }}
+                                                                transition={{ duration: shouldReduceMotion ? 0 : 0.12 }}
                                                                 className="overflow-hidden"
                                                             >
                                                                 <div className="mt-4 pt-4 border-t border-border/60 space-y-4">
@@ -206,7 +203,6 @@ export default function Education() {
                                                                 </div>
                                                             </motion.div>
                                                         )}
-                                                    </AnimatePresence>
                                                 </div>
                                             )}
                                         </div>

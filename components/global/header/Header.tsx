@@ -217,8 +217,8 @@ export default function Header() {
     ]
 
     return (
-        // 顶部固定：80%透明背景 + 中度背景模糊（毛玻璃效果），并针对支持模糊特性的浏览器优化透明度
-        <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-background/90 backdrop-blur-xl supports-[backdrop-filter]:bg-background/82">
+        // 固定导航使用实色背景，避免滚动时持续重新计算背景模糊。
+        <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-background">
             <div
                 className={cn(
                     "pointer-events-none absolute inset-x-0 top-0 h-0.5 overflow-hidden opacity-0 transition-opacity duration-200",

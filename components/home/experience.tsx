@@ -1,7 +1,7 @@
 "use client"
 
 import { useTranslation } from 'react-i18next'
-import { motion, useInView, AnimatePresence } from 'motion/react'
+import { motion, useInView } from 'motion/react'
 import { useId, useRef, useState } from 'react'
 import { Briefcase, ChevronDown, ChevronUp } from 'lucide-react'
 import Image from 'next/image'
@@ -11,7 +11,7 @@ export default function Experience() {
     const shouldReduceMotion = usePrefersReducedMotion()
     const containerRef = useRef<HTMLDivElement>(null)
     const sectionId = useId()
-    const isInView = useInView(containerRef, { once: false, amount: 0.2 })
+    const isInView = useInView(containerRef, { once: true, amount: 0.2 })
     const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set())
 
     const experienceItems = t('experience.items', { returnObjects: true }) as Array<{
@@ -104,7 +104,7 @@ export default function Experience() {
                                 {/* 卡片内容 - 右侧对齐 */}
                                 <div className="mr-0 md:mr-12">
                                     <div
-                                        className="relative overflow-hidden rounded-xl border border-indigo-500/20 bg-white/95 dark:bg-neutral-900/80 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg backdrop-blur"
+                                        className="relative overflow-hidden rounded-xl border border-indigo-500/20 bg-white/95 dark:bg-neutral-900/80 shadow-sm transition-shadow duration-200 hover:shadow-md"
                                     >
                                         <div className="absolute left-0 top-0 h-full w-1 bg-indigo-500/50" />
 
@@ -171,13 +171,11 @@ export default function Experience() {
                                                     aria-labelledby={headingId}
                                                     aria-hidden={!isExpanded}
                                                 >
-                                                    <AnimatePresence>
                                                         {isExpanded && (
                                                             <motion.div
-                                                                initial={shouldReduceMotion ? false : { height: 0, opacity: 0 }}
-                                                                animate={{ height: 'auto', opacity: 1 }}
-                                                                exit={shouldReduceMotion ? { opacity: 0 } : { height: 0, opacity: 0 }}
-                                                                transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+                                                                initial={shouldReduceMotion ? false : { opacity: 0 }}
+                                                                animate={{ opacity: 1 }}
+                                                                transition={{ duration: shouldReduceMotion ? 0 : 0.12 }}
                                                                 className="overflow-hidden"
                                                             >
                                                                 <div className="mt-4 pt-4 border-t border-indigo-500/15">
@@ -189,7 +187,6 @@ export default function Experience() {
                                                                 </div>
                                                             </motion.div>
                                                         )}
-                                                    </AnimatePresence>
                                                 </div>
                                             )}
                                         </div>
